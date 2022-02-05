@@ -79,7 +79,7 @@ public class FreeRCTApplication {
 
 	public static String createLinkifiedHeader(String tag, String doc, String slug, String text) {
 		return	"<" + tag + " id='" + slug + "' style='padding-top:" + DESIRED_PADDING_BELOW_MENU_BAR + "px'>"
-			+	"<a href='" + doc + ".html#" + slug + "' class='linkified_header'>"
+			+	"<a href='" + doc + "#" + slug + "' class='linkified_header'>"
 			+	text
 			+	"</a></" + tag + ">";
 	}

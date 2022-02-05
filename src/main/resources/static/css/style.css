@@ -196,7 +196,7 @@ th, .table_release {
 	color: var(--text-light);
 }
 #latest_posts h1 {
-	margin: 8px;
+	margin: 16px 8px;
 }
 
 .latest_post_entry {

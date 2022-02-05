@@ -29,7 +29,7 @@ public class Contribute {
 				</p>
 
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "contribute", "graphics", "Graphics Design")
+			+ FreeRCTApplication.createLinkifiedHeader("h2", "/contribute", "graphics", "Graphics Design")
 			+ """
 				<p>
 					Whether you can create 2D graphics for the UI or 3D images for rides and other in-game objects,
@@ -38,7 +38,7 @@ public class Contribute {
 				</p>
 
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "contribute", "sound", "Sound & Music")
+			+ FreeRCTApplication.createLinkifiedHeader("h2", "/contribute", "sound", "Sound & Music")
 			+ """
 				<p>
 					Okay, FreeRCT doesn't have a sound engine yet, but that's only because we don't
@@ -48,7 +48,7 @@ public class Contribute {
 				</p>
 
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "contribute", "translating", "Translating")
+			+ FreeRCTApplication.createLinkifiedHeader("h2", "/contribute", "translating", "Translating")
 			+ """
 				<p>
 					The source language of FreeRCT is British English (<tt>en_GB</tt>).
@@ -70,7 +70,7 @@ public class Contribute {
 				</p>
 
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "contribute", "testing", "Testing")
+			+ FreeRCTApplication.createLinkifiedHeader("h2", "/contribute", "testing", "Testing")
 			+ """
 				<p>
 					Even if you can't contribute code or art, you're welcome to test FreeRCT and hunt for bugs.
@@ -87,16 +87,16 @@ public class Contribute {
 					<a target="_blank" href="https://github.com/FreeRCT/FreeRCT/pulls">open PRs</a>.
 					In this case, bugs should be reported in the PR, not on the issue tracker.
 					The PR description will tell you what to watch out for specifically.
-					Currently the only way to test a PR is to <a href="download.html#compile">compile it yourself</a>.
+					Currently the only way to test a PR is to <a href="/download#compile">compile it yourself</a>.
 					Soon, installable binaries will be provided automatically for all PRs;
 					this site will then be updated with instructions where to get and how to install.
 				</p><p>
-					New screenshots for the website's <a href="screenshots.html">screenshots section</a>
+					New screenshots for the website's <a href="/screenshots">screenshots section</a>
 					are also always appreciated.
 				</p>
 
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "contribute", "website", "Website Scripting")
+			+ FreeRCTApplication.createLinkifiedHeader("h2", "/contribute", "website", "Website Scripting")
 			+ """
 				<p>
 					You're welcome to improve this website in every way you can think of.
@@ -107,7 +107,7 @@ public class Contribute {
 				</p>
 
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "contribute", "coding", "Coding For FreeRCT")
+			+ FreeRCTApplication.createLinkifiedHeader("h2", "/contribute", "coding", "Coding For FreeRCT")
 			+ """
 				<p>
 					The FreeRCT engine is coded in C++ using SDL2.

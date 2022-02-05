@@ -66,7 +66,7 @@ public class Mainpage {
 			<div class="content_flexbox">
 				<div class="content_flexbox_content">
 
-					<h1>Welcome to the FreeRCT homepage!</h1>
+					<h1>Welcome to the FreeRCT Homepage!</h1>
 
 					<p>
 						FreeRCT aims to be a free and open source game which captures the look, feel, and gameplay of the
