@@ -213,10 +213,10 @@ public class FreeRCTApplication {
 					</script>
 
 
-					<link rel='icon' href='img/logo.png'>
+					<link rel='icon' href='/img/logo.png'>
 					<div id='menubar_top_canvas'></div>
 					<a class='pictorial_link' href=#top>
-						<img id='menubar_logo' src='img/logo.png' height=auto width=auto></img>
+						<img id='menubar_logo' src='/img/logo.png' height=auto width=auto></img>
 					</a>
 
 			"""

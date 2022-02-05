@@ -86,7 +86,7 @@ public class Mainpage {
 		for (SlideshowSlide slide : SlideshowSlide.ALL_SLIDES) {
 			body += "<div class='slideshow_slide";
 			if (slide == SlideshowSlide.ALL_SLIDES[0]) body += " slideshow_first_slide";
-			body += "'><img class='slideshow_image' src='img/screenshots/mainpage_slideshow/" + slide.image + "'></img>";
+			body += "'><img class='slideshow_image' src='/img/screenshots/mainpage_slideshow/" + slide.image + "'></img>";
 			body += "<div class='slideshow_text'><p>" + slide.caption + "</p></div>";
 			body += "</div>";
 		}
