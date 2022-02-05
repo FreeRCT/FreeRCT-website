@@ -76,7 +76,7 @@ public class Mainpage {
 						The game is still in an early alpha state, but it is already playable and offers a variety of features.
 					</p>
 
-					<br><h2><a href="news" class="linkified_header">Latest News</a></h2>
+					<br><h2><a href="/news" class="linkified_header">Latest News</a></h2>
 		"""
 		+ News.printLatestNews(request.getLocale(), 3, 0)
 		+ """
