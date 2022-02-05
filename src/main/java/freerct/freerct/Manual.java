@@ -6,7 +6,6 @@ import org.springframework.web.context.request.*;
 
 @Controller
 public class Manual {
-
 	@GetMapping("/manual")
 	@ResponseBody
 	public String fetch(WebRequest request) {
@@ -815,5 +814,4 @@ public class Manual {
 			</div>  <!-- end of manual_section -->
 		""");
 	}
-
 }

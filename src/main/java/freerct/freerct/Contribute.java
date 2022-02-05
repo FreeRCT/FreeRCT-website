@@ -6,7 +6,6 @@ import org.springframework.web.context.request.*;
 
 @Controller
 public class Contribute {
-
 	@GetMapping("/contribute")
 	@ResponseBody
 	public String fetch(WebRequest request) {
@@ -121,5 +120,4 @@ public class Contribute {
 				</p>
 		""");
 	}
-
 }

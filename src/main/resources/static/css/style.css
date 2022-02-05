@@ -214,6 +214,7 @@ th, .table_release {
 	font-weight: bold;
 	text-decoration: none;
 }
+
 .latest_post_entry a:link    { color: var(--bg-blue   ) !important; }
 .latest_post_entry a:visited { color: var(--text-light) !important; }
 

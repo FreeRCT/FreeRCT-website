@@ -6,7 +6,6 @@ import org.springframework.web.context.request.*;
 
 @Controller
 public class Mainpage {
-
 	private static class SlideshowSlide {
 		public final String image, caption;
 		private SlideshowSlide(String i, String c) {
@@ -28,6 +27,9 @@ public class Mainpage {
 		String body = """
 
 			<script>
+		"""
+		+ "const NR_SLIDES = " + SlideshowSlide.ALL_SLIDES.length + ";"
+		+ """
 				var slideIndex = 0;
 				var timeoutVar = null;
 
@@ -48,14 +50,14 @@ public class Mainpage {
 					var images = document.getElementsByClassName("slideshow_image");
 					var texts = document.getElementsByClassName("slideshow_text");
 					var dots = document.getElementsByClassName("slideshow_dot");
-					if (n > ALL_SLIDES.length) slideIndex = 1;
-					if (n < 1) slideIndex = ALL_SLIDES.length;
+					if (n > NR_SLIDES) slideIndex = 1;
+					if (n < 1) slideIndex = NR_SLIDES;
 
-					for (i = 0; i < ALL_SLIDES.length; i++) {
+					for (i = 0; i < NR_SLIDES; i++) {
 						images[i].style.opacity = (i + 1 == slideIndex) ? '1' : '0';
 						texts[i].style.opacity = (i + 1 == slideIndex) ? '1' : '0';
 					}
-					for (i = 0; i < ALL_SLIDES.length; i++) dots[i].className = dots[i].className.replace(" slideshow_dot_active", "");
+					for (i = 0; i < NR_SLIDES; i++) dots[i].className = dots[i].className.replace(" slideshow_dot_active", "");
 					dots[slideIndex-1].className += " slideshow_dot_active";
 
 					if (timeoutVar) clearTimeout(timeoutVar);
@@ -75,13 +77,15 @@ public class Mainpage {
 					</p>
 
 					<br><h2><a href="news" class="linkified_header">Latest News</a></h2>
+		"""
+		+ News.printLatestNews(request.getLocale(), 3, 0)
+		+ """
 
 				</div>
 
 				<div class="content_flexbox_content slideshow_main">
 					<div class="slideshow_container">
-		"""
-		.replaceAll("ALL_SLIDES.length", "" + SlideshowSlide.ALL_SLIDES.length);
+		""";
 
 		for (SlideshowSlide slide : SlideshowSlide.ALL_SLIDES) {
 			body += "<div class='slideshow_slide";
@@ -112,5 +116,4 @@ public class Mainpage {
 
 		return FreeRCTApplication.generatePage(request, "Home", body);
 	}
-
 }

@@ -6,7 +6,6 @@ import org.springframework.web.context.request.*;
 
 @Controller
 public class Download {
-
 	@GetMapping("/download")
 	@ResponseBody
 	public String fetch(WebRequest request) {
@@ -169,5 +168,4 @@ public class Download {
 			</table></p>
 		""");
 	}
-
 }
