@@ -1,6 +1,7 @@
 package freerct.freerct;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -120,7 +121,9 @@ public class FreeRCTApplication {
 			;
 	}
 
+	private static AtomicLong globalCounter = new AtomicLong(0);
 	public static String generatePage(WebRequest request, String pagename, String body) {
+		long counter = globalCounter.incrementAndGet();
 		final String uri = uri(request);
 		return
 			"<!DOCTYPE HTML>"
@@ -241,14 +244,14 @@ public class FreeRCTApplication {
 			+				"<h1>Latest Posts</h1>"
 			+				createLatestPost("8", "Graphics Development", "I want to contribute", "Tester",
 									new Calendar.Builder().setDate(2032, 11, 30).setTimeOfDay(15, 24, 01).build())
-			+				createLatestPost("7", "Website", "Another Topic", "Nordfriese", Calendar.getInstance())
+			+				createLatestPost("7", "Website", counter + " posts already!", "Nordfriese", Calendar.getInstance())
 			+				createLatestPost("6", "English Players’ Forum", "Hello World", "Tester",
 									new Calendar.Builder().setDate(2022, 1, 4).setTimeOfDay(16, 00, 00).build())
 			+				createLatestPost("5", "Deutsches Spielerforum", "Hallo Welt :)", "Nordfriese",
 									new Calendar.Builder().setDate(2022, 1, 4).setTimeOfDay(14, 00, 00).build())
 			+				createLatestPost("4", "Playing FreeRCT", "this game is awesome but how do i play please help me i have no idea and i need help anyone please", "Tester",
 									new Calendar.Builder().setDate(2022, 1, 3).setTimeOfDay(18, 00, 00).build())
-			+				createLatestPost("3", "General", "First Post", "Nordfriese",
+			+				createLatestPost("3", "General", "Another Topic", "Nordfriese",
 									new Calendar.Builder().setDate(2022, 1, 3).setTimeOfDay(10, 00, 01).build())
 			+				createLatestPost("2", "Technical Help", "Help!", "Tester",
 									new Calendar.Builder().setDate(2022, 0, 0).setTimeOfDay(15, 24, 01).build())
