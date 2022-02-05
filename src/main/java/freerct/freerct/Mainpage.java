@@ -2,6 +2,7 @@ package freerct.freerct;
 
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.*;
 
 @Controller
 public class Mainpage {
@@ -23,7 +24,7 @@ public class Mainpage {
 
 	@GetMapping("/")
 	@ResponseBody
-	public String fetch() {
+	public String fetch(WebRequest request) {
 		String body = """
 
 			<script>
@@ -109,7 +110,7 @@ public class Mainpage {
 			<script>showSlidesAuto();</script>
 		""";
 
-		return FreerctApplication.generatePage("Home", body);
+		return FreerctApplication.generatePage(request, "Home", body);
 	}
 
 }

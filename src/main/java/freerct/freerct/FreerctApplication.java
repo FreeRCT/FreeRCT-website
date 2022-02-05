@@ -1,14 +1,19 @@
 package freerct.freerct;
 
-import java.util.Calendar;
+import java.util.*;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.context.request.*;
 
 @SpringBootApplication
 public class FreerctApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FreerctApplication.class, args);
+	}
+
+	public static String uri(WebRequest request) {
+		return ((ServletWebRequest)request).getRequest().getRequestURI().toString();
 	}
 
 	public static String timestringSince(Calendar timestamp) {
@@ -55,11 +60,43 @@ public class FreerctApplication {
 		return delta <= 1 ? future ? ("next year") : ("last year") : future ? ("in " + delta + " years") : (delta + " years ago");
 	}
 
-	private static String createMenuBarEntry(String link, String slug, String label) {
-		return		"<li class='menubar_li'>"
-			+			"<a id='menubar_entry_" + slug + "' href='" + link + "'>" + label + "<span class='tooltip_bottom'>" + label + "</span></a>"
-			+		"</li>"
-			;
+	private static class DropdownEntry {
+		public final String link, slug, label;
+		public final boolean newTab;
+		public DropdownEntry(String l, String u, String d, boolean t) {
+			link = l;
+			slug = u;
+			label = d;
+			newTab = t;
+		}
+		public DropdownEntry(String l, String u, String d) {
+			this(l, u, d, false);
+		}
+	}
+
+	private static String createMenuBarEntry(String uri, DropdownEntry e) {
+		String str	=	"<li class='menubar_li'><a ";
+		if (Objects.equals(uri, e.link)) str += "class='menubar_active' ";
+		str			+=	"id='menubar_entry_" + e.slug + "' href='" + e.link + "'>" + e.label + "<span class='tooltip_bottom'>" + e.label + "</span></a>"
+					+	"</li>"
+					;
+		return str;
+	}
+
+	private static String createMenuBarDropdown(String uri, DropdownEntry e, DropdownEntry ... content) {
+		String str	=	"<li class='menubar_li menubar_dropdown' onmouseover='dropdownMouse(this, true)' onmouseout='dropdownMouse(this, false)'><a ";
+		if (Objects.equals(uri, e.link)) str += "class='menubar_active' ";
+		str			+=	"id='menubar_entry_" + e.slug + "' href='" + e.link + "'>" + e.label + "<span class='tooltip_corner'>" + e.label + "</span></a>"
+					+	"<div class='menubar_dropdown_content'>"
+					;
+		for (DropdownEntry d : content) {
+			str += "<a ";
+			if (Objects.equals(uri, d.link)) str += "class='menubar_active' ";
+			if (d.newTab) str += "target='_blank' ";
+			str += "id='menubar_entry_" + d.slug + "' href='" + d.link + "'>" + d.label + "<span class='tooltip_left'>" + d.label + "</span></a>";
+		}
+		str += "</div></li>";
+		return str;
 	}
 
 	private static String createLatestPost(String postID, String forum, String topic, String user, Calendar timestamp) {
@@ -72,7 +109,8 @@ public class FreerctApplication {
 			;
 	}
 
-	public static String generatePage(String pagename, String body) {
+	public static String generatePage(WebRequest request, String pagename, String body) {
+		final String uri = uri(request);
 		return
 			"<!DOCTYPE HTML>"
 			+"<html>"
@@ -173,34 +211,20 @@ public class FreerctApplication {
 					</a>
 
 			"""
-// BEGIN NOCOM
 			+		"<ul id='menubar_ul'>"
 			+		"<p id='menubar_spacer_menu'></p>"
 
 
-			+		createMenuBarEntry("/"           , "home"       , "FreeRCT Home")
-			+		createMenuBarEntry("/screenshots", "screenshots", "Screenshots" )
-			+		createMenuBarEntry("/download"   , "download"   , "Get It!"     )
-			+		createMenuBarEntry("/manual"     , "manual"     , "Manual"      )
-			+		createMenuBarEntry("/news"       , "news"       , "News Archive")
-	/* ALL_PAGES.forEach((id) => {
-		if (id.dropdown == null) {
-			document.write('<li class="menubar_li">"
-			document.write(makeHref(id, 'tooltip_bottom'));
-		} else {
-			document.write('<li class="menubar_li menubar_dropdown" onmouseover="dropdownMouse(this, true)" onmouseout="dropdownMouse(this, false)">"
-			document.write(makeHref(id, 'tooltip_corner'));
-			document.write('<div class="menubar_dropdown_content">"
-				id.dropdown.forEach((entry) => {
-					document.write(makeHref(entry, 'tooltip_left'));
-				});
-			document.write('</div>"
-		}
-		document.write('</li>"
-	}); */
+			+		createMenuBarEntry   (uri, new DropdownEntry("/"                                        , "home"       , "FreeRCT Home"        ))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/screenshots"                             , "screenshots", "Screenshots"         ))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/download"                                , "download"   , "Get It!"             ))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/manual"                                  , "manual"     , "Manual"              ))
+			+		createMenuBarDropdown(uri, new DropdownEntry("/contribute"                              , "contribute" , "Contribute"          ),
+					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT"       , "github"     , "Git Repository", true),
+					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT/issues", "issues"     , "Issue Tracker" , true))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/news"                                    , "news"       , "News Archive"        ))
 			+		"</ul>"
 			+		"<p id='menubar_spacer_bottom'></p>"
-// END NOCOM
 
 			+		"<div class='toplevel_content_flexbox'>"
 			+			"<div class='content_flexbox_content'>" + body + "</div>"
