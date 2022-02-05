@@ -7,9 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.context.request.*;
 
 @SpringBootApplication
-public class FreerctApplication {
+public class FreeRCTApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(FreerctApplication.class, args);
+		SpringApplication.run(FreeRCTApplication.class, args);
 	}
 
 	public static String uri(WebRequest request) {
@@ -74,6 +74,17 @@ public class FreerctApplication {
 		}
 	}
 
+	public static final int MENU_BAR_BAR_HEIGHT = 50;
+	public static final int DESIRED_PADDING_BELOW_MENU_BAR = MENU_BAR_BAR_HEIGHT + 8;
+
+	public static String createLinkifiedHeader(String tag, String doc, String slug, String text) {
+		return	"<" + tag + " id='" + slug + "' style='padding-top:" + DESIRED_PADDING_BELOW_MENU_BAR + "px'>"
+			+	"<a href='" + doc + ".html#" + slug + "' class='linkified_header'>"
+			+	text
+			+	"</a></" + tag + ">";
+	}
+
+
 	private static String createMenuBarEntry(String uri, DropdownEntry e) {
 		String str	=	"<li class='menubar_li'><a ";
 		if (Objects.equals(uri, e.link)) str += "class='menubar_active' ";
@@ -123,12 +134,10 @@ public class FreerctApplication {
 			+	"</head>"
 			+	"<body>"
 
+			+		"<script>"
+			+			"const MENU_BAR_BAR_HEIGHT            = " + MENU_BAR_BAR_HEIGHT            + ";"
+			+			"const DESIRED_PADDING_BELOW_MENU_BAR = " + DESIRED_PADDING_BELOW_MENU_BAR + ";"
 			+ """
-					<script>
-
-						const MENU_BAR_BAR_HEIGHT = 50;
-						const DESIRED_PADDING_BELOW_MENU_BAR = MENU_BAR_BAR_HEIGHT + 8;
-
 						function readjustMenuBarY() {
 							var ul = document.getElementById('menubar_ul');
 							var logo = document.getElementById('menubar_logo');

@@ -10,7 +10,7 @@ public class ErrorHandler implements ErrorController {
 	@RequestMapping("/error")
 	@ResponseBody
 	public String error(WebRequest request) {
-		return FreerctApplication.generatePage(request, "Not Found", """
+		return FreeRCTApplication.generatePage(request, "Not Found", """
 					<h1>Not Found</h1>
 
 					<p>

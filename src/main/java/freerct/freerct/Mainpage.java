@@ -110,7 +110,7 @@ public class Mainpage {
 			<script>showSlidesAuto();</script>
 		""";
 
-		return FreerctApplication.generatePage(request, "Home", body);
+		return FreeRCTApplication.generatePage(request, "Home", body);
 	}
 
 }
