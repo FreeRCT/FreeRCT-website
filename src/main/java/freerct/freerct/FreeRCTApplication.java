@@ -333,13 +333,14 @@ public class FreeRCTApplication {
 			+			"</div>"
 			+		"</div>"
 
-			+		"<p id='footer_spacer'></p><footer id='menubar_footer'>© 2021-"
-							+ Calendar.getInstance().get(Calendar.YEAR)
-			+		" by the FreeRCT Development Team</footer>"
+			+		"<p id='footer_spacer'></p><footer>"
+			+			"<div>© 2021-" + Calendar.getInstance().get(Calendar.YEAR) + " by the FreeRCT Development Team</div>"
+			+			"<div><a href='/contact'>Legal notice / contact</a></div>"
+			+		"</footer>"
 			+		"<script>readjustMenuBarY();</script>"
 
 			+	"</body>"
-			+"</html>"
+			+ "</html>"
 			;
 	}
 }

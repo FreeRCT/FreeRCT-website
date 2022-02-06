@@ -125,12 +125,16 @@ state                | int              | One of 0 (unread), 1 (read), or 2 (del
 
 ### Table Schema
 ```sql
+-- Delete all current tables in the correct order.
+-- Do this only if you don't care about data loss!!!
 drop table if exists posts;
 drop table if exists topics;
 drop table if exists forums;
 drop table if exists news;
 drop table if exists messages;
 drop table if exists users;
+
+-- Create the new tables.
 create table users (
 	id       int          not null  primary key auto_increment,
 	username varchar(255) not null,
@@ -146,7 +150,7 @@ create table news (
 	slug      varchar(255) not null,
 	title     varchar(255) not null,
 	body      text         not null,
-	foreign key (author) references users (id) on delete cascade on update cascade
+	foreign key fk_author (author) references users (id) on delete cascade on update cascade
 );
 create table forums (
 	id   int          not null primary key auto_increment,
@@ -156,7 +160,7 @@ create table topics (
 	id    int          not null primary key auto_increment,
 	forum int          not null,
 	name  varchar(255) not null,
-	foreign key (forum) references forums (id) on delete cascade on update cascade
+	foreign key fk_forum (forum) references forums (id) on delete cascade on update cascade
 );
 create table posts (
 	id      int      not null primary key auto_increment,
@@ -166,9 +170,9 @@ create table posts (
 	created datetime not null default current_timestamp,
 	edited  datetime          default null,
 	body    text     not null,
-	foreign key (topic ) references topics (id) on delete cascade on update cascade,
-	foreign key (user  ) references users  (id) on delete cascade on update cascade,
-	foreign key (editor) references users  (id) on delete cascade on update cascade
+	foreign key fk_topic  (topic ) references topics (id) on delete cascade on update cascade,
+	foreign key fk_user   (user  ) references users  (id) on delete cascade on update cascade,
+	foreign key fk_editor (editor) references users  (id) on delete cascade on update cascade
 );
 create table messages (
 	id        int          not null primary key auto_increment,
@@ -178,7 +182,7 @@ create table messages (
 	body      text         not null,
 	timestamp datetime     not null default current_timestamp,
 	state     int          not null default 0,
-	foreign key (sender   ) references users (id) on delete cascade on update cascade,
-	foreign key (recipient) references users (id) on delete cascade on update cascade
+	foreign key fk_sender    (sender   ) references users (id) on delete cascade on update cascade,
+	foreign key fk_recipient (recipient) references users (id) on delete cascade on update cascade
 );
 ```
