@@ -2,6 +2,7 @@ package freerct.freerct;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -11,6 +12,14 @@ import org.springframework.web.context.request.*;
 
 @SpringBootApplication
 public class FreeRCTApplication {
+	private static final Map<String, Object> _config = new HashMap<>();
+	public static String config(String key) {
+		Object o = _config.get(key);
+		return o == null ? null : o.toString();
+	}
+
+	private static Connection _database = null;
+
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(FreeRCTApplication.class);
 		Map<String, Object> properties = new HashMap<>();
@@ -18,14 +27,23 @@ public class FreeRCTApplication {
 		try {
 			File file = new File("config");
 			if (file.isFile()) {
+				Map<String, Object> curMap = properties;
 				for (String line : Files.readAllLines(file.toPath())) {
 					line = line.trim();
 					if (line.isEmpty() || line.startsWith("#") || line.startsWith(";")) continue;
 
+					if (line.matches("~+")) {
+						if (curMap == properties) {
+							curMap = _config;
+							continue;
+						}
+						throw new Exception("More than two sections in config file");
+					}
+
 					String[] str = line.split("=");
 					for (int i = 0; i < str.length; ++i) str[i] = str[i].trim();
 					if (str.length < 2) {
-						if (str.length == 1) properties.put(str[0], "");
+						if (str.length == 1) curMap.put(str[0], "");
 						continue;
 					}
 
@@ -35,9 +53,8 @@ public class FreeRCTApplication {
 						arg = arg.substring(1);
 						if (arg.endsWith("\"")) arg = arg.substring(0, arg.length() - 1);
 					}
-					properties.put(str[0], arg);
+					curMap.put(str[0], arg);
 				}
-				// properties.put("server.port", "80");
 			}
 		} catch (Exception e) {
 			System.out.println("Cannot load config file: " + e);
@@ -46,7 +63,18 @@ public class FreeRCTApplication {
 		}
 
 		app.setDefaultProperties(properties);
-		app.run(args);
+
+		try {
+			_database = DriverManager.getConnection("jdbc:mysql://" + config("databasehost") + ":" +
+					                                config("databaseport") + "/" + config("databasename"),
+					                                config("databaseuser"), config("databasepassword"));
+		} catch (Exception e) {
+			System.out.println("Cannot connect to database: " + e);
+			e.printStackTrace();
+			System.exit(2);
+		}
+
+		app.run(args);  // Main loop.
 	}
 
 	public static String uri(WebRequest request) {
@@ -262,15 +290,24 @@ public class FreeRCTApplication {
 			+		"<ul id='menubar_ul'>"
 			+		"<p id='menubar_spacer_menu'></p>"
 
-
-			+		createMenuBarEntry   (uri, new DropdownEntry("/"                                        , "home"       , "FreeRCT Home"        ))
-			+		createMenuBarEntry   (uri, new DropdownEntry("/screenshots"                             , "screenshots", "Screenshots"         ))
-			+		createMenuBarEntry   (uri, new DropdownEntry("/download"                                , "download"   , "Get It!"             ))
-			+		createMenuBarEntry   (uri, new DropdownEntry("/manual"                                  , "manual"     , "Manual"              ))
-			+		createMenuBarDropdown(uri, new DropdownEntry("/contribute"                              , "contribute" , "Contribute"          ),
-					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT"       , "github"     , "Git Repository", true),
-					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT/issues", "issues"     , "Issue Tracker" , true))
-			+		createMenuBarEntry   (uri, new DropdownEntry("/news"                                    , "news"       , "News Archive"        ))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/"                                        , "home"       , "FreeRCT Home"          ))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/screenshots"                             , "screenshots", "Screenshots"           ))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/download"                                , "download"   , "Get It!"               ))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/manual"                                  , "manual"     , "Manual"                ))
+			+		createMenuBarDropdown(uri, new DropdownEntry("/forum"                                   , "forum"      , "Forums"                ),
+					                           new DropdownEntry("/forum/1"                                 , "forum_1"    , "Technical Help"        ),
+					                           new DropdownEntry("/forum/2"                                 , "forum_2"    , "General Topics"        ),
+					                           new DropdownEntry("/forum/3"                                 , "forum_3"    , "Playing FreeRCT"       ),
+					                           new DropdownEntry("/forum/4"                                 , "forum_4"    , "Game Suggestions"      ),
+					                           new DropdownEntry("/forum/5"                                 , "forum_5"    , "Deutsches Spielerforum"),
+					                           new DropdownEntry("/forum/6"                                 , "forum_6"    , "English Players’ Forum"),
+					                           new DropdownEntry("/forum/7"                                 , "forum_7"    , "Translating & i18n"    ),
+					                           new DropdownEntry("/forum/8"                                 , "forum_8"    , "Graphics Development"  ),
+					                           new DropdownEntry("/forum/9"                                 , "forum_9"    , "Website"               ))
+			+		createMenuBarDropdown(uri, new DropdownEntry("/contribute"                              , "contribute" , "Contribute"            ),
+					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT"       , "github"     , "Git Repository",   true),
+					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT/issues", "issues"     , "Issue Tracker" ,   true))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/news"                                    , "news"       , "News Archive"          ))
 			+		"</ul>"
 			+		"<p id='menubar_spacer_bottom'></p>"
 
