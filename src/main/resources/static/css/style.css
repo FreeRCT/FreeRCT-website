@@ -252,9 +252,11 @@ th, .table_release {
 }
 
 .forum_post_meta {
-	font-size: 14px;
 	margin: 0;
 	padding: 0 0 0 8px;
+}
+.forum_post_meta, .forum_post_meta * {
+	font-size: 14px;
 }
 
 .forum_post_body {

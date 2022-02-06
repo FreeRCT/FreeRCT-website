@@ -56,10 +56,8 @@ public class ForumView {
 				ResultSet lastAuthor = FreeRCTApplication.sql("select username from users where id=?", firstPost.getLong("user"));
 				lastAuthor.next();
 
-				Calendar calendarFirst = Calendar.getInstance();
-				calendarFirst.setTime(firstPost.getTimestamp("created"));
-				Calendar calendarLast = Calendar.getInstance();
-				calendarLast.setTime(lastPost.getTimestamp("created"));
+				Calendar calendarFirst = FreeRCTApplication.getCalendar(firstPost, "created");
+				Calendar calendarLast = FreeRCTApplication.getCalendar(lastPost, "created");
 
 				allTopics.add(new Topic(topicID, nrPostsInTopic, firstPost.getLong("id"), lastPost.getLong("id"),
 						topics.getString("name"), firstAuthor.getString("username"), lastAuthor.getString("username"), calendarFirst, calendarLast));

@@ -46,16 +46,8 @@ public class ForumTopic {
 				author = FreeRCTApplication.sql("select username from users where id=?", sql.getLong("editor"));
 				String editorName = author.next() ? author.getString("username") : null;
 
-				Calendar calendarFirst = Calendar.getInstance();
-				calendarFirst.setTime(sql.getTimestamp("created"));
-
-				Calendar calendarLast = null;
-				Timestamp edited = sql.getTimestamp("edited");
-				if (edited != null) {
-					calendarLast = Calendar.getInstance();
-					calendarLast.setTime(edited);
-				}
-
+				Calendar calendarFirst = FreeRCTApplication.getCalendar(sql, "created");
+				Calendar calendarLast = FreeRCTApplication.getCalendar(sql, "edited");
 				allPosts.add(new Post(sql.getLong("id"), authorName, editorName, calendarFirst, calendarLast, sql.getString("body")));
 			}
 

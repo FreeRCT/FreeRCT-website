@@ -92,6 +92,14 @@ public class FreeRCTApplication {
 		}
 	}
 
+	public static Calendar getCalendar(ResultSet sql, String field) throws SQLException {
+		Timestamp t = sql.getTimestamp(field);
+		if (t == null) return null;
+		Calendar c = Calendar.getInstance();
+		c.setTime(t);
+		return c;
+	}
+
 	public static String uri(WebRequest request) {
 		return ((ServletWebRequest)request).getRequest().getRequestURI().toString();
 	}
@@ -194,7 +202,7 @@ public class FreeRCTApplication {
 		return str;
 	}
 
-	private static String createLatestPost(String postID, String forum, String topic, String user, Calendar timestamp) {
+	private static String createLatestPost(long postID, String forum, String topic, String user, Calendar timestamp) {
 		return	"<div class='latest_post_entry'>"
 			+		"<div>[" + forum + "]</div>"
 			+		"<div><a href='/forum/post/" + postID + "'>" + topic + "</a></div>"
@@ -202,6 +210,40 @@ public class FreeRCTApplication {
 			+		"<div>" + timestringSince(timestamp) + "</div>"
 			+ 	"</div>"
 			;
+	}
+
+	private static String createLatestPosts(int howMany) {
+		if (howMany <= 0) return "";
+		try {
+			ResultSet allPosts = sql("select id,topic,user,created from posts order by id desc limit ?", howMany * howMany);
+			Set<Long> topicIDs = new HashSet<>();
+			String result = "";
+
+			while (allPosts.next() && howMany > 0) {
+				long topic = allPosts.getLong("topic");
+				if (topicIDs.contains(topic)) continue;
+
+				topicIDs.add(topic);
+				--howMany;
+
+				ResultSet sql = sql("select name,forum from topics where id=?", topic);
+				sql.next();
+				String topicName = sql.getString("name");
+
+				sql = sql("select name from forums where id=?", sql.getLong("forum"));
+				sql.next();
+				String forumName = sql.getString("name");
+
+				sql = sql("select username from users where id=?", allPosts.getLong("user"));
+				sql.next();
+				String userName = sql.getString("username");
+				result += createLatestPost(allPosts.getLong("id"), forumName, topicName, userName, getCalendar(allPosts, "created"));
+			}
+
+			return result;
+		} catch (SQLException e) {
+			return "";
+		}
 	}
 
 	private static AtomicLong globalCounter = new AtomicLong(0);
@@ -309,10 +351,10 @@ public class FreeRCTApplication {
 			+		"<ul id='menubar_ul'>"
 			+		"<p id='menubar_spacer_menu'></p>"
 
-			+		createMenuBarEntry   (uri, new DropdownEntry("/"                                        , "home"       , "FreeRCT Home"          ))
-			+		createMenuBarEntry   (uri, new DropdownEntry("/screenshots"                             , "screenshots", "Screenshots"           ))
-			+		createMenuBarEntry   (uri, new DropdownEntry("/download"                                , "download"   , "Get It!"               ))
-			+		createMenuBarEntry   (uri, new DropdownEntry("/manual"                                  , "manual"     , "Manual"                ))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/"           , "home"       , "FreeRCT Home"))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/screenshots", "screenshots", "Screenshots" ))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/download"   , "download"   , "Get It!"     ))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/manual"     , "manual"     , "Manual"      ))
 			;
 
 		List<DropdownEntry> allForums = new ArrayList<>();
@@ -328,8 +370,8 @@ public class FreeRCTApplication {
 
 		result
 			+=		createMenuBarDropdown(uri, new DropdownEntry("/contribute"                              , "contribute" , "Contribute"            ),
-					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT"       , "github"     , "Git Repository",   true),
-					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT/issues", "issues"     , "Issue Tracker" ,   true))
+					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT"       , "github"     , "Git Repository", true),
+					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT/issues", "issues"     , "Issue Tracker" , true))
 			+		createMenuBarEntry   (uri, new DropdownEntry("/news"                                    , "news"       , "News Archive"          ))
 			+		"</ul>"
 			+		"<p id='menubar_spacer_bottom'></p>"
@@ -337,22 +379,7 @@ public class FreeRCTApplication {
 			+		"<div class='toplevel_content_flexbox'>"
 			+			"<div class='content_flexbox_content'>" + body + "</div>"
 			+			"<div class='content_flexbox_content' id='latest_posts'>"
-			+				"<h1>Latest Posts</h1>"
-			+				createLatestPost("8", "Graphics Development", "I want to contribute", "Tester",
-									new Calendar.Builder().setDate(2032, 11, 30).setTimeOfDay(15, 24, 01).build())
-			+				createLatestPost("7", "Website", counter + " posts already!", "Nordfriese", Calendar.getInstance())
-			+				createLatestPost("6", "English Players’ Forum", "Hello World", "Tester",
-									new Calendar.Builder().setDate(2022, 1, 4).setTimeOfDay(16, 00, 00).build())
-			+				createLatestPost("5", "Deutsches Spielerforum", "Hallo Welt :)", "Nordfriese",
-									new Calendar.Builder().setDate(2022, 1, 4).setTimeOfDay(14, 00, 00).build())
-			+				createLatestPost("4", "Playing FreeRCT", "this game is awesome but how do i play please help me i have no idea and i need help anyone please", "Tester",
-									new Calendar.Builder().setDate(2022, 1, 3).setTimeOfDay(18, 00, 00).build())
-			+				createLatestPost("3", "General", "Another Topic", "Nordfriese",
-									new Calendar.Builder().setDate(2022, 1, 3).setTimeOfDay(10, 00, 01).build())
-			+				createLatestPost("2", "Technical Help", "Help!", "Tester",
-									new Calendar.Builder().setDate(2022, 0, 0).setTimeOfDay(15, 24, 01).build())
-			+				createLatestPost("1", "Website", "New website", "Nordfriese",
-									new Calendar.Builder().setDate(2010, 0, 0).setTimeOfDay(15, 24, 01).build())
+			+				"<h1>Latest Posts</h1>" + createLatestPosts(8)
 			+			"</div>"
 			+		"</div>"
 
