@@ -1,6 +1,7 @@
 package freerct.freerct;
 
 import java.sql.*;
+import java.text.*;
 import java.util.*;
 
 import org.springframework.stereotype.*;
@@ -10,16 +11,29 @@ import org.springframework.web.context.request.*;
 @Controller
 public class ForumTopic {
 	private static class Post {
-		public final long id;
+		public final long id, authorID, editorID;
 		public final String author, editor, body;
 		public final Calendar created, edited;
-		public Post(long i, String auth, String edit, Calendar timeFirst, Calendar timeLast, String b) {
+		public Post(long i, long a, String auth, long e, String edit, Calendar timeFirst, Calendar timeLast, String b) {
 			id = i;
+			authorID = a;
+			editorID = e;
 			author = auth;
 			editor = edit;
 			created = timeFirst;
 			edited = timeLast;
 			body = b;
+		}
+	}
+
+	@GetMapping("/forum/post/{postID}")
+	public String permalink(WebRequest request, @PathVariable long postID) {
+		try {
+			ResultSet sql = FreeRCTApplication.sql("select topic from posts where id=?", postID);
+			sql.next();
+			return "redirect:/forum/topic/" + sql.getLong("topic") + "#post_" + postID;
+		} catch (Exception e) {
+			return new ErrorHandler().error(request);
 		}
 	}
 
@@ -48,7 +62,8 @@ public class ForumTopic {
 
 				Calendar calendarFirst = FreeRCTApplication.getCalendar(sql, "created");
 				Calendar calendarLast = FreeRCTApplication.getCalendar(sql, "edited");
-				allPosts.add(new Post(sql.getLong("id"), authorName, editorName, calendarFirst, calendarLast, sql.getString("body")));
+				allPosts.add(new Post(sql.getLong("id"), sql.getLong("user"), authorName, sql.getLong("editor"), editorName,
+						calendarFirst, calendarLast, sql.getString("body")));
 			}
 
 			String body	=	"<h1>Topic: " + topicName + "</h1>"
@@ -57,9 +72,23 @@ public class ForumTopic {
 						;
 
 			for (Post p : allPosts) {
-				body	+=	"<div class='forum_list_entry'>"
-						+		"<div>"
+				ResultSet postCounter = FreeRCTApplication.sql("select count(user) as nr from posts where user=?", p.authorID);
+				postCounter.next();
+				ResultSet userDetails = FreeRCTApplication.sql("select joined,admin from users where id=?", p.authorID);
+				userDetails.next();
+
+				body	+=	"<div class='forum_list_entry' id='post_" + p.id + "'>"
+						+		"<div class='forum_post_usercolumn'>"
 						+			"<div><a href='/user/" + p.author + "'>" + p.author + "</a></div>"
+						;
+
+				if (userDetails.getLong("admin") > 0) body += "<div class='forum_post_userdetails'><b>Administrator</b></div>";
+
+				body	+=			"<div class='forum_post_userdetails'>Posts: <b>" + postCounter.getLong("nr") + "</b></div>"
+						+			"<div class='forum_post_userdetails'>Joined: "
+						+				DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM,
+												request.getLocale()).format(userDetails.getTimestamp("joined"))
+						+			"</div>"
 						+		"</div>"
 						+		"<div class='forum_post_wrapper'>"
 						+			"<div class='forum_post_meta'>" + FreeRCTApplication.datetimestring(p.created, request.getLocale()) + "</div>"
@@ -68,12 +97,12 @@ public class ForumTopic {
 
 				if (p.edited != null) {
 					body += "<div class='forum_post_meta'>";
-					if (p.author.equals(p.editor)) {
+					if (p.authorID == p.editorID) {
 						body += "Edited on ";
 					} else {
 						body += "Edited by <a href='/user/" + p.editor + "'>" + p.editor + "</a> on ";
 					}
-					body += FreeRCTApplication.datetimestring(p.created, request.getLocale()) + "</div>";
+					body += FreeRCTApplication.datetimestring(p.edited, request.getLocale()) + "</div>";
 				}
 
 				body += "</div></div>";

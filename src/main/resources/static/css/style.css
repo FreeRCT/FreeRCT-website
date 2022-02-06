@@ -133,7 +133,7 @@ footer a:link   , .latest_post_entry a:link,    a:link .forum_list_header   , .f
 footer a:visited, .latest_post_entry a:visited, a:visited .forum_list_header, .forum_list_entry a:visited
 	{ color: var(--text-light) !important; }
 
-.latest_post_entry a, a .forum_list_header, .forum_list_entry a {
+footer a, .latest_post_entry a, a .forum_list_header, .forum_list_entry a {
 	font-weight: bold;
 	font-variant: small-caps;
 }
@@ -250,12 +250,16 @@ th, .table_release {
 	flex-grow: 1;
 	padding: 0 4px;
 }
+.forum_post_usercolumn {
+	font-variant: small-caps;
+	flex-grow: 0;
+}
 
 .forum_post_meta {
 	margin: 0;
 	padding: 0 0 0 8px;
 }
-.forum_post_meta, .forum_post_meta * {
+.forum_post_meta, .forum_post_meta *, .forum_post_userdetails {
 	font-size: 14px;
 }
 
