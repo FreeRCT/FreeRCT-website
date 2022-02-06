@@ -82,6 +82,7 @@ Column               | Type             | Description
 -------------------- | ---------------- | ----------------------------------------------------------
 id                   | int              | Unique forum ID.
 name                 | varchar          | Display name of the forum.
+description          | varchar          | Long description of the forum's intended purpose.
 
 ### `topics`
 
@@ -153,8 +154,9 @@ create table news (
 	foreign key fk_author (author) references users (id) on delete cascade on update cascade
 );
 create table forums (
-	id   int          not null primary key auto_increment,
-	name varchar(255) not null
+	id          int          not null primary key auto_increment,
+	name        varchar(255) not null,
+	description varchar(255) not null
 );
 create table topics (
 	id    int          not null primary key auto_increment,

@@ -9,7 +9,7 @@ public class Contact {
 	@GetMapping("/contact")
 	@ResponseBody
 	public String fetch(WebRequest request) {
-		return FreeRCTApplication.generatePage(request, " Legal Notice / Contact", """
+		return FreeRCTApplication.generatePage(request, "Legal Notice / Contact", """
 			<h1>Legal Notice</h1>
 			<p>
 				The website <a href="/">freerct.net</a> is a privately owned page to exchange knowledge and experience

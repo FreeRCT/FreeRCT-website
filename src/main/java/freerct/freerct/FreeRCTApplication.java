@@ -77,6 +77,20 @@ public class FreeRCTApplication {
 		app.run(args);  // Main loop.
 	}
 
+	public static ResultSet sql(String query, Object... values) throws SQLException {
+		synchronized (_database) {
+			try {
+				PreparedStatement s = _database.prepareStatement(query);
+				for (int i = 0; i < values.length; i++) s.setObject(i + 1, values[i]);
+				return s.execute() ? s.getResultSet() : null;
+			} catch (SQLException e) {
+				System.out.println("SQL Error: " + e);
+				e.printStackTrace();
+				throw e;
+			}
+		}
+	}
+
 	public static String uri(WebRequest request) {
 		return ((ServletWebRequest)request).getRequest().getRequestURI().toString();
 	}
@@ -189,7 +203,7 @@ public class FreeRCTApplication {
 	public static String generatePage(WebRequest request, String pagename, String body) {
 		long counter = globalCounter.incrementAndGet();
 		final String uri = uri(request);
-		return
+		String result =
 			"<!DOCTYPE HTML>"
 			+"<html>"
 			+	"<head>"
@@ -294,17 +308,21 @@ public class FreeRCTApplication {
 			+		createMenuBarEntry   (uri, new DropdownEntry("/screenshots"                             , "screenshots", "Screenshots"           ))
 			+		createMenuBarEntry   (uri, new DropdownEntry("/download"                                , "download"   , "Get It!"               ))
 			+		createMenuBarEntry   (uri, new DropdownEntry("/manual"                                  , "manual"     , "Manual"                ))
-			+		createMenuBarDropdown(uri, new DropdownEntry("/forum"                                   , "forum"      , "Forums"                ),
-					                           new DropdownEntry("/forum/1"                                 , "forum_1"    , "Technical Help"        ),
-					                           new DropdownEntry("/forum/2"                                 , "forum_2"    , "General Topics"        ),
-					                           new DropdownEntry("/forum/3"                                 , "forum_3"    , "Playing FreeRCT"       ),
-					                           new DropdownEntry("/forum/4"                                 , "forum_4"    , "Game Suggestions"      ),
-					                           new DropdownEntry("/forum/5"                                 , "forum_5"    , "Deutsches Spielerforum"),
-					                           new DropdownEntry("/forum/6"                                 , "forum_6"    , "English Players’ Forum"),
-					                           new DropdownEntry("/forum/7"                                 , "forum_7"    , "Translating & i18n"    ),
-					                           new DropdownEntry("/forum/8"                                 , "forum_8"    , "Graphics Development"  ),
-					                           new DropdownEntry("/forum/9"                                 , "forum_9"    , "Website"               ))
-			+		createMenuBarDropdown(uri, new DropdownEntry("/contribute"                              , "contribute" , "Contribute"            ),
+			;
+
+		List<DropdownEntry> allForums = new ArrayList<>();
+		try {
+			ResultSet sql = sql("select id,name from forums");
+			while (sql.next()) {
+				allForums.add(new DropdownEntry("/forum/" + sql.getLong("id"), "forum_" + sql.getLong("id"), sql.getString("name")));
+			}
+		} catch (SQLException e) {
+			allForums.clear();
+		}
+		result += createMenuBarDropdown(uri, new DropdownEntry("/forum", "forum", "Forums"), allForums.toArray(new DropdownEntry[0]));
+
+		result
+			+=		createMenuBarDropdown(uri, new DropdownEntry("/contribute"                              , "contribute" , "Contribute"            ),
 					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT"       , "github"     , "Git Repository",   true),
 					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT/issues", "issues"     , "Issue Tracker" ,   true))
 			+		createMenuBarEntry   (uri, new DropdownEntry("/news"                                    , "news"       , "News Archive"          ))
@@ -342,5 +360,6 @@ public class FreeRCTApplication {
 			+	"</body>"
 			+ "</html>"
 			;
+		return result;
 	}
 }
