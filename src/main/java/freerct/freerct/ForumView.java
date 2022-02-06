@@ -11,16 +11,18 @@ import org.springframework.web.context.request.*;
 public class ForumView {
 	private static class Topic {
 		public final long id, nrPosts, firstPostID, lastPostID;
-		public final String name, creator;
-		public final Calendar created;
-		public Topic(long i, long p, long f, long l, String n, String c, Calendar t) {
+		public final String name, creator, lastUpdater;
+		public final Calendar created, lastUpdated;
+		public Topic(long i, long nrP, long firstID, long lastID, String n, String auth, String lastUpd, Calendar timeFirst, Calendar timeLast) {
 			id = i;
-			nrPosts = p;
-			firstPostID = f;
-			lastPostID = l;
+			nrPosts = nrP;
+			firstPostID = firstID;
+			lastPostID = lastID;
 			name = n;
-			creator = c;
-			created = t;
+			creator = auth;
+			lastUpdater = lastUpd;
+			created = timeFirst;
+			lastUpdated = timeLast;
 		}
 	}
 
@@ -34,7 +36,7 @@ public class ForumView {
 			final String forumDescription = sql.getString("description");
 
 			List<Topic> allTopics = new ArrayList<>();
-			ResultSet topics = FreeRCTApplication.sql("select id,name from topics where forum=?", forumID);
+			ResultSet topics = FreeRCTApplication.sql("select id,name from topics where forum=? order by id desc", forumID);
 			int nrPosts = 0;
 			while (topics.next()) {
 				final long topicID = topics.getLong("id");
@@ -46,17 +48,21 @@ public class ForumView {
 				ResultSet firstPost = FreeRCTApplication.sql("select id,user,created from posts where id=(select min(id) from posts where topic=?)", topicID);
 				if (!firstPost.next()) continue;  // Empty topic
 
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(firstPost.getTimestamp("created"));
-
-				ResultSet author = FreeRCTApplication.sql("select username from users where id=?", firstPost.getLong("user"));
-				author.next();
-
-				ResultSet lastPost = FreeRCTApplication.sql("select max(id) as id from posts where topic=?", topicID);
+				ResultSet lastPost = FreeRCTApplication.sql("select id,user, created from posts where id=(select max(id) as id from posts where topic=?)", topicID);
 				lastPost.next();
 
+				ResultSet firstAuthor = FreeRCTApplication.sql("select username from users where id=?", firstPost.getLong("user"));
+				firstAuthor.next();
+				ResultSet lastAuthor = FreeRCTApplication.sql("select username from users where id=?", firstPost.getLong("user"));
+				lastAuthor.next();
+
+				Calendar calendarFirst = Calendar.getInstance();
+				calendarFirst.setTime(firstPost.getTimestamp("created"));
+				Calendar calendarLast = Calendar.getInstance();
+				calendarLast.setTime(lastPost.getTimestamp("created"));
+
 				allTopics.add(new Topic(topicID, nrPostsInTopic, firstPost.getLong("id"), lastPost.getLong("id"),
-						topics.getString("name"), author.getString("username"), calendar));
+						topics.getString("name"), firstAuthor.getString("username"), lastAuthor.getString("username"), calendarFirst, calendarLast));
 				nrPosts += nrPostsInTopic;
 			}
 
@@ -65,7 +71,15 @@ public class ForumView {
 						+	"<p class='forum_description_stats'>" + allTopics.size() + " topics · " + nrPosts + " posts</p>"
 						;
 
-			for (Topic t : allTopics) {
+			Topic[] topicsSorted = allTopics.toArray(new Topic[0]);
+			Arrays.sort(topicsSorted, (x, y) -> {
+				int i = y.lastUpdated.compareTo(x.lastUpdated);
+				if (i != 0) return i;
+				if (x.lastPostID != y.lastPostID) return x.lastPostID > y.lastPostID ? -1 : 1;
+				if (x.id != y.id) return x.id > y.id ? -1 : 1;
+				return 0;
+			});
+			for (Topic t : topicsSorted) {
 				body	+=	"<div class='forum_list_entry'>"
 						+		"<div>"
 						+			"<div class='forum_list_header'><a href='/forum/topic/" + t.id + "'>" + t.name + "</a></div>"
@@ -75,6 +89,9 @@ public class ForumView {
 						+		"</div>"
 						+		"<div class='forum_list_right_column'>"
 						+			"<div><a href='/post/" + t.lastPostID + "'>Posts: " + t.nrPosts + "</a></div>"
+						+			"<div>Most recent post by <a href='/user/" + t.lastUpdater + "'>" + t.lastUpdater + "</a> on "
+						+				FreeRCTApplication.datetimestring(t.lastUpdated, request.getLocale())
+						+			"</div>"
 						+		"</div>"
 						+	"</div>";
 			}
