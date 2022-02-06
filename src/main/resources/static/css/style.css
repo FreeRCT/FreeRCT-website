@@ -50,6 +50,9 @@ emp {
 	color: var(--blue-dark);
 	font-style: oblique;
 }
+smallcaps {
+	font-variant: small-caps;
+}
 
 tt, pre code, .codefield, .toc {
 	color: var(--text-light);
@@ -216,6 +219,11 @@ th, .table_release {
 .forum_list_entry * {
 	padding: 4px;
 	text-decoration: none;
+	color: var(--text-light);
+}
+
+.user_post_entry {
+	display: block;
 	color: var(--text-light);
 }
 

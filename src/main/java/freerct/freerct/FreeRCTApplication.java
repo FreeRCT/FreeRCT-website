@@ -107,6 +107,9 @@ public class FreeRCTApplication {
 	public static String datetimestring(Calendar c, Locale locale) {
 		return DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.LONG, locale).format(c.getTime());
 	}
+	public static String shortDatetimestring(Calendar c, Locale locale) {
+		return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, locale).format(c.getTime());
+	}
 
 	public static String timestringSince(Calendar timestamp) {
 		long delta = Calendar.getInstance().getTimeInMillis() - timestamp.getTimeInMillis();

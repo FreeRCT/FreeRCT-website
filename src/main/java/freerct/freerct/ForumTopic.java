@@ -1,7 +1,6 @@
 package freerct.freerct;
 
 import java.sql.*;
-import java.text.*;
 import java.util.*;
 
 import org.springframework.stereotype.*;
@@ -86,8 +85,7 @@ public class ForumTopic {
 
 				body	+=			"<div class='forum_post_userdetails'>Posts: <b>" + postCounter.getLong("nr") + "</b></div>"
 						+			"<div class='forum_post_userdetails'>Joined: "
-						+				DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM,
-												request.getLocale()).format(userDetails.getTimestamp("joined"))
+						+				FreeRCTApplication.shortDatetimestring(FreeRCTApplication.getCalendar(userDetails, "joined"), request.getLocale())
 						+			"</div>"
 						+		"</div>"
 						+		"<div class='forum_post_wrapper'>"
