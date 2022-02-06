@@ -197,7 +197,7 @@ public class FreeRCTApplication {
 	private static String createLatestPost(String postID, String forum, String topic, String user, Calendar timestamp) {
 		return	"<div class='latest_post_entry'>"
 			+		"<div>[" + forum + "]</div>"
-			+		"<div><a href='/post/" + postID + "'>" + topic + "</a></div>"
+			+		"<div><a href='/forum/post/" + postID + "'>" + topic + "</a></div>"
 			+		"<div>by <a href='/user/" + user + "'>" + user + "</a></div>"
 			+		"<div>" + timestringSince(timestamp) + "</div>"
 			+ 	"</div>"

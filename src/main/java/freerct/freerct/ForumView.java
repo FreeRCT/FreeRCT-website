@@ -31,7 +31,7 @@ public class ForumView {
 	public String fetch(WebRequest request, @PathVariable long forumID) {
 		try {
 			ResultSet sql = FreeRCTApplication.sql("select name,description from forums where id=?", forumID);
-			if (!sql.next()) return new ErrorHandler().error(request);
+			sql.next();
 			final String forumName = sql.getString("name");
 			final String forumDescription = sql.getString("description");
 
@@ -79,6 +79,7 @@ public class ForumView {
 				if (x.id != y.id) return x.id > y.id ? -1 : 1;
 				return 0;
 			});
+
 			for (Topic t : topicsSorted) {
 				body	+=	"<div class='forum_list_entry'>"
 						+		"<div>"
@@ -88,7 +89,7 @@ public class ForumView {
 						+			"</div>"
 						+		"</div>"
 						+		"<div class='forum_list_right_column'>"
-						+			"<div><a href='/post/" + t.lastPostID + "'>Posts: " + t.nrPosts + "</a></div>"
+						+			"<div><a href='/forum/post/" + t.lastPostID + "'>Posts: " + t.nrPosts + "</a></div>"
 						+			"<div>Most recent post by <a href='/user/" + t.lastUpdater + "'>" + t.lastUpdater + "</a> on "
 						+				FreeRCTApplication.datetimestring(t.lastUpdated, request.getLocale())
 						+			"</div>"

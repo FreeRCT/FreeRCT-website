@@ -196,7 +196,7 @@ th, .table_release {
 	flex-grow: 1;
 }
 
-/* Forum list. */
+/* Forums. */
 
 .forum_list_entry {
 	background-color: var(--bg-overlay);
@@ -227,19 +227,42 @@ th, .table_release {
 	align-items: flex-end;
 }
 
-.forum_description_name {
+.forum_description_name, .forum_description_name a {
 	font-style: italic;
 	font-size: 18px;
 	text-shadow: none;
 	text-align: center;
 }
-.forum_description_stats {
+.forum_description_name a {
+	text-decoration: none;
+	font-variant: small-caps;
+}
+.forum_description_stats,.forum_description_stats a {
 	font-style: italic;
 	font-weight: bold;
 	font-size: 16px;
 	text-shadow: none;
 	text-align: center;
 	font-variant: small-caps;
+}
+
+.forum_post_wrapper {
+	flex-grow: 1;
+	padding: 0 4px;
+}
+
+.forum_post_meta {
+	font-size: 14px;
+	margin: 0;
+	padding: 0 0 0 8px;
+}
+
+.forum_post_body {
+	border: var(--border-blue-thick);
+	border-radius: 5px;
+	background-color: var(--bg-overlay);
+	margin: 4px 0;
+	padding: 8px;
 }
 
 /* Latest posts box. */
