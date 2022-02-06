@@ -128,16 +128,16 @@ a:active {
 	text-decoration: none;
 }
 
-footer a:link   , .latest_post_entry a:link,    a:link .forum_list_header
+footer a:link   , .latest_post_entry a:link,    a:link .forum_list_header   , .forum_list_entry a:link
 	{ color: var(--bg-blue   ) !important; }
-footer a:visited, .latest_post_entry a:visited, a:visited .forum_list_header
+footer a:visited, .latest_post_entry a:visited, a:visited .forum_list_header, .forum_list_entry a:visited
 	{ color: var(--text-light) !important; }
 
-.latest_post_entry a, a .forum_list_header {
+.latest_post_entry a, a .forum_list_header, .forum_list_entry a {
 	font-weight: bold;
 	font-variant: small-caps;
 }
-footer a, .latest_post_entry a {
+footer a, .latest_post_entry a, .forum_list_entry a {
 	text-decoration: none;
 }
 
@@ -202,7 +202,7 @@ th, .table_release {
 	background-color: var(--bg-overlay);
 	border: var(--border-blue-thick);
 	border-radius: 5px;
-	padding: 8px;
+	padding: 4px;
 	margin: 8px;
 	text-decoration: none;
 
@@ -214,8 +214,24 @@ th, .table_release {
 }
 
 .forum_list_entry * {
+	padding: 4px;
 	text-decoration: none;
 	color: var(--text-light);
+}
+
+.forum_list_right_column {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-content: flex-end;
+	align-items: flex-end;
+}
+
+.forum_description {
+	font-style: italic;
+	font-size: 16px;
+	text-shadow: none;
+	color: var(--text-dark);
 }
 
 /* Latest posts box. */
@@ -258,7 +274,7 @@ th, .table_release {
 .news_count {
 	font-style: italic;
 	font-size: 16px;
-	text-shadow: none
+	text-shadow: none;
 }
 
 .news_timestamp {

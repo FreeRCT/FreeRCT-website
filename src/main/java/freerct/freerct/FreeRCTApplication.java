@@ -3,6 +3,7 @@ package freerct.freerct;
 import java.io.*;
 import java.nio.file.Files;
 import java.sql.*;
+import java.text.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -93,6 +94,10 @@ public class FreeRCTApplication {
 
 	public static String uri(WebRequest request) {
 		return ((ServletWebRequest)request).getRequest().getRequestURI().toString();
+	}
+
+	public static String datetimestring(Calendar c, Locale locale) {
+		return DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.LONG, locale).format(c.getTime());
 	}
 
 	public static String timestringSince(Calendar timestamp) {

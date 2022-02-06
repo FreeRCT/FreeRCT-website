@@ -1,7 +1,6 @@
 package freerct.freerct;
 
 import java.util.*;
-import java.text.*;
 
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +28,7 @@ public class News {
 				+		"<p class='news_timestamp'>"
 				+			"<a href='/user/" + author + "'>" + author + "</a>"
 				+			" ~ "
-				+ 			DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.LONG, locale).format(timestamp.getTime())
+				+ 			FreeRCTApplication.datetimestring(timestamp, locale)
 				+		"</p>"
 				+	"</div>";
 		}

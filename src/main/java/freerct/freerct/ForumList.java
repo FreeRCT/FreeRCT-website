@@ -50,13 +50,13 @@ public class ForumList {
 					+			"<div class='forum_list_header'>" + f.name + "</div>"
 					+			"<div>" + f.description + "</div>"
 					+		"</div>"
-					+		"<div style='text-align:right'>"
+					+		"<div class='forum_list_right_column'>"
 					+			"<div>Topics: " + f.nrTopics + "</div>"
 					+			"<div>Posts: " + f.nrPosts + "</div>"
 					+		"</div>"
 					+	"</a>";
 		}
 
-		return FreeRCTApplication.generatePage(request, "Forum", body);
+		return FreeRCTApplication.generatePage(request, "Forums", body);
 	}
 }
