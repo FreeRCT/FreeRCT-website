@@ -1,5 +1,7 @@
 package freerct.freerct;
 
+import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -10,7 +12,41 @@ import org.springframework.web.context.request.*;
 @SpringBootApplication
 public class FreeRCTApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(FreeRCTApplication.class, args);
+		SpringApplication app = new SpringApplication(FreeRCTApplication.class);
+		Map<String, Object> properties = new HashMap<>();
+
+		try {
+			File file = new File("config");
+			if (file.isFile()) {
+				for (String line : Files.readAllLines(file.toPath())) {
+					line = line.trim();
+					if (line.isEmpty() || line.startsWith("#") || line.startsWith(";")) continue;
+
+					String[] str = line.split("=");
+					for (int i = 0; i < str.length; ++i) str[i] = str[i].trim();
+					if (str.length < 2) {
+						if (str.length == 1) properties.put(str[0], "");
+						continue;
+					}
+
+					String arg = str[1];
+					for (int i = 2; i < str.length; ++i) arg += "=" + str[i];
+					if (arg.startsWith("\"")) {
+						arg = arg.substring(1);
+						if (arg.endsWith("\"")) arg = arg.substring(0, arg.length() - 1);
+					}
+					properties.put(str[0], arg);
+				}
+				// properties.put("server.port", "80");
+			}
+		} catch (Exception e) {
+			System.out.println("Cannot load config file: " + e);
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		app.setDefaultProperties(properties);
+		app.run(args);
 	}
 
 	public static String uri(WebRequest request) {
