@@ -47,7 +47,7 @@ public class ForumView {
 				if (!firstPost.next()) continue;  // Empty topic
 
 				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(firstPost.getDate("created"));
+				calendar.setTime(firstPost.getTimestamp("created"));
 
 				ResultSet author = FreeRCTApplication.sql("select username from users where id=?", firstPost.getLong("user"));
 				author.next();
@@ -60,21 +60,12 @@ public class ForumView {
 				nrPosts += nrPostsInTopic;
 			}
 
-			String body	=	"<h1>" + forumName + "</h1>"
-						+	"<h2 class='forum_description'>" + forumDescription + "</h2>"
-						+	"<h3 class='forum_description'>" + allTopics.size() + " topics · " + nrPosts + " posts</h3>"
+			String body	=	"<h1>Forum: " + forumName + "</h1>"
+						+	"<p class='forum_description_name'>" + forumDescription + "</p>"
+						+	"<p class='forum_description_stats'>" + allTopics.size() + " topics · " + nrPosts + " posts</p>"
 						;
 
 			for (Topic t : allTopics) {
-				/* body	+=	"<a class='forum_list_entry' href='/forum/topic/" + t.id + "'>"
-						+		"<div>"
-						+			"<div class='forum_list_header'>" + t.name + "</div>"
-						+			"<div>Created by " + t.creator + " on " + FreeRCTApplication.datetimestring(t.created, request.getLocale()) + "</div>"
-						+		"</div>"
-						+		"<div class='forum_list_right_column'>"
-						+			"<div>Posts: " + t.nrPosts + "</div>"
-						+		"</div>"
-						+	"</a>"; */
 				body	+=	"<div class='forum_list_entry'>"
 						+		"<div>"
 						+			"<div class='forum_list_header'><a href='/forum/topic/" + t.id + "'>" + t.name + "</a></div>"

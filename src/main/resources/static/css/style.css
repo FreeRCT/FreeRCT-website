@@ -227,11 +227,19 @@ th, .table_release {
 	align-items: flex-end;
 }
 
-.forum_description {
+.forum_description_name {
 	font-style: italic;
+	font-size: 18px;
+	text-shadow: none;
+	text-align: center;
+}
+.forum_description_stats {
+	font-style: italic;
+	font-weight: bold;
 	font-size: 16px;
 	text-shadow: none;
-	color: var(--text-dark);
+	text-align: center;
+	font-variant: small-caps;
 }
 
 /* Latest posts box. */
