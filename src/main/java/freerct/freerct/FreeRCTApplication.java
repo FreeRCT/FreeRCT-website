@@ -250,9 +250,7 @@ public class FreeRCTApplication {
 		}
 	}
 
-	private static AtomicLong globalCounter = new AtomicLong(0);
 	public static String generatePage(WebRequest request, String pagename, String body) {
-		long counter = globalCounter.incrementAndGet();
 		final String uri = uri(request);
 		String result =
 			"<!DOCTYPE HTML>"
@@ -398,7 +396,7 @@ public class FreeRCTApplication {
 				+	"</div>"
 				;
 		} else {
-			result += "<a class='right_column_box' href='/login'><div class='right_column_login'>Log In / Register</div></a>";
+			result += "<div class='right_column_box right_column_login'><a href='/login'>Log In</a> / <a href='/signup'>Register</a></div>";
 		}
 
 		SortedSet<String> allLoggedInUsers = SecurityManager.getLoggedInUsers();
@@ -420,7 +418,7 @@ public class FreeRCTApplication {
 
 			+		"<p id='footer_spacer'></p><footer>"
 			+			"<div>© 2021-" + Calendar.getInstance().get(Calendar.YEAR) + " by the FreeRCT Development Team</div>"
-			+			"<div><a href='/contact'>Legal notice / contact</a></div>"
+			+			"<div><a href='/contact'>Legal Notice / Contact</a></div>"
 			+		"</footer>"
 			+		"<script>readjustMenuBarY();</script>"
 

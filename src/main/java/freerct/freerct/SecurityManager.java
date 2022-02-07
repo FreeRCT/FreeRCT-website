@@ -81,22 +81,27 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			.antMatchers("/css/**").permitAll()
 			.antMatchers("/img/**").permitAll()
 
-			/* Public-facing pages. */
+			/* Logging in. */
 			.antMatchers("/login").permitAll()
 			.antMatchers("/login/*").permitAll()
+			.antMatchers("/signup").permitAll()
+			.antMatchers("/signup/*").permitAll()
+
+			/* Public-facing pages. */
 			.antMatchers("/").permitAll()
-			.antMatchers("/news").permitAll()
-			.antMatchers("/manual").permitAll()
-			.antMatchers("/screenshots").permitAll()
-			.antMatchers("/download").permitAll()
+			.antMatchers("/contact").permitAll()
 			.antMatchers("/contribute").permitAll()
+			.antMatchers("/download").permitAll()
 			.antMatchers("/forum").permitAll()
 			.antMatchers("/forum/*").permitAll()
-			.antMatchers("/forum/topic/*").permitAll()
 			.antMatchers("/forum/post/*").permitAll()
+			.antMatchers("/forum/topic/*").permitAll()
+			.antMatchers("/manual").permitAll()
+			.antMatchers("/news").permitAll()
+			.antMatchers("/screenshots").permitAll()
 			/* The "/user/*" pages are not public. */
 
-			/* Everything else only for authenticated users. */
+			/* All other pages are accessible only to authenticated users. */
 			.anyRequest()
 			.authenticated()
 			.and()
@@ -104,7 +109,7 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			.loginPage("/login#")
 			.loginProcessingUrl("/login/signin")
 			.defaultSuccessUrl("/", false)
-			.failureUrl("/login?error=true")
+			.failureUrl("/login?type=login_failed")
 			.successHandler(new CustomLoginSuccessHandler())
 //			.failureHandler(authenticationFailureHandler())  // We do not need a custom failure handler currently.
 			.and()

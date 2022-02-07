@@ -29,7 +29,7 @@ public class UserProfile {
 
 	@GetMapping("/user/{username}")
 	@ResponseBody
-	public String fetch(WebRequest request, @PathVariable String username) {
+	public String fetch(WebRequest request, @PathVariable String username, @RequestParam(value="new_user", required=false) boolean newUser) {
 		try {
 			ResultSet userDetails = FreeRCTApplication.sql("select id,joined,state from users where username=?", username);
 			userDetails.next();
@@ -49,6 +49,10 @@ public class UserProfile {
 			}
 
 			String body = "<h1>User " + username + "</h1>";
+
+			if (newUser) {
+				body += "<div class='forum_description_name announcement_box'>Welcome! Your account was created successfully.</div>";
+			}
 
 			switch (userDetails.getInt("state")) {
 				case USER_STATE_ADMIN:

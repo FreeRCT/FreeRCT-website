@@ -225,7 +225,7 @@ label, label.griditem {
 	padding: 12px 0 8px 0;
 }
 
-label, .form_button, .form_error {
+label, .form_button, .form_error, .form_ok {
 	font-variant: small-caps;
 	font-family: serif;
 	text-shadow: none;
@@ -240,9 +240,14 @@ input {
 	color: var(--text-light);
 }
 
+.form_error, .form_ok {
+	font-size: 18px;
+}
 .form_error {
 	color: var(--red-warning);
-	font-size: 18px;
+}
+.form_ok {
+	color: var(--green-medium);
 }
 
 .form_button {
@@ -252,6 +257,28 @@ input {
 }
 .form_button:hover {
 	background-color: var(--green-light);
+}
+
+.login_form_wrapper {
+	width: 100%;
+	padding: 0 20%;
+	display: table;
+}
+.login_form_caption, .announcement_box {
+	text-align: center;
+	background-color: var(--bg-overlay-light);
+	border: var(--border-blue-thin);
+	border-radius: 5px;
+	padding: 8px 20%;
+}
+.login_form_caption {
+	display: table-caption;
+	caption-side: bottom;
+	margin: 16px 0 0 0;
+}
+.announcement_box {
+	font-weight: bold;
+	margin: 32px 0;
 }
 
 /* Forums. */
@@ -345,10 +372,12 @@ input {
 
 .main_right_column {
 	flex: 0 0 300px;
+	max-width: 300px;
 	margin: 0 0 0 8px;
 	padding: 0;
 	border: initial;
 	background-color: initial;
+	overflow: hidden;
 
 	display: flex;
 	flex-direction: column;
