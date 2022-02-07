@@ -7,11 +7,12 @@ import java.text.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.SpringApplication;
 import org.springframework.web.context.request.*;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 public class FreeRCTApplication {
 	private static final Map<String, Object> _config = new HashMap<>();
 	public static String config(String key) {
@@ -372,11 +373,20 @@ public class FreeRCTApplication {
 		result += createMenuBarDropdown(uri, new DropdownEntry("/forum", "forum", "Forums"), allForums.toArray(new DropdownEntry[0]));
 
 		result
-			+=		createMenuBarDropdown(uri, new DropdownEntry("/contribute"                              , "contribute" , "Contribute"            ),
+			+=		createMenuBarDropdown(uri, new DropdownEntry("/contribute"                              , "contribute" , "Contribute"          ),
 					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT"       , "github"     , "Git Repository", true),
 					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT/issues", "issues"     , "Issue Tracker" , true))
-			+		createMenuBarEntry   (uri, new DropdownEntry("/news"                                    , "news"       , "News Archive"          ))
-			+		"</ul>"
+			+		createMenuBarEntry   (uri, new DropdownEntry("/news"                                    , "news"       , "News Archive"        ))
+			;
+
+		if (request.getUserPrincipal() == null) {
+			result += createMenuBarEntry(uri, new DropdownEntry("/login", "login", "Log In / Register"));
+		} else {
+			result += createMenuBarEntry(uri, new DropdownEntry("/logout", "logout", "" + "Logged in as " + request.getRemoteUser() + " / Log Out"));
+		}
+
+		result
+			+=		"</ul>"
 			+		"<p id='menubar_spacer_bottom'></p>"
 
 			+		"<div class='toplevel_content_flexbox'>"

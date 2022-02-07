@@ -89,12 +89,14 @@ public class ForumTopic {
 						+			"</div>"
 						+		"</div>"
 						+		"<div class='forum_post_wrapper'>"
-						+			"<div class='forum_post_meta'>" + FreeRCTApplication.datetimestring(p.created, request.getLocale()) + "</div>"
-						+			"<div class='forum_post_body'>" + p.body + "</div>"
+						+			"<div class='forum_post_meta'>"
+						+				"<div>"
+						+					FreeRCTApplication.datetimestring(p.created, request.getLocale())
+						+				"</div>"
 						;
 
 				if (p.edited != null) {
-					body += "<div class='forum_post_meta'>";
+					body += "<div>";
 					if (p.authorID == p.editorID) {
 						body += "Edited on ";
 					} else {
@@ -103,7 +105,7 @@ public class ForumTopic {
 					body += FreeRCTApplication.datetimestring(p.edited, request.getLocale()) + "</div>";
 				}
 
-				body += "</div></div>";
+				body += "</div><div class='forum_post_body'>" + p.body + "</div></div></div>";
 			}
 
 			return FreeRCTApplication.generatePage(request, "Forum | " + forumName + " | " + topicName, body);
