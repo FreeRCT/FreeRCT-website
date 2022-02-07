@@ -25,6 +25,10 @@ import org.springframework.web.context.request.*;
 @Configuration
 @EnableWebSecurity
 public class SecurityManager extends WebSecurityConfigurerAdapter {
+	public static PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
 	private class FreeRCTUserDetailsService implements UserDetailsService {
 		private class FreeRCTUserDetails implements UserDetails {
 			private final String username, password;
@@ -51,7 +55,7 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 
 				if (!userDetails.next()) throw new Exception();
 
-				return new FreeRCTUserDetails(username, new BCryptPasswordEncoder().encode​(userDetails.getString("password")), userDetails.getInt("state"));
+				return new FreeRCTUserDetails(username, userDetails.getString("password"), userDetails.getInt("state"));
 			} catch (UsernameNotFoundException e) {
 				throw e;
 			} catch (Exception e) {
@@ -64,7 +68,7 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 		authProvider.setUserDetailsService(new FreeRCTUserDetailsService());
-		authProvider.setPasswordEncoder(new BCryptPasswordEncoder());
+		authProvider.setPasswordEncoder(passwordEncoder());
 
 		auth.authenticationProvider(authProvider);
 	}

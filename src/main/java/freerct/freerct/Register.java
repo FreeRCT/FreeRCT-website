@@ -87,7 +87,8 @@ public class Register {
 			if (!password.equals(password2)) return "redirect:/signup?type=passwords";
 			if (userDetails.next()) return "redirect:/signup?type=name_taken";
 
-			FreeRCTApplication.sql("insert into users (username,email,password) value (?,?,?)", username, email, password);
+			FreeRCTApplication.sql("insert into users (username,email,password) value (?,?,?)",
+					username, email, SecurityManager.passwordEncoder().encode​(password));
 
 			// TODO send a confirmation e-mail before activating the user's account
 
