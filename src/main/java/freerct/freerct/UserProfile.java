@@ -9,6 +9,11 @@ import org.springframework.web.context.request.*;
 
 @Controller
 public class UserProfile {
+	public static final int USER_STATE_NORMAL      = 0;
+	public static final int USER_STATE_ADMIN       = 1;
+	public static final int USER_STATE_MODERATOR   = 2;
+	public static final int USER_STATE_DEACTIVATED = 3;
+
 	private static class Post {
 		public final long id, topicID;
 		public final String topicName, forumName;
@@ -26,7 +31,7 @@ public class UserProfile {
 	@ResponseBody
 	public String fetch(WebRequest request, @PathVariable String username) {
 		try {
-			ResultSet userDetails = FreeRCTApplication.sql("select id,joined,admin from users where username=?", username);
+			ResultSet userDetails = FreeRCTApplication.sql("select id,joined,state from users where username=?", username);
 			userDetails.next();
 
 			List<Post> allPosts = new ArrayList<>();
@@ -45,7 +50,16 @@ public class UserProfile {
 
 			String body = "<h1>User " + username + "</h1>";
 
-			if (userDetails.getLong("admin") > 0) body += "<b><div class='forum_description_name'>Administrator</div></b>";
+			switch (userDetails.getInt("state")) {
+				case USER_STATE_ADMIN:
+					body += "<b><div class='forum_description_name'>Administrator</div></b>";
+					break;
+				case USER_STATE_MODERATOR:
+					body += "<b><div class='forum_description_name'>Moderator</div></b>";
+					break;
+				default:
+					break;
+			}
 
 			body	+=	"<p class='forum_description_name'>Joined: "
 					+		FreeRCTApplication.shortDatetimestring(FreeRCTApplication.getCalendar(userDetails, "joined"), request.getLocale())

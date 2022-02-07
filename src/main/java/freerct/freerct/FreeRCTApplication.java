@@ -401,6 +401,16 @@ public class FreeRCTApplication {
 			result += "<a class='right_column_box' href='/login'><div class='right_column_login'>Log In / Register</div></a>";
 		}
 
+		SortedSet<String> allLoggedInUsers = SecurityManager.getLoggedInUsers();
+		if (!allLoggedInUsers.isEmpty()) {
+			result += "<div class='right_column_box logged_in_users'>";
+			result += "<h2>Currently Online</h2>";
+			for (String user : allLoggedInUsers) {
+				result += "<div class='right_column_login'><a href='/user/" + user + "'>" + user + "</a></div>";
+			}
+			result += "</div>";
+		}
+
 		result
 			+=				"<div class='right_column_box'>"
 			+					"<h1>Latest Posts</h1>" + createLatestPosts(8)

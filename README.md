@@ -53,13 +53,13 @@ The database contains the following tables:
 Each row represents a registered website user.
 
 Column               | Type             | Description
--------------------- | ---------------- | ----------------------------------------------------------
+-------------------- | ---------------- | -----------------------------------------------------------------------------------------
 id                   | int              | Unique user ID.
 username             | varchar          | The user's displayed name.
 email                | varchar          | E-mail address to send notifications.
 password             | varchar          | The hash of the user's password.
 joined               | datetime         | The time and date the user registered on the website.
-admin                | tinyint          | 1 if the user is an administrator; 0 otherwise.
+state                | int              | 0 for normal users, 1 for administrators, 2 for moderators, 3 for deactivated accounts.
 
 ### `news`
 
@@ -142,7 +142,7 @@ create table users (
 	email    varchar(255) not null,
 	password varchar(255) not null,
 	joined   datetime     not null  default current_timestamp,
-	admin    tinyint      not null  default 0
+	state    int          not null  default 0
 );
 create table news (
 	id        int          not null primary key auto_increment,

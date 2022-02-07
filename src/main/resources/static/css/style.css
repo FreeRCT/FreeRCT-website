@@ -371,7 +371,7 @@ input {
 .right_column_box, .right_column_box * {
 	color: var(--text-light);
 }
-.right_column_box h1 {
+.right_column_box h1, .right_column_box h2, .right_column_box h3 {
 	margin: 16px 8px;
 }
 
@@ -386,9 +386,14 @@ input {
 	font-size: 18px;
 	padding: 8px;
 }
-.right_column_box a, a .right_column_login {
+.right_column_box a, a .right_column_login, .right_column_login a {
 	font-weight: bold;
 	font-size: 18px;
+}
+
+.logged_in_users .right_column_login {
+	padding: 0;
+	margin: 8px;
 }
 
 .latest_post_entry {

@@ -73,7 +73,7 @@ public class ForumTopic {
 			for (Post p : allPosts) {
 				ResultSet postCounter = FreeRCTApplication.sql("select count(user) as nr from posts where user=?", p.authorID);
 				postCounter.next();
-				ResultSet userDetails = FreeRCTApplication.sql("select joined,admin from users where id=?", p.authorID);
+				ResultSet userDetails = FreeRCTApplication.sql("select joined,state from users where id=?", p.authorID);
 				userDetails.next();
 
 				body	+=	"<div class='forum_list_entry' id='post_" + p.id + "'>"
@@ -81,7 +81,16 @@ public class ForumTopic {
 						+			"<div><a href='/user/" + p.author + "'>" + p.author + "</a></div>"
 						;
 
-				if (userDetails.getLong("admin") > 0) body += "<div class='forum_post_userdetails'><b>Administrator</b></div>";
+				switch (userDetails.getInt("state")) {
+					case UserProfile.USER_STATE_ADMIN:
+						body += "<div class='forum_post_userdetails'><b>Administrator</b></div>";
+						break;
+					case UserProfile.USER_STATE_MODERATOR:
+						body += "<div class='forum_post_userdetails'><b>Moderator</b></div>";
+						break;
+					default:
+						break;
+				}
 
 				body	+=			"<div class='forum_post_userdetails'>Posts: <b>" + postCounter.getLong("nr") + "</b></div>"
 						+			"<div class='forum_post_userdetails'>Joined: "
