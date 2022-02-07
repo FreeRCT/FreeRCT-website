@@ -133,9 +133,18 @@ a:active {
 	text-decoration: none;
 }
 
-footer a:link   , .latest_post_entry a:link,    a:link .forum_list_header   , .forum_list_entry a:link
-	{ color: var(--bg-blue   ) !important; }
-footer a:visited, .latest_post_entry a:visited, a:visited .forum_list_header, .forum_list_entry a:visited
+footer a:link,
+.latest_post_entry a:link,
+a:link .forum_list_header,
+.forum_list_entry a:link,
+a:link .right_column_login,
+.right_column_box a:link
+	{ color: var(--bg-blue) !important; }
+footer a:visited, .latest_post_entry a:visited,
+a:visited .forum_list_header,
+.forum_list_entry a:visited,
+a:visited .right_column_login,
+.right_column_box a:visited
 	{ color: var(--text-light) !important; }
 
 footer a, .latest_post_entry a, a .forum_list_header, .forum_list_entry a {
@@ -334,21 +343,52 @@ input {
 
 /* Latest posts box. */
 
-#latest_posts {
-	border: var(--border-blue-thick);
-	border-radius: 5px;
-	background-color: var(--bg-overlay);
+.main_right_column {
 	flex: 0 0 300px;
 	margin: 0 0 0 8px;
 	padding: 0;
+	border: initial;
+	background-color: initial;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-content: stretch;
+	align-items: stretch;
+}
+
+.right_column_box {
+	margin: 8px 0;
+	border: var(--border-blue-thick);
+	border-radius: 5px;
+	background-color: var(--bg-overlay);
 	font-variant: small-caps;
 	font-family: sans-serif;
 }
-#latest_posts * {
+.right_column_box, .right_column_box a {
+	text-decoration: none;
+}
+.right_column_box, .right_column_box * {
 	color: var(--text-light);
 }
-#latest_posts h1 {
+.right_column_box h1 {
 	margin: 16px 8px;
+}
+
+.main_right_column>.right_column_box:first-child { margin-top   : 0 }
+.main_right_column>.right_column_box:last-child  { margin-bottom: 0 }
+
+.right_column_login {
+	flex-grow: 1;
+	text-align: center;
+	text-shadow: var(--text-shadow);
+	text-decoration: none;
+	font-size: 18px;
+	padding: 8px;
+}
+.right_column_box a, a .right_column_login {
+	font-weight: bold;
+	font-size: 18px;
 }
 
 .latest_post_entry {

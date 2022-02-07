@@ -41,7 +41,9 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 		public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 			try {
 				ResultSet userDetails = FreeRCTApplication.sql("select password from users where username=?", username);
+
 				if (!userDetails.next()) throw new Exception();
+
 				return new FreeRCTUserDetails(username, new BCryptPasswordEncoder().encode​(userDetails.getString("password")));
 			} catch (UsernameNotFoundException e) {
 				throw e;
@@ -59,20 +61,6 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 
 		auth.authenticationProvider(authProvider);
 	}
-
-	/* @Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-		auth
-			.inMemoryAuthentication()
-			.withUser("user")
-			.password(encoder.encode("password"))
-			.roles("USER")
-			.and()
-			.withUser("admin")
-			.password(encoder.encode("admin"))
-			.roles("USER", "ADMIN");
-	} */
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -97,9 +85,8 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			.antMatchers("/contribute").permitAll()
 			.antMatchers("/forum").permitAll()
 			.antMatchers("/forum/*").permitAll()
-// NOCOM disabled for testing only
-//			.antMatchers("/forum/topic/*").permitAll()
-//			.antMatchers("/forum/post/*").permitAll()
+			.antMatchers("/forum/topic/*").permitAll()
+			.antMatchers("/forum/post/*").permitAll()
 			/* The "/user/*" pages are not public. */
 
 			/* Everything else only for authenticated users. */

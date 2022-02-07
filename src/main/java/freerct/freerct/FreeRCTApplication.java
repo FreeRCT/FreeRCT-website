@@ -379,20 +379,32 @@ public class FreeRCTApplication {
 			+		createMenuBarEntry   (uri, new DropdownEntry("/news"                                    , "news"       , "News Archive"        ))
 			;
 
-		if (request.getUserPrincipal() == null) {
-			result += createMenuBarEntry(uri, new DropdownEntry("/login", "login", "Log In / Register"));
-		} else {
-			result += createMenuBarEntry(uri, new DropdownEntry("/logout", "logout", "" + "Logged in as " + request.getRemoteUser() + " / Log Out"));
-		}
-
 		result
 			+=		"</ul>"
 			+		"<p id='menubar_spacer_bottom'></p>"
 
 			+		"<div class='toplevel_content_flexbox'>"
 			+			"<div class='content_flexbox_content'>" + body + "</div>"
-			+			"<div class='content_flexbox_content' id='latest_posts'>"
-			+				"<h1>Latest Posts</h1>" + createLatestPosts(8)
+			+			"<div class='content_flexbox_content main_right_column'>"
+			;
+
+		if (request.getUserPrincipal() != null) {
+			result
+				+=	"<div class='right_column_box'>"
+				+		"<div class='right_column_login'>"
+				+			"Logged in as <a href='/user/" + request.getRemoteUser() + "'>" + request.getRemoteUser()
+				+		"</a></div>"
+				+		"<div class='right_column_login'><a href='/logout'>Log Out</a></div>"
+				+	"</div>"
+				;
+		} else {
+			result += "<a class='right_column_box' href='/login'><div class='right_column_login'>Log In / Register</div></a>";
+		}
+
+		result
+			+=				"<div class='right_column_box'>"
+			+					"<h1>Latest Posts</h1>" + createLatestPosts(8)
+			+				"</div>"
 			+			"</div>"
 			+		"</div>"
 
