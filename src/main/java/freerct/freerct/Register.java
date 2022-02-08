@@ -49,23 +49,24 @@ public class Register {
 		""";
 
 		if (argument != null) {
-			boolean passwordMismatch = argument.equalsIgnoreCase("passwords");
-			boolean nameInvalid = argument.equalsIgnoreCase("name_invalid");
-			boolean usernameTaken = argument.equalsIgnoreCase("name_taken");
-
 			body += "<p class='form_error login_form_caption'>";
-			if (passwordMismatch) {
-				body += "The passwords don't match.";
-			} else if (usernameTaken) {
-				body += "This username is already in use.";
-			} else if (nameInvalid) {
-				body	+=	"Usernames may contain only Latin characters, digits, and the special characters <tt>.-_+</tt> "
-						+	"and may not be longer than " + USERNAME_MAX_LENGTH + " characters."
-						;
-			} else {
-				body	+=	"An unknown error has occurred. If you are repeatedly unable to create an account, see the "
-						+	"<a href='/contact'><i>Contact</i></a> page for information on how to contact the webmaster."
-						;
+			switch (argument.toLowerCase()) {
+				case "passwords":
+					body += "The passwords don't match.";
+					break;
+				case "name_taken":
+					body += "This username is already in use.";
+					break;
+				case "name_invalid":
+					body	+=	"Usernames may contain only Latin characters, digits, and the special characters <tt>.-_+</tt> "
+							+	"and may not be longer than " + USERNAME_MAX_LENGTH + " characters."
+							;
+					break;
+				default:
+					body	+=	"An unknown error has occurred. If you are repeatedly unable to create an account, see the "
+							+	"<a href='/contact'><i>Contact</i></a> page for information on how to contact the webmaster."
+							;
+					break;
 			}
 			body += "</p>";
 		}

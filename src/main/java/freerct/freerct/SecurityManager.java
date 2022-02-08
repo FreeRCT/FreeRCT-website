@@ -18,6 +18,7 @@ import org.springframework.security.crypto.factory.*;
 import org.springframework.security.crypto.password.*;
 import org.springframework.security.web.authentication.*;
 import org.springframework.security.web.authentication.logout.*;
+import org.springframework.security.web.session.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
@@ -27,6 +28,11 @@ import org.springframework.web.context.request.*;
 public class SecurityManager extends WebSecurityConfigurerAdapter {
 	public static PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public HttpSessionEventPublisher httpSessionEventPublisher() {
+		return new HttpSessionEventPublisher();
 	}
 
 	private class FreeRCTUserDetailsService implements UserDetailsService {
@@ -122,6 +128,11 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			.logoutSuccessUrl("/")
 			.deleteCookies("JSESSIONID")
 			.logoutSuccessHandler(new CustomLogoutSuccessHandler())
+
+			/* When using an invalid or expired cookie. */
+			.and()
+			.sessionManagement()
+			.invalidSessionUrl("/login?type=expired");
 			;
 	}
 

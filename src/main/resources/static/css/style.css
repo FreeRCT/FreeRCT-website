@@ -4,6 +4,7 @@
 	--bg-blue:      #add8f6;
 	--text-light:   #eeeeee;
 	--text-dark:    #001000;
+	--text-light-bluish: #e0eeff;
 	--green-dark:   #003000;
 	--green-medium: #006000;
 	--green-light:  #009000;
@@ -145,7 +146,7 @@ a:visited .forum_list_header,
 .forum_list_entry a:visited,
 a:visited .right_column_login,
 .right_column_box a:visited
-	{ color: var(--text-light) !important; }
+	{ color: var(--text-light-bluish) !important; }
 
 footer a, .latest_post_entry a, a .forum_list_header, .forum_list_entry a {
 	font-weight: bold;

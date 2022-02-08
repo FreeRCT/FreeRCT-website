@@ -24,7 +24,8 @@ Then open your web browser and visit http://localhost:8080/.
 Add a `config` file in the toplevel directory of the git checkout.
 It's a simple ini-style file with key-value pairs, e.g.:
 ```
-server.port = 9001
+server.port = 8080
+server.servlet.session.timeout = 15m
 ```
 
 The config file consists of two sections which are separated by a line consisting only of '~' characters.

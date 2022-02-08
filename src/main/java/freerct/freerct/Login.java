@@ -37,21 +37,27 @@ public class Login {
 		""";
 
 		if (argument != null) {
-			boolean wrongName = argument.equalsIgnoreCase("wrong_username");
-			boolean passwordReset = argument.equalsIgnoreCase("password_reset");
-
-			body += "<p class='" + (passwordReset ? "form_ok" : "form_error") + " login_form_caption'>";
-			if (passwordReset) {
-				// body += "An e-mail has been sent to your address. Please follow the link therein to reset your password.";
-				body	+=	"We are sorry, but the feature to reset your password has not actually been implemented yet. "
-						+	"See the <a href='/contact'><i>Contact</i></a> page for information on how to contact the webmaster."
-						;
-			} else if (wrongName) {
-				body += "Please enter a valid username.";
-			} else {
-				body += "Invalid username or password.";
+			boolean isGoodNews = false;
+			String message;
+			switch (argument.toLowerCase()) {
+				case "expired":
+					message = "Your session has expired. Please log in again.";
+					break;
+				case "password_reset":
+					isGoodNews = true;
+					// message = "An e-mail has been sent to your address. Please follow the link therein to reset your password.";
+					message	=	"We are sorry, but the feature to reset your password has not actually been implemented yet. "
+							+	"See the <a href='/contact'><i>Contact</i></a> page for information on how to contact the webmaster."
+							;
+					break;
+				case "wrong_username":
+					message = "Please enter a valid username.";
+					break;
+				default:
+					message = "Invalid username or password.";
+					break;
 			}
-			body += "</p>";
+			body += "<p class='" + (isGoodNews ? "form_ok" : "form_error") + " login_form_caption'>" + message + "</p>";
 		}
 		body += "</div>";
 
