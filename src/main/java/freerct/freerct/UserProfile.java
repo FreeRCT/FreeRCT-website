@@ -16,12 +16,14 @@ import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 
+/** The user profile page. */
 @Controller
 public class UserProfile {
-	public static final int USER_STATE_NORMAL      = 0;
-	public static final int USER_STATE_ADMIN       = 1;
-	public static final int USER_STATE_MODERATOR   = 2;
-	public static final int USER_STATE_DEACTIVATED = 3;
+	/* These constants are stored in the database, DO NOT CHANGE THEM. */
+	public static final int USER_STATE_NORMAL      = 0;  ///< State constant for normal users.
+	public static final int USER_STATE_ADMIN       = 1;  ///< State constant for administrators.
+	public static final int USER_STATE_MODERATOR   = 2;  ///< State constant for moderators.
+	public static final int USER_STATE_DEACTIVATED = 3;  ///< State constant for deactivated accounts.
 
 	private static class Post {
 		public final long id, topicID;

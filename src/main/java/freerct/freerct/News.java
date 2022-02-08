@@ -17,6 +17,7 @@ import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 import static freerct.freerct.FreeRCTApplication.DESIRED_PADDING_BELOW_MENU_BAR;
 
+/** Handled printing of news items and the News Archive page. */
 @Controller
 public class News {
 	private static long countNews() {
@@ -29,6 +30,13 @@ public class News {
 		}
 	}
 
+	/**
+	 * Print some of the most recent news items.
+	 * @param locale Locale to use.
+	 * @param howMany Maximum number of items to print, or -1 for all.
+	 * @param margin Spacing between items.
+	 * @return HTML string.
+	 */
 	public static String printLatestNews(Locale locale, long howMany, int margin) {
 		try {
 			final long nr = countNews();

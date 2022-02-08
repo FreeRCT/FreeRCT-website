@@ -21,6 +21,7 @@ import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 
+/** The registering page. */
 @Controller
 public class Register {
 	private static final String USERNAME_REGEX = "[-._+A-Za-z0-9]+";
@@ -85,7 +86,7 @@ public class Register {
 	}
 
 	@PostMapping("/signup/complete")
-	public String resetPassword(HttpServletRequest request,
+	public String newUser(HttpServletRequest request,
 			@RequestPart("username") String username,
 			@RequestPart("email") String email,
 			@RequestPart("password") String password,

@@ -32,9 +32,14 @@ import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 
+/** Handles user logins and general security measures. */
 @Configuration
 @EnableWebSecurity
 public class SecurityManager extends WebSecurityConfigurerAdapter {
+	/**
+	 * Create an encoder with which to encrypt user passwords.
+	 * @return Encoder to use.
+	 */
 	public static PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
@@ -147,6 +152,10 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 
 	private static List<String> _loggedInUsers = new ArrayList<>();  // Not a set because it may contain duplicates.
 
+	/**
+	 * Get a list of all currently logged-in users, sorted by name and without duplicates.
+	 * @return Set of logged-in users.
+	 */
 	public static SortedSet<String> getLoggedInUsers() {
 		SortedSet<String> set = new TreeSet<>();
 		for (String str : _loggedInUsers) set.add(str);

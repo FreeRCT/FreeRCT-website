@@ -16,6 +16,7 @@ import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 
+/** The page with the list of all topics in a forum. */
 @Controller
 public class ForumView {
 	private static class Topic {

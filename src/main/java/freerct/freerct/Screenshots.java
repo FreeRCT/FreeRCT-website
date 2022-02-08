@@ -13,6 +13,7 @@ import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 
+/** The screenshots page. */
 @Controller
 public class Screenshots {
 	@GetMapping("/screenshots")

@@ -12,9 +12,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.web.context.request.*;
 
+/** The main class. It provided the main loop and various important utility functions. */
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 public class FreeRCTApplication {
 	private static final Map<String, Object> _config = new HashMap<>();
+
+	/**
+	 * Get a config file entry.
+	 * @param key Config key to look up.
+	 * @return The value, or null if the key does not exist.
+	 */
 	public static String config(String key) {
 		Object o = _config.get(key);
 		return o == null ? null : o.toString();
@@ -22,6 +29,7 @@ public class FreeRCTApplication {
 
 	private static Connection _database = null;
 
+	/** The main loop. */
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(FreeRCTApplication.class);
 		Map<String, Object> properties = new HashMap<>();
@@ -79,6 +87,12 @@ public class FreeRCTApplication {
 		app.run(args);  // Main loop.
 	}
 
+	/**
+	 * Execute a safe SQL statement or query.
+	 * @param query SQL statement to execute.
+	 * @param values Parameters to insert into the query's placeholders. Never concatenate arbitrary values to a query!!!
+	 * @return The ResultSet returned by the query, or null if none.
+	 */
 	public static ResultSet sql(String query, Object... values) throws SQLException {
 		synchronized (_database) {
 			try {
@@ -93,6 +107,12 @@ public class FreeRCTApplication {
 		}
 	}
 
+	/**
+	 * Get a Calendar object from a ResultSet.
+	 * @param sql ResultSet to query.
+	 * @param field Name of the column.
+	 * @return The Calendar instance.
+	 */
 	public static Calendar getCalendar(ResultSet sql, String field) throws SQLException {
 		Timestamp t = sql.getTimestamp(field);
 		if (t == null) return null;
@@ -101,10 +121,20 @@ public class FreeRCTApplication {
 		return c;
 	}
 
+	/**
+	 * Get the URI of the current request.
+	 * @param request The current web request.
+	 * @return The URI of the current webpage.
+	 */
 	public static String uri(WebRequest request) {
 		return ((ServletWebRequest)request).getRequest().getRequestURI().toString();
 	}
 
+	/**
+	 * Interpret an arbitrary string as a Markdown-styled text. Also takes care of HTML escaping.
+	 * @param input Text to render (may be HTML-unsafe).
+	 * @return Rendered and HTML-safe string.
+	 */
 	public static String renderMarkdown(String input) {
 		if (input == null) return null;
 
@@ -121,6 +151,11 @@ public class FreeRCTApplication {
 		return markdown.substring(3, markdown.length() - 4);
 	}
 
+	/**
+	 * Escape HTML characters in arbitrary text.
+	 * @param input (Possibly unsafe) text to escape.
+	 * @return Escaped text.
+	 */
 	public static String htmlEscape(String input) {
 		return input == null ? null : (input
 			.replaceAll("&", "&amp;")  // This rule must come first!
@@ -131,13 +166,31 @@ public class FreeRCTApplication {
 			);
 	}
 
+	/**
+	 * Format a date and time string with the user's locale in a long format.
+	 * @param c Date and time to format.
+	 * @param locale Locale to use.
+	 * @return Formatted and HTML-escaped string.
+	 */
 	public static String datetimestring(Calendar c, Locale locale) {
 		return htmlEscape(DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.LONG, locale).format(c.getTime()));
 	}
+
+	/**
+	 * Format a date and time string with the user's locale in a short format.
+	 * @param c Date and time to format.
+	 * @param locale Locale to use.
+	 * @return Formatted and HTML-escaped string.
+	 */
 	public static String shortDatetimestring(Calendar c, Locale locale) {
 		return htmlEscape(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, locale).format(c.getTime()));
 	}
 
+	/**
+	 * Get a string representation of the difference of a given date and time to the present.
+	 * @param timestamp Date and time to compare.
+	 * @return The time string.
+	 */
 	public static String timestringSince(Calendar timestamp) {
 		long delta = Calendar.getInstance().getTimeInMillis() - timestamp.getTimeInMillis();
 		boolean future = false;
@@ -196,8 +249,8 @@ public class FreeRCTApplication {
 		}
 	}
 
-	public static final int MENU_BAR_BAR_HEIGHT = 50;
-	public static final int DESIRED_PADDING_BELOW_MENU_BAR = MENU_BAR_BAR_HEIGHT + 8;
+	public static final int MENU_BAR_BAR_HEIGHT = 50;  ///< Height of the menu bar in pixels.
+	public static final int DESIRED_PADDING_BELOW_MENU_BAR = MENU_BAR_BAR_HEIGHT + 8;  ///< Spacing above the topmost content element in pixels.
 
 	public static String createLinkifiedHeader(String tag, String doc, String slug, String text) {
 		return	"<" + tag + " id='" + slug + "' style='padding-top:" + DESIRED_PADDING_BELOW_MENU_BAR + "px'>"
@@ -277,6 +330,13 @@ public class FreeRCTApplication {
 		}
 	}
 
+	/**
+	 * Generate the complete HTML webpage for a request.
+	 * @param request Current web request.
+	 * @param pagename Title for the page.
+	 * @param body Main content of the page.
+	 * @return Complete HTML-formatted webpage.
+	 */
 	public static String generatePage(WebRequest request, String pagename, String body) {
 		final String uri = uri(request);
 		String result =

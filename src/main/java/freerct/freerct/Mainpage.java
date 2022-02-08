@@ -13,6 +13,7 @@ import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 
+/** The main page. */
 @Controller
 public class Mainpage {
 	private static class SlideshowSlide {

@@ -14,6 +14,7 @@ import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 
+/** The generic Page Not Found error page. */
 @Controller
 public class ErrorHandler implements ErrorController {
 	@RequestMapping("/error")

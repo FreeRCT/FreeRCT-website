@@ -4,7 +4,6 @@
 	--bg-blue:      #add8f6;
 	--text-light:   #eeeeee;
 	--text-dark:    #001000;
-	--text-light-bluish: #e0eeff;
 	--green-dark:   #003000;
 	--green-medium: #006000;
 	--green-light:  #009000;
@@ -12,6 +11,8 @@
 	--blue-medium:  #0000f0;
 	--blue-dark:    #000b2a;
 	--red-warning:  #e60a12;
+	--text-light-bluish: #e0eeff;
+	--blue-very-light  : #75aacd;
 	--bg-overlay       : rgba(  0,  48,   0, 0.5);
 	--bg-overlay-light : rgba(200, 255, 200, 0.1);
 	--border-blue-thick: 5px ridge var(--blue-light);
@@ -140,13 +141,13 @@ a:link .forum_list_header,
 .forum_list_entry a:link,
 a:link .right_column_login,
 .right_column_box a:link
-	{ color: var(--bg-blue) !important; }
+	{ color: var(--text-light-bluish) !important; }
 footer a:visited, .latest_post_entry a:visited,
 a:visited .forum_list_header,
 .forum_list_entry a:visited,
 a:visited .right_column_login,
 .right_column_box a:visited
-	{ color: var(--text-light-bluish) !important; }
+	{ color: var(--blue-very-light) !important; }
 
 footer a, .latest_post_entry a, a .forum_list_header, .forum_list_entry a {
 	font-weight: bold;
