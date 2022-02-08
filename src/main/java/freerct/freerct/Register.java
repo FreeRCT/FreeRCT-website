@@ -12,6 +12,15 @@ import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
 
+import static freerct.freerct.FreeRCTApplication.generatePage;
+import static freerct.freerct.FreeRCTApplication.sql;
+import static freerct.freerct.FreeRCTApplication.getCalendar;
+import static freerct.freerct.FreeRCTApplication.htmlEscape;
+import static freerct.freerct.FreeRCTApplication.renderMarkdown;
+import static freerct.freerct.FreeRCTApplication.datetimestring;
+import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
+import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+
 @Controller
 public class Register {
 	private static final String USERNAME_REGEX = "[-._+A-Za-z0-9]+";
@@ -72,7 +81,7 @@ public class Register {
 		}
 		body += "</div>";
 
-		return FreeRCTApplication.generatePage(request, "Register", body);
+		return generatePage(request, "Register", body);
 	}
 
 	@PostMapping("/signup/complete")
@@ -84,11 +93,11 @@ public class Register {
 		try {
 			if (username.length() > USERNAME_MAX_LENGTH || !username.matches(USERNAME_REGEX)) return "redirect:/signup?type=name_invalid";
 
-			ResultSet userDetails = FreeRCTApplication.sql("select id from users where username=?", username);
+			ResultSet userDetails = sql("select id from users where username=?", username);
 			if (!password.equals(password2)) return "redirect:/signup?type=passwords";
 			if (userDetails.next()) return "redirect:/signup?type=name_taken";
 
-			FreeRCTApplication.sql("insert into users (username,email,password) value (?,?,?)",
+			sql("insert into users (username,email,password) value (?,?,?)",
 					username, email, SecurityManager.passwordEncoder().encode​(password));
 
 			// TODO send a confirmation e-mail before activating the user's account

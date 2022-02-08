@@ -5,12 +5,21 @@ import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
 
+import static freerct.freerct.FreeRCTApplication.generatePage;
+import static freerct.freerct.FreeRCTApplication.sql;
+import static freerct.freerct.FreeRCTApplication.getCalendar;
+import static freerct.freerct.FreeRCTApplication.htmlEscape;
+import static freerct.freerct.FreeRCTApplication.renderMarkdown;
+import static freerct.freerct.FreeRCTApplication.datetimestring;
+import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
+import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+
 @Controller
 public class ErrorHandler implements ErrorController {
 	@RequestMapping("/error")
 	@ResponseBody
 	public String error(WebRequest request) {
-		return FreeRCTApplication.generatePage(request, "Not Found", """
+		return generatePage(request, "Not Found", """
 					<h1>Not Found</h1>
 
 					<p>

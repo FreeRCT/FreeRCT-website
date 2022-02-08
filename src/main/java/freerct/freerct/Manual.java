@@ -4,12 +4,21 @@ import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
 
+import static freerct.freerct.FreeRCTApplication.generatePage;
+import static freerct.freerct.FreeRCTApplication.sql;
+import static freerct.freerct.FreeRCTApplication.getCalendar;
+import static freerct.freerct.FreeRCTApplication.htmlEscape;
+import static freerct.freerct.FreeRCTApplication.renderMarkdown;
+import static freerct.freerct.FreeRCTApplication.datetimestring;
+import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
+import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+
 @Controller
 public class Manual {
 	@GetMapping("/manual")
 	@ResponseBody
 	public String fetch(WebRequest request) {
-		return FreeRCTApplication.generatePage(request, "Manual", """
+		return generatePage(request, "Manual", """
 			<div class="manual_section">
 				<div class="manual_margin hideme"">
 					<div></div>  <!-- spacer -->
@@ -39,7 +48,7 @@ public class Manual {
 				<div class="manual_body">
 					<div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "/manual", "download-install", "Downloading and Installing")
+			+ createLinkifiedHeader("h2", "/manual", "download-install", "Downloading and Installing")
 			+ """
 						<p>
 							See the <a href="/download">download page</a> for information on where to get and how to install FreeRCT.
@@ -59,7 +68,7 @@ public class Manual {
 				<div class="manual_body">
 					<div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "/manual", "mainmenu", "Main Menu")
+			+ createLinkifiedHeader("h2", "/manual", "mainmenu", "Main Menu")
 			+ """
 					<p>
 						After starting FreeRCT, you should see a splash screen with the FreeRCT logo which fades slowly into the main menu.
@@ -70,7 +79,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "mm-newgame", "New Game")
+			+ createLinkifiedHeader("h3", "/manual", "mm-newgame", "New Game")
 			+ """
 						<p>
 							When you click the <emp>New Game</emp> button, you are immediately presented with a brand-new empty park and ready to start playing.
@@ -78,7 +87,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "mm-loadgame", "Load")
+			+ createLinkifiedHeader("h3", "/manual", "mm-loadgame", "Load")
 			+ """
 						<p>
 							When you click the <emp>Load</emp> button, a window with a list of all saved games appears.
@@ -87,7 +96,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "mm-settings", "Settings")
+			+ createLinkifiedHeader("h3", "/manual", "mm-settings", "Settings")
 			+ """
 						<p>
 							When you click the <emp>Settings</emp> button, the Settings window opens.
@@ -97,7 +106,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "mm-quit", "Quit")
+			+ createLinkifiedHeader("h3", "/manual", "mm-quit", "Quit")
 			+ """
 						<p>
 							When you click the <emp>Quit</emp> button, FreeRCT closes immediately.
@@ -119,7 +128,7 @@ public class Manual {
 				<div class="manual_body">
 					<div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "/manual", "game-window", "The Game Window")
+			+ createLinkifiedHeader("h2", "/manual", "game-window", "The Game Window")
 			+ """
 						<p>
 							The game window is divided into three areas. In the center of the window is the <emp>main view</emp>,
@@ -130,7 +139,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "mainview", "The Main View")
+			+ createLinkifiedHeader("h3", "/manual", "mainview", "The Main View")
 			+ """
 						<p>
 							The main view displays the game world.
@@ -142,7 +151,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "toolbar", "The Toolbar")
+			+ createLinkifiedHeader("h3", "/manual", "toolbar", "The Toolbar")
 			+ """
 						<p>
 							The toolbar buttons, from left to right, mean:
@@ -176,7 +185,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "info-panel", "The Info Panel")
+			+ createLinkifiedHeader("h3", "/manual", "info-panel", "The Info Panel")
 			+ """
 						<p>
 							In the upper left corner of the info panel you can see the amount of <emp>cash</emp> your park currently has.
@@ -228,10 +237,10 @@ public class Manual {
 				<div class="manual_body">
 					<div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "infra", "Building Basic Park Infrastructure")
+			+ createLinkifiedHeader("h3", "/manual", "infra", "Building Basic Park Infrastructure")
 			+ """
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "footpaths", "Footpaths")
+			+ createLinkifiedHeader("h3", "/manual", "footpaths", "Footpaths")
 			+ """
 						<p>
 							Your guests will move only on footpaths. To build footpaths, click on the 
@@ -261,7 +270,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "path-objects", "Path Objects")
+			+ createLinkifiedHeader("h3", "/manual", "path-objects", "Path Objects")
 			+ """
 						<p>
 							Those paths are a bit bare, aren't they? Let's add some path objects.
@@ -293,7 +302,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "scenery", "Scenery")
+			+ createLinkifiedHeader("h3", "/manual", "scenery", "Scenery")
 			+ """
 						<p>
 							Most of your park is just a featureless green plain. How about adding some trees, flowers,
@@ -315,7 +324,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "terraforming", "Terraforming")
+			+ createLinkifiedHeader("h3", "/manual", "terraforming", "Terraforming")
 			+ """
 						<p>
 							The landscape is still looking a tad boring. Some hills or cliffs would be nice.
@@ -345,7 +354,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "fences", "Fences")
+			+ createLinkifiedHeader("h3", "/manual", "fences", "Fences")
 			+ """
 						<p>
 							If you played around with the various tools, your park should have a pretty
@@ -397,7 +406,7 @@ public class Manual {
 				<div class="manual_body">
 					<div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "/manual", "rides", "Rides")
+			+ createLinkifiedHeader("h2", "/manual", "rides", "Rides")
 			+ """
 						<p>
 							Rides are the most important aspect of your park. So let's see how to build and manage them.
@@ -405,7 +414,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "rides-selection", "Rides Selection")
+			+ createLinkifiedHeader("h3", "/manual", "rides-selection", "Rides Selection")
 			+ """
 						<p>
 							To build a new ride, click the <emp>Rides</emp> button in the top toolbar.
@@ -419,7 +428,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "fixed-rides", "Building Fixed Rides")
+			+ createLinkifiedHeader("h3", "/manual", "fixed-rides", "Building Fixed Rides")
 			+ """
 						<p>
 							There are two types of rides: <emp>Fixed</emp> and <emp>tracked</emp> rides.
@@ -433,7 +442,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "tracked-rides", "Building Tracked Rides")
+			+ createLinkifiedHeader("h3", "/manual", "tracked-rides", "Building Tracked Rides")
 			+ """
 						<p>
 							Some rides, such as coasters, require you to build an individual
@@ -467,7 +476,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "ride-man-window", "Ride Management Window")
+			+ createLinkifiedHeader("h3", "/manual", "ride-man-window", "Ride Management Window")
 			+ """
 						<p>
 							Click on a ride to open its management window.
@@ -523,7 +532,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "testing-rides", "Testing Rides")
+			+ createLinkifiedHeader("h3", "/manual", "testing-rides", "Testing Rides")
 			+ """
 						<p>
 							It is strongly recommended to test your coaster before opening it.
@@ -536,7 +545,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "ride-persons", "Interaction With Persons")
+			+ createLinkifiedHeader("h3", "/manual", "ride-persons", "Interaction With Persons")
 			+ """
 						<p>
 							Guests enter rides though <emp>entrances</emp>. If a ride can not be entered yet,
@@ -599,10 +608,10 @@ public class Manual {
 				<div class="manual_body">
 					<div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "/manual", "park-admin", "Park Administration")
+			+ createLinkifiedHeader("h2", "/manual", "park-admin", "Park Administration")
 			+ """
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "staff", "Staff")
+			+ createLinkifiedHeader("h3", "/manual", "staff", "Staff")
 			+ """
 						<p>
 							Hiring staff is an important aspect of keeping your park functional.
@@ -628,7 +637,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "inbox", "Inbox")
+			+ createLinkifiedHeader("h3", "/manual", "inbox", "Inbox")
 			+ """
 						<p>
 							FreeRCT occasionally sends you a message to inform you about important events
@@ -639,7 +648,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "finances", "Finances")
+			+ createLinkifiedHeader("h3", "/manual", "finances", "Finances")
 			+ """
 						<p>
 							The <emp>Finances</emp> button in the top toolbar shows you details
@@ -650,7 +659,7 @@ public class Manual {
 
 					</div><div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h3", "/manual", "person-window", "Personal Information Windows")
+			+ createLinkifiedHeader("h3", "/manual", "person-window", "Personal Information Windows")
 			+ """
 						<p>
 							You can click on any person – guest or staff – in the main view
@@ -669,7 +678,7 @@ public class Manual {
 				<div class="manual_body">
 					<div>
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "/manual", "shortcuts", "Keybindings")
+			+ createLinkifiedHeader("h2", "/manual", "shortcuts", "Keybindings")
 			+ """
 						<p>
 							Many game elements are also (or, in some cases, only) accessible via the keyboard:

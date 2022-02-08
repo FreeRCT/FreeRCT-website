@@ -105,11 +105,37 @@ public class FreeRCTApplication {
 		return ((ServletWebRequest)request).getRequest().getRequestURI().toString();
 	}
 
+	public static String renderMarkdown(String input) {
+		if (input == null) return null;
+
+		/* Render the HTML-escaped text as Markdown. */
+		input = htmlEscape(input);
+		String markdown = com.github.rjeschke.txtmark.Processor.process(input).trim();
+
+		/* Remove the surrounding <p> tag because it messes up our markup. */
+		if (!markdown.startsWith("<p>") || !markdown.endsWith("</p>")) {
+			System.out.println("NOCOM: Markdown is not surrounded by <p> tag!\n\t^^^" + input + "^^^\n\t^^^" + markdown + "^^^");
+			return input;
+		}
+
+		return markdown.substring(3, markdown.length() - 4);
+	}
+
+	public static String htmlEscape(String input) {
+		return input == null ? null : (input
+			.replaceAll("&", "&amp;")  // This rule must come first!
+			.replaceAll("\"", "&quot;")
+			.replaceAll("\'", "&apos;")
+			.replaceAll("<", "&lt;")
+			.replaceAll(">", "&gt;")
+			);
+	}
+
 	public static String datetimestring(Calendar c, Locale locale) {
-		return DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.LONG, locale).format(c.getTime());
+		return htmlEscape(DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.LONG, locale).format(c.getTime()));
 	}
 	public static String shortDatetimestring(Calendar c, Locale locale) {
-		return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, locale).format(c.getTime());
+		return htmlEscape(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, locale).format(c.getTime()));
 	}
 
 	public static String timestringSince(Calendar timestamp) {
@@ -241,7 +267,8 @@ public class FreeRCTApplication {
 				sql = sql("select username from users where id=?", allPosts.getLong("user"));
 				sql.next();
 				String userName = sql.getString("username");
-				result += createLatestPost(allPosts.getLong("id"), forumName, topicName, userName, getCalendar(allPosts, "created"));
+				result += createLatestPost(allPosts.getLong("id"), htmlEscape(forumName), htmlEscape(topicName),
+						htmlEscape(userName), getCalendar(allPosts, "created"));
 			}
 
 			return result;

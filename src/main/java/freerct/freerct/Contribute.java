@@ -4,12 +4,21 @@ import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
 
+import static freerct.freerct.FreeRCTApplication.generatePage;
+import static freerct.freerct.FreeRCTApplication.sql;
+import static freerct.freerct.FreeRCTApplication.getCalendar;
+import static freerct.freerct.FreeRCTApplication.htmlEscape;
+import static freerct.freerct.FreeRCTApplication.renderMarkdown;
+import static freerct.freerct.FreeRCTApplication.datetimestring;
+import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
+import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+
 @Controller
 public class Contribute {
 	@GetMapping("/contribute")
 	@ResponseBody
 	public String fetch(WebRequest request) {
-		return FreeRCTApplication.generatePage(request, "Contribute", """
+		return generatePage(request, "Contribute", """
 				<h1>Contribute</h1>
 				<p>
 					So you want to help develop FreeRCT? That's great!
@@ -28,7 +37,7 @@ public class Contribute {
 				</p>
 
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "/contribute", "graphics", "Graphics Design")
+			+ createLinkifiedHeader("h2", "/contribute", "graphics", "Graphics Design")
 			+ """
 				<p>
 					Whether you can create 2D graphics for the UI or 3D images for rides and other in-game objects,
@@ -37,7 +46,7 @@ public class Contribute {
 				</p>
 
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "/contribute", "sound", "Sound & Music")
+			+ createLinkifiedHeader("h2", "/contribute", "sound", "Sound & Music")
 			+ """
 				<p>
 					Okay, FreeRCT doesn't have a sound engine yet, but that's only because we don't
@@ -47,7 +56,7 @@ public class Contribute {
 				</p>
 
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "/contribute", "translating", "Translating")
+			+ createLinkifiedHeader("h2", "/contribute", "translating", "Translating")
 			+ """
 				<p>
 					The source language of FreeRCT is British English (<tt>en_GB</tt>).
@@ -69,7 +78,7 @@ public class Contribute {
 				</p>
 
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "/contribute", "testing", "Testing")
+			+ createLinkifiedHeader("h2", "/contribute", "testing", "Testing")
 			+ """
 				<p>
 					Even if you can't contribute code or art, you're welcome to test FreeRCT and hunt for bugs.
@@ -95,7 +104,7 @@ public class Contribute {
 				</p>
 
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "/contribute", "website", "Website Scripting")
+			+ createLinkifiedHeader("h2", "/contribute", "website", "Website Scripting")
 			+ """
 				<p>
 					You're welcome to improve this website in every way you can think of.
@@ -106,7 +115,7 @@ public class Contribute {
 				</p>
 
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "/contribute", "coding", "Coding For FreeRCT")
+			+ createLinkifiedHeader("h2", "/contribute", "coding", "Coding For FreeRCT")
 			+ """
 				<p>
 					The FreeRCT engine is coded in C++ using SDL2.

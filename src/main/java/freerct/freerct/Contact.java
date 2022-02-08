@@ -4,12 +4,21 @@ import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
 
+import static freerct.freerct.FreeRCTApplication.generatePage;
+import static freerct.freerct.FreeRCTApplication.sql;
+import static freerct.freerct.FreeRCTApplication.getCalendar;
+import static freerct.freerct.FreeRCTApplication.htmlEscape;
+import static freerct.freerct.FreeRCTApplication.renderMarkdown;
+import static freerct.freerct.FreeRCTApplication.datetimestring;
+import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
+import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+
 @Controller
 public class Contact {
 	@GetMapping("/contact")
 	@ResponseBody
 	public String fetch(WebRequest request) {
-		return FreeRCTApplication.generatePage(request, "Legal Notice / Contact", """
+		return generatePage(request, "Legal Notice / Contact", """
 			<h1>Legal Notice</h1>
 			<p>
 				The website <a href="/">freerct.net</a> is a privately owned page to exchange knowledge and experience

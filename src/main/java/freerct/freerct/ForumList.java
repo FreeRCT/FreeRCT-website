@@ -7,6 +7,15 @@ import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
 
+import static freerct.freerct.FreeRCTApplication.generatePage;
+import static freerct.freerct.FreeRCTApplication.sql;
+import static freerct.freerct.FreeRCTApplication.getCalendar;
+import static freerct.freerct.FreeRCTApplication.htmlEscape;
+import static freerct.freerct.FreeRCTApplication.renderMarkdown;
+import static freerct.freerct.FreeRCTApplication.datetimestring;
+import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
+import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+
 @Controller
 public class ForumList {
 	private static class Forum {
@@ -27,15 +36,15 @@ public class ForumList {
 	public String fetch(WebRequest request) {
 		List<Forum> allForums = new ArrayList<>();
 		try {
-			ResultSet forums = FreeRCTApplication.sql("select id,name,description from forums order by id asc");
+			ResultSet forums = sql("select id,name,description from forums order by id asc");
 			long nrTotalTopics = 0;
 			long nrTotalPosts = 0;
 			while (forums.next()) {
 				Forum f = new Forum(forums.getLong("id"), forums.getString("name"), forums.getString("description"));
-				ResultSet topics = FreeRCTApplication.sql("select id,name from topics where forum=?", f.id);
+				ResultSet topics = sql("select id,name from topics where forum=?", f.id);
 				while (topics.next()) {
 					++f.nrTopics;
-					ResultSet posts = FreeRCTApplication.sql("select count(id) as nr from posts where topic=?", topics.getLong("id"));
+					ResultSet posts = sql("select count(id) as nr from posts where topic=?", topics.getLong("id"));
 					posts.next();
 					f.nrPosts += posts.getLong("nr");
 				}
@@ -52,8 +61,8 @@ public class ForumList {
 			for (Forum f : allForums) {
 				body	+=	"<a class='forum_list_entry' href='/forum/" + f.id + "'>"
 						+		"<div>"
-						+			"<div class='forum_list_header'>" + f.name + "</div>"
-						+			"<div>" + f.description + "</div>"
+						+			"<div class='forum_list_header'>" + renderMarkdown(f.name) + "</div>"
+						+			"<div>" + renderMarkdown(f.description) + "</div>"
 						+		"</div>"
 						+		"<div class='forum_list_right_column'>"
 						+			"<div>Topics: " + f.nrTopics + "</div>"
@@ -62,7 +71,7 @@ public class ForumList {
 						+	"</a>";
 			}
 
-			return FreeRCTApplication.generatePage(request, "Forums", body);
+			return generatePage(request, "Forums", body);
 		} catch (SQLException e) {
 			return new ErrorHandler().error(request);
 		}

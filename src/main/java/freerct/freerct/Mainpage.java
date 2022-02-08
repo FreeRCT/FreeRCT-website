@@ -4,6 +4,15 @@ import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
 
+import static freerct.freerct.FreeRCTApplication.generatePage;
+import static freerct.freerct.FreeRCTApplication.sql;
+import static freerct.freerct.FreeRCTApplication.getCalendar;
+import static freerct.freerct.FreeRCTApplication.htmlEscape;
+import static freerct.freerct.FreeRCTApplication.renderMarkdown;
+import static freerct.freerct.FreeRCTApplication.datetimestring;
+import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
+import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+
 @Controller
 public class Mainpage {
 	private static class SlideshowSlide {
@@ -91,7 +100,7 @@ public class Mainpage {
 			body += "<div class='slideshow_slide";
 			if (slide == SlideshowSlide.ALL_SLIDES[0]) body += " slideshow_first_slide";
 			body += "'><img class='slideshow_image' src='/img/screenshots/mainpage_slideshow/" + slide.image + "'></img>";
-			body += "<div class='slideshow_text'><p>" + slide.caption + "</p></div>";
+			body += "<div class='slideshow_text'><p>" + renderMarkdown(slide.caption) + "</p></div>";
 			body += "</div>";
 		}
 
@@ -114,6 +123,6 @@ public class Mainpage {
 			<script>showSlidesAuto();</script>
 		""";
 
-		return FreeRCTApplication.generatePage(request, "Home", body);
+		return generatePage(request, "Home", body);
 	}
 }

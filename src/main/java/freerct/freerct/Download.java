@@ -4,16 +4,25 @@ import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
 
+import static freerct.freerct.FreeRCTApplication.generatePage;
+import static freerct.freerct.FreeRCTApplication.sql;
+import static freerct.freerct.FreeRCTApplication.getCalendar;
+import static freerct.freerct.FreeRCTApplication.htmlEscape;
+import static freerct.freerct.FreeRCTApplication.renderMarkdown;
+import static freerct.freerct.FreeRCTApplication.datetimestring;
+import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
+import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+
 @Controller
 public class Download {
 	@GetMapping("/download")
 	@ResponseBody
 	public String fetch(WebRequest request) {
-		return FreeRCTApplication.generatePage(request, "Get It!", """
+		return generatePage(request, "Get It!", """
 			<h1>Get It!</h1>
 
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "/download", "releases", "Releases")
+			+ createLinkifiedHeader("h2", "/download", "releases", "Releases")
 			+ """
 			<p style="text-align:center"> <table>
 				<tr>
@@ -40,7 +49,7 @@ public class Download {
 			</p>
 
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "/download", "daily", "Daily Builds")
+			+ createLinkifiedHeader("h2", "/download", "daily", "Daily Builds")
 			+ """
 			<p>
 				There are no daily builds yet. When FreeRCT daily build integration has been set up,
@@ -48,7 +57,7 @@ public class Download {
 			</p>
 
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "/download", "compile", "Compiling From Source")
+			+ createLinkifiedHeader("h2", "/download", "compile", "Compiling From Source")
 			+ """
 			<ol>
 				<li>      Check out the commit you wish to build in Git,
@@ -80,7 +89,7 @@ public class Download {
 			</ol>
 
 			"""
-			+ FreeRCTApplication.createLinkifiedHeader("h2", "/download", "play", "How To Play")
+			+ createLinkifiedHeader("h2", "/download", "play", "How To Play")
 			+ """
 			<p>
 				Just start the installed binary or type <tt>freerct</tt>.

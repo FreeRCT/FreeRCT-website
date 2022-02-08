@@ -23,6 +23,15 @@ import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
 
+import static freerct.freerct.FreeRCTApplication.generatePage;
+import static freerct.freerct.FreeRCTApplication.sql;
+import static freerct.freerct.FreeRCTApplication.getCalendar;
+import static freerct.freerct.FreeRCTApplication.htmlEscape;
+import static freerct.freerct.FreeRCTApplication.renderMarkdown;
+import static freerct.freerct.FreeRCTApplication.datetimestring;
+import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
+import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityManager extends WebSecurityConfigurerAdapter {
@@ -57,7 +66,7 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 		@Override
 		public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 			try {
-				ResultSet userDetails = FreeRCTApplication.sql("select password,state from users where username=?", username);
+				ResultSet userDetails = sql("select password,state from users where username=?", username);
 
 				if (!userDetails.next()) throw new Exception();
 

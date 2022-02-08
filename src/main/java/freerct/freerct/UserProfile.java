@@ -7,6 +7,15 @@ import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
 
+import static freerct.freerct.FreeRCTApplication.generatePage;
+import static freerct.freerct.FreeRCTApplication.sql;
+import static freerct.freerct.FreeRCTApplication.getCalendar;
+import static freerct.freerct.FreeRCTApplication.htmlEscape;
+import static freerct.freerct.FreeRCTApplication.renderMarkdown;
+import static freerct.freerct.FreeRCTApplication.datetimestring;
+import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
+import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+
 @Controller
 public class UserProfile {
 	public static final int USER_STATE_NORMAL      = 0;
@@ -31,24 +40,24 @@ public class UserProfile {
 	@ResponseBody
 	public String fetch(WebRequest request, @PathVariable String username, @RequestParam(value="new_user", required=false) boolean newUser) {
 		try {
-			ResultSet userDetails = FreeRCTApplication.sql("select id,joined,state from users where username=?", username);
+			ResultSet userDetails = sql("select id,joined,state from users where username=?", username);
 			userDetails.next();
 
 			List<Post> allPosts = new ArrayList<>();
-			ResultSet sql = FreeRCTApplication.sql("select id,topic,created from posts where user=? order by id desc", userDetails.getLong("id"));
+			ResultSet sql = sql("select id,topic,created from posts where user=? order by id desc", userDetails.getLong("id"));
 			while (sql.next()) {
 				long topic = sql.getLong("topic");
 
-				ResultSet topicInfo = FreeRCTApplication.sql("select name,forum from topics where id=?", topic);
+				ResultSet topicInfo = sql("select name,forum from topics where id=?", topic);
 				topicInfo.next();
-				ResultSet forumInfo = FreeRCTApplication.sql("select name from forums where id=?", topicInfo.getLong("forum"));
+				ResultSet forumInfo = sql("select name from forums where id=?", topicInfo.getLong("forum"));
 				forumInfo.next();
 
-				allPosts.add(new Post(sql.getLong("id"), FreeRCTApplication.getCalendar(sql, "created"),
+				allPosts.add(new Post(sql.getLong("id"), getCalendar(sql, "created"),
 						topic, topicInfo.getString("name"), forumInfo.getString("name")));
 			}
 
-			String body = "<h1>User " + username + "</h1>";
+			String body = "<h1>User " + htmlEscape(username) + "</h1>";
 
 			if (newUser) {
 				body += "<div class='forum_description_name announcement_box'>Welcome! Your account was created successfully.</div>";
@@ -66,20 +75,20 @@ public class UserProfile {
 			}
 
 			body	+=	"<p class='forum_description_name'>Joined: "
-					+		FreeRCTApplication.shortDatetimestring(FreeRCTApplication.getCalendar(userDetails, "joined"), request.getLocale())
+					+		shortDatetimestring(getCalendar(userDetails, "joined"), request.getLocale())
 					+	"</p><p class='forum_description_stats'>Posts: " + allPosts.size() + "</p>"
 					;
 
 			for (Post p : allPosts) {
 				body	+=	"<div class='forum_list_entry user_post_entry'>"
 						+		"<a href='/forum/post/" + p.id + "'>Post</a> on topic <a href='/forum/topic/"
-						+		p.topicID + "'>" + p.topicName + "</a> <smallcaps>[" + p.forumName + "]</smallcaps>, "
-						+		FreeRCTApplication.datetimestring(p.created, request.getLocale())
+						+		p.topicID + "'>" + renderMarkdown(p.topicName) + "</a> <smallcaps>[" + renderMarkdown(p.forumName) + "]</smallcaps>, "
+						+		datetimestring(p.created, request.getLocale())
 						+	"</div>"
 						;
 			}
 
-			return FreeRCTApplication.generatePage(request, "User | " + username, body);
+			return generatePage(request, "User | " + htmlEscape(username), body);
 		} catch (SQLException e) {
 			return new ErrorHandler().error(request);
 		}

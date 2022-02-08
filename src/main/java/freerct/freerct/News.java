@@ -7,11 +7,21 @@ import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
 
+import static freerct.freerct.FreeRCTApplication.generatePage;
+import static freerct.freerct.FreeRCTApplication.sql;
+import static freerct.freerct.FreeRCTApplication.getCalendar;
+import static freerct.freerct.FreeRCTApplication.htmlEscape;
+import static freerct.freerct.FreeRCTApplication.renderMarkdown;
+import static freerct.freerct.FreeRCTApplication.datetimestring;
+import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
+import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+import static freerct.freerct.FreeRCTApplication.DESIRED_PADDING_BELOW_MENU_BAR;
+
 @Controller
 public class News {
 	private static long countNews() {
 		try {
-			ResultSet sql = FreeRCTApplication.sql("select count(id) as nr from news");
+			ResultSet sql = sql("select count(id) as nr from news");
 			sql.next();
 			return sql.getLong("nr");
 		} catch (Exception e) {
@@ -23,30 +33,30 @@ public class News {
 		try {
 			final long nr = countNews();
 			if (howMany < 0 || howMany > nr) howMany = nr;
-			String str = "";
+			String body = "";
 
-			ResultSet sql = FreeRCTApplication.sql("select id,author,timestamp,slug,title,body from news order by timestamp desc limit ?", howMany);
+			ResultSet sql = sql("select id,author,timestamp,slug,title,body from news order by timestamp desc limit ?", howMany);
 			while (sql.next()) {
-				String slug = sql.getString("slug");
+				String slug = htmlEscape(sql.getString("slug"));
 
-				ResultSet author = FreeRCTApplication.sql("select username from users where id=?", sql.getLong("author"));
+				ResultSet author = sql("select username from users where id=?", sql.getLong("author"));
 				author.next();
-				String authorName = author.getString("username");
+				String authorName = htmlEscape(author.getString("username"));
 
-				str	+=	"<p id='" + slug + "' style='padding-top:" + margin + "px'></p><div class='news'>"
+				body	+=	"<p id='" + slug + "' style='padding-top:" + margin + "px'></p><div class='news'>"
 					+		"<h3><a href='/news#" + slug + "' class='linkified_header'>"
-					+			sql.getString("title")
+					+			renderMarkdown(sql.getString("title"))
 					+		"</a></h3>"
-					+		sql.getString("body")
+					+		renderMarkdown(sql.getString("body"))
 					+		"<p class='news_timestamp'>"
 					+			"<a href='/user/" + authorName + "'>" + authorName + "</a>"
 					+			" ~ "
-					+ 			FreeRCTApplication.datetimestring(FreeRCTApplication.getCalendar(sql, "timestamp"), locale)
+					+ 			datetimestring(getCalendar(sql, "timestamp"), locale)
 					+		"</p>"
 					+	"</div>";
 			}
 
-			return str;
+			return body;
 		} catch (Exception e) {
 			return "";
 		}
@@ -63,8 +73,8 @@ public class News {
 		} else {
 			body += nr + " news items";
 		}
-		body += "</h2>" + printLatestNews(request.getLocale(), -1, FreeRCTApplication.DESIRED_PADDING_BELOW_MENU_BAR);
+		body += "</h2>" + printLatestNews(request.getLocale(), -1, DESIRED_PADDING_BELOW_MENU_BAR);
 
-		return FreeRCTApplication.generatePage(request, "News Archive", body);
+		return generatePage(request, "News Archive", body);
 	}
 }

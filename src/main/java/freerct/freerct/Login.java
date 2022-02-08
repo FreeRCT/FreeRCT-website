@@ -7,6 +7,15 @@ import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
 
+import static freerct.freerct.FreeRCTApplication.generatePage;
+import static freerct.freerct.FreeRCTApplication.sql;
+import static freerct.freerct.FreeRCTApplication.getCalendar;
+import static freerct.freerct.FreeRCTApplication.htmlEscape;
+import static freerct.freerct.FreeRCTApplication.renderMarkdown;
+import static freerct.freerct.FreeRCTApplication.datetimestring;
+import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
+import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+
 @Controller
 public class Login {
 	@GetMapping("/login")
@@ -61,7 +70,7 @@ public class Login {
 		}
 		body += "</div>";
 
-		return FreeRCTApplication.generatePage(request, "Log In", body);
+		return generatePage(request, "Log In", body);
 	}
 
 	@PostMapping("/login/forgotpassword")
@@ -69,7 +78,7 @@ public class Login {
 		try {
 			if (username == null) throw new Exception();
 
-			ResultSet userDetails = FreeRCTApplication.sql("select id,email from users where username=?", username);
+			ResultSet userDetails = sql("select id,email from users where username=?", username);
 			userDetails.next();
 			String email = userDetails.getString("email");
 
