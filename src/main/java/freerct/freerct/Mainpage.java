@@ -101,7 +101,7 @@ public class Mainpage {
 			body += "<div class='slideshow_slide";
 			if (slide == SlideshowSlide.ALL_SLIDES[0]) body += " slideshow_first_slide";
 			body += "'><img class='slideshow_image' src='/img/screenshots/mainpage_slideshow/" + slide.image + "'></img>";
-			body += "<div class='slideshow_text'><p>" + renderMarkdown(slide.caption) + "</p></div>";
+			body += "<div class='slideshow_text'><p>" + renderMarkdown(slide.caption, false) + "</p></div>";
 			body += "</div>";
 		}
 

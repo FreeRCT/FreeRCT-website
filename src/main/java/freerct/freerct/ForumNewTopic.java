@@ -30,8 +30,8 @@ public class ForumNewTopic {
 			final String forumName = sql.getString("name");
 			final String forumDescription = sql.getString("description");
 
-			String body	=	"<h1>Forum: " + renderMarkdown(forumName) + ": New Topic</h1>"
-						+	"<p class='forum_description_name'>" + renderMarkdown(forumDescription) + "</p>"
+			String body	=	"<h1>Forum: " + renderMarkdown(forumName, true) + ": New Topic</h1>"
+						+	"<p class='forum_description_name'>" + renderMarkdown(forumDescription, true) + "</p>"
 						+ """
 							<form class='grid' method='post' enctype='multipart/form-data'>
 								<label class='griditem'             style='grid-column:3/span 1; grid-row:1/span 1' for="subject">Subject:</label>

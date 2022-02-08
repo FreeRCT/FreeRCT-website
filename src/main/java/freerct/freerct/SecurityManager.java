@@ -105,11 +105,12 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			.antMatchers("/css/**").permitAll()
 			.antMatchers("/img/**").permitAll()
 
-			/* Logging in. */
+			/* Logging in and error handling. */
 			.antMatchers("/login").permitAll()
 			.antMatchers("/login/*").permitAll()
 			.antMatchers("/signup").permitAll()
 			.antMatchers("/signup/*").permitAll()
+			.antMatchers("/error").permitAll()
 
 			/* Public-facing pages. */
 			.antMatchers("/").permitAll()

@@ -227,6 +227,10 @@ label, label.griditem {
 	padding: 12px 0 8px 0;
 }
 
+.new_post_form label {
+	text-align: center;
+}
+
 label, .form_button, .form_error, .form_ok {
 	font-variant: small-caps;
 	font-family: serif;
@@ -267,7 +271,7 @@ input, textarea, .form_button {
 	padding: 0 20%;
 	display: table;
 }
-.login_form_caption, .announcement_box {
+.login_form_caption, .announcement_box, .new_post_form {
 	text-align: center;
 	background-color: var(--bg-overlay-light);
 	border: var(--border-blue-thin);
@@ -363,7 +367,7 @@ input, textarea, .form_button {
 	font-size: 14px;
 }
 
-.forum_post_body {
+.forum_post_body, .new_post_preview {
 	border: var(--border-blue-thick);
 	border-radius: 5px;
 	background-color: var(--bg-overlay);
@@ -371,11 +375,33 @@ input, textarea, .form_button {
 	padding: 8px;
 }
 
+.forum_post_body>p:first-child {
+	margin-top: 0;
+}
+.forum_post_body>p:last-child {
+	margin-bottom: 0;
+}
+
 .forum_new_topic_button_wrapper {
 	text-align: right;
 	padding: 0;
 	/* Ugh, pixel-perfect positioning. This is fragile, not sure if there is a better way. */
 	margin: -54px 8px 8px 0;
+}
+
+.new_post_form {
+	padding: 8px;
+	margin: 16px 20% 0 20%;
+}
+
+.new_post_form label {
+	font-size: 18px;
+	color: var(--green-medium);
+	text-shadow: var(--text-shadow);
+}
+
+.new_post_preview_wrapper {
+	display: none;
 }
 
 /* Latest posts box. */

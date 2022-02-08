@@ -67,8 +67,8 @@ public class ForumList {
 			for (Forum f : allForums) {
 				body	+=	"<a class='forum_list_entry' href='/forum/" + f.id + "'>"
 						+		"<div>"
-						+			"<div class='forum_list_header'>" + renderMarkdown(f.name) + "</div>"
-						+			"<div>" + renderMarkdown(f.description) + "</div>"
+						+			"<div class='forum_list_header'>" + renderMarkdown(f.name, true) + "</div>"
+						+			"<div>" + renderMarkdown(f.description, true) + "</div>"
 						+		"</div>"
 						+		"<div class='forum_list_right_column'>"
 						+			"<div>Topics: " + f.nrTopics + "</div>"

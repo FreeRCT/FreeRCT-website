@@ -84,7 +84,8 @@ public class UserProfile {
 			for (Post p : allPosts) {
 				body	+=	"<div class='forum_list_entry user_post_entry'>"
 						+		"<a href='/forum/post/" + p.id + "'>Post</a> on topic <a href='/forum/topic/"
-						+		p.topicID + "'>" + renderMarkdown(p.topicName) + "</a> <smallcaps>[" + renderMarkdown(p.forumName) + "]</smallcaps>, "
+						+		p.topicID + "'>" + renderMarkdown(p.topicName, true) + "</a> <smallcaps>["
+						+		renderMarkdown(p.forumName, true) + "]</smallcaps>, "
 						+		datetimestring(p.created, request.getLocale())
 						+	"</div>"
 						;

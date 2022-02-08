@@ -158,14 +158,17 @@ public class FreeRCTApplication {
 	/**
 	 * Interpret an arbitrary string as a Markdown-styled text. Also takes care of HTML escaping.
 	 * @param input Text to render (may be HTML-unsafe).
+	 * @param stripOuterTag Remove the outermost <p> tag from the result.
 	 * @return Rendered and HTML-safe string.
 	 */
-	public static String renderMarkdown(String input) {
+	public static String renderMarkdown(String input, boolean stripOuterTag) {
 		if (input == null) return null;
 
 		/* Render the HTML-escaped text as Markdown. */
 		input = htmlEscape(input);
 		String markdown = com.github.rjeschke.txtmark.Processor.process(input).trim();
+
+		if (!stripOuterTag) return markdown;
 
 		/* Remove the surrounding <p> tag because it messes up our markup. */
 		if (!markdown.startsWith("<p>") || !markdown.endsWith("</p>")) {

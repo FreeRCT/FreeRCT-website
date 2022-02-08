@@ -9,6 +9,7 @@ import org.springframework.web.context.request.*;
 
 import static freerct.freerct.FreeRCTApplication.generatePage;
 import static freerct.freerct.FreeRCTApplication.sql;
+import static freerct.freerct.FreeRCTApplication.sqlSync;
 import static freerct.freerct.FreeRCTApplication.getCalendar;
 import static freerct.freerct.FreeRCTApplication.htmlEscape;
 import static freerct.freerct.FreeRCTApplication.renderMarkdown;
@@ -43,7 +44,7 @@ public class ForumTopic {
 			sql.next();
 			return "redirect:/forum/topic/" + sql.getLong("topic") + "#post_" + postID;
 		} catch (Exception e) {
-			return new ErrorHandler().error(request);
+			return "redirect:/error";
 		}
 	}
 
@@ -73,11 +74,11 @@ public class ForumTopic {
 				Calendar calendarFirst = getCalendar(sql, "created");
 				Calendar calendarLast = getCalendar(sql, "edited");
 				allPosts.add(new Post(sql.getLong("id"), sql.getLong("user"), htmlEscape(authorName), sql.getLong("editor"), htmlEscape(editorName),
-						calendarFirst, calendarLast, renderMarkdown(sql.getString("body"))));
+						calendarFirst, calendarLast, renderMarkdown(sql.getString("body"), false)));
 			}
 
-			String body	=	"<h1>Topic: " + renderMarkdown(topicName) + "</h1>"
-						+	"<p class='forum_description_name'>Forum: <a href='/forum/" + forumID + "'>" + renderMarkdown(forumName) + "</a></p>"
+			String body	=	"<h1>Topic: " + renderMarkdown(topicName, true) + "</h1>"
+						+	"<p class='forum_description_name'>Forum: <a href='/forum/" + forumID + "'>" + renderMarkdown(forumName, true) + "</a></p>"
 						+	"<p class='forum_description_stats'>" + pluralForm(allPosts.size(), "post", "posts") + "</p>"
 						;
 
@@ -128,9 +129,55 @@ public class ForumTopic {
 				body += "</div><div class='forum_post_body'>" + p.body + "</div></div></div>";
 			}
 
+			if (request.getUserPrincipal() != null) {
+				body += """
+						<form class='grid new_post_form' method='post' enctype='multipart/form-data'>
+							<label class='griditem' style='grid-column:2/span 1; grid-row:1/span 1' for="content">New Post</label>
+
+							<textarea class='griditem' style='grid-column:1/span 3; grid-row:2/span 1; resize:vertical'
+									id="content" required name="content" onchange="updatePreview()"></textarea>
+
+							<input class='griditem form_button' style='grid-column:3/span 1; grid-row:3/span 1'
+									type="button" value="Preview">
+							<input class='griditem form_button' style='grid-column:1/span 1; grid-row:3/span 1'
+					"""
+					+			"type='submit' value='Submit' formaction='/forum/topic/" + topicID + "/submit_new'>"
+					+	"""
+
+							<div class='new_post_preview_wrapper' id='preview_wrapper'>
+								<label class='griditem' style='grid-column:2/span 1; grid-row:4/span 1'>Preview</label>
+								<div class='griditem new_post_preview' style='grid-column:1/span 3; grid-row:5/span 1' id='preview'></div>
+							</div>
+							</form>
+						"""
+					;
+			}
+
 			return generatePage(request, "Forum | " + forumName + " | " + topicName, body);
 		} catch (Exception e) {
 			return new ErrorHandler().error(request);
+		}
+	}
+
+	@PostMapping("/forum/topic/{topicID}/submit_new")
+	public String createPost(WebRequest request,
+			@PathVariable long topicID,
+			@RequestPart("content") String content) {
+		try {
+			ResultSet sql = sql("select id from users where username=?", request.getRemoteUser());
+			sql.next();
+			long userID = sql.getLong("id");
+
+			synchronized (sqlSync()) {
+				sql("insert into posts (topic,user,body) value(?,?,?)", topicID, userID, content);
+				sql = sql("select last_insert_id() as new_id");
+			}
+			sql.next();
+			long postID = sql.getLong("new_id");
+
+			return "redirect:/forum/post/" + postID;
+		} catch (Exception e) {
+			return "redirect:/error";
 		}
 	}
 }
