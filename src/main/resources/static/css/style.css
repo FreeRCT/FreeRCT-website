@@ -235,7 +235,7 @@ label, .form_button, .form_error, .form_ok {
 	font-size: 16px;
 }
 
-input {
+input, textarea, .form_button {
 	background-color: var(--bg-overlay);
 	border: var(--border-blue-thick);
 	border-radius: 5px;
@@ -256,6 +256,7 @@ input {
 	cursor: pointer;
 	text-align: center;
 	transition: background-color 0.5s ease;
+	padding: 8px 16px;
 }
 .form_button:hover {
 	background-color: var(--green-light);
@@ -329,7 +330,7 @@ input {
 	text-decoration: none;
 	font-variant: small-caps;
 }
-.forum_description_stats,.forum_description_stats a {
+.forum_description_stats, .forum_description_stats a {
 	font-style: italic;
 	font-weight: bold;
 	font-size: 16px;
@@ -368,6 +369,13 @@ input {
 	background-color: var(--bg-overlay);
 	margin: 4px 0;
 	padding: 8px;
+}
+
+.forum_new_topic_button_wrapper {
+	text-align: right;
+	padding: 0;
+	/* Ugh, pixel-perfect positioning. This is fragile, not sure if there is a better way. */
+	margin: -54px 8px 8px 0;
 }
 
 /* Latest posts box. */
@@ -442,7 +450,7 @@ input {
 	border-color: var(--blue-light);
 	border-radius: 5px;
 	overflow: auto;
-	padding: 8px;
+	padding: 8px 8px 4px 8px;
 }
 
 .news_count {
@@ -458,6 +466,7 @@ input {
 	text-align: right;
 	font-weight: lighter;
 	font-variant: small-caps;
+	margin-bottom: 0;
 }
 
 /* Screenshots and the manual. */

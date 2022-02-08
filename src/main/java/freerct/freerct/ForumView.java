@@ -14,6 +14,7 @@ import static freerct.freerct.FreeRCTApplication.htmlEscape;
 import static freerct.freerct.FreeRCTApplication.renderMarkdown;
 import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
+import static freerct.freerct.FreeRCTApplication.pluralForm;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 
 /** The page with the list of all topics in a forum. */
@@ -77,7 +78,13 @@ public class ForumView {
 
 			String body	=	"<h1>Forum: " + renderMarkdown(forumName) + "</h1>"
 						+	"<p class='forum_description_name'>" + renderMarkdown(forumDescription) + "</p>"
-						+	"<p class='forum_description_stats'>" + allTopics.size() + " topics · " + nrPosts + " posts</p>"
+						+	"<p class='forum_description_stats'>"
+						+		pluralForm(allTopics.size(), "topic", "topics")
+						+		" · " + pluralForm(nrPosts, "post", "posts")
+						+	"</p>"
+						+	"<form><div class='forum_new_topic_button_wrapper'>"
+						+		"<input class='form_button' type='submit' value='New Topic' formaction='/forum/" + forumID + "/new'>"
+						+	"</div></form>"
 						;
 
 			Topic[] topicsSorted = allTopics.toArray(new Topic[0]);

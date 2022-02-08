@@ -14,6 +14,7 @@ import static freerct.freerct.FreeRCTApplication.htmlEscape;
 import static freerct.freerct.FreeRCTApplication.renderMarkdown;
 import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
+import static freerct.freerct.FreeRCTApplication.pluralForm;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 
 /** The page with the list of all forums. */
@@ -56,7 +57,11 @@ public class ForumList {
 			}
 
 			String body	=	"<h1>Forums</h1>"
-						+	"<p class='forum_description_stats'>" + allForums.size() + " forums · " + nrTotalTopics + " topics · " + nrTotalPosts + " posts</p>"
+						+	"<p class='forum_description_stats'>"
+						+		pluralForm(allForums.size(), "forum", "forums")
+						+		" · " + pluralForm(nrTotalTopics, "topic", "topics")
+						+		" · " + pluralForm(nrTotalPosts, "post", "posts")
+						+	"</p>"
 						;
 
 			for (Forum f : allForums) {

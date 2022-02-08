@@ -15,18 +15,12 @@ import org.springframework.web.context.request.*;
 /** The main class. It provided the main loop and various important utility functions. */
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 public class FreeRCTApplication {
+	public static final int MENU_BAR_BAR_HEIGHT            =                      50;  ///< Height of the menu bar in pixels.
+	public static final int DESIRED_PADDING_BELOW_MENU_BAR = MENU_BAR_BAR_HEIGHT + 8;  ///< Spacing above the topmost content element in pixels.
+
+	private static final int LATEST_POSTS_DEFAULT_COUNT = 5;  ///< How many latest posts we normally show by default.
+
 	private static final Map<String, Object> _config = new HashMap<>();
-
-	/**
-	 * Get a config file entry.
-	 * @param key Config key to look up.
-	 * @return The value, or null if the key does not exist.
-	 */
-	public static String config(String key) {
-		Object o = _config.get(key);
-		return o == null ? null : o.toString();
-	}
-
 	private static Connection _database = null;
 
 	/** The main loop. */
@@ -88,13 +82,23 @@ public class FreeRCTApplication {
 	}
 
 	/**
+	 * Get a config file entry.
+	 * @param key Config key to look up.
+	 * @return The value, or null if the key does not exist.
+	 */
+	public static String config(String key) {
+		Object o = _config.get(key);
+		return o == null ? null : o.toString();
+	}
+
+	/**
 	 * Execute a safe SQL statement or query.
 	 * @param query SQL statement to execute.
 	 * @param values Parameters to insert into the query's placeholders. Never concatenate arbitrary values to a query!!!
 	 * @return The ResultSet returned by the query, or null if none.
 	 */
 	public static ResultSet sql(String query, Object... values) throws SQLException {
-		synchronized (_database) {
+		synchronized (sqlSync()) {
 			try {
 				PreparedStatement s = _database.prepareStatement(query);
 				for (int i = 0; i < values.length; i++) s.setObject(i + 1, values[i]);
@@ -105,6 +109,27 @@ public class FreeRCTApplication {
 				throw e;
 			}
 		}
+	}
+
+	/**
+	 * Get the correct singular or plural form for a string.
+	 * @param n Number for which to get the form.
+	 * @param singular The singular form.
+	 * @param plural The plural form.
+	 * @return The singular or plural string as appropriate, prepended with n.
+	 */
+	public static String pluralForm(long n, String singular, String plural) {
+		return n + " " + (n == 1 ? singular : plural);
+	}
+
+	/**
+	 * Get the object on whose monitor all SQL queries are synchronized,
+	 * allowing you to perform multiple queries in a row without any
+	 * other database access happening concurrently.
+	 * @return The object to use in your 'synchronized()' clause.
+	 */
+	public static Object sqlSync() {
+		return _database;
 	}
 
 	/**
@@ -248,9 +273,6 @@ public class FreeRCTApplication {
 			this(l, u, d, false);
 		}
 	}
-
-	public static final int MENU_BAR_BAR_HEIGHT = 50;  ///< Height of the menu bar in pixels.
-	public static final int DESIRED_PADDING_BELOW_MENU_BAR = MENU_BAR_BAR_HEIGHT + 8;  ///< Spacing above the topmost content element in pixels.
 
 	public static String createLinkifiedHeader(String tag, String doc, String slug, String text) {
 		return	"<" + tag + " id='" + slug + "' style='padding-top:" + DESIRED_PADDING_BELOW_MENU_BAR + "px'>"
@@ -498,7 +520,7 @@ public class FreeRCTApplication {
 
 		result
 			+=				"<div class='right_column_box'>"
-			+					"<h1>Latest Posts</h1>" + createLatestPosts(8)
+			+					"<h1>Latest Posts</h1>" + createLatestPosts(LATEST_POSTS_DEFAULT_COUNT)
 			+				"</div>"
 			+			"</div>"
 			+		"</div>"

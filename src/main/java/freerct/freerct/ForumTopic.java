@@ -14,6 +14,7 @@ import static freerct.freerct.FreeRCTApplication.htmlEscape;
 import static freerct.freerct.FreeRCTApplication.renderMarkdown;
 import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
+import static freerct.freerct.FreeRCTApplication.pluralForm;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 
 /** The page that displays a single forum topic. */
@@ -77,7 +78,7 @@ public class ForumTopic {
 
 			String body	=	"<h1>Topic: " + renderMarkdown(topicName) + "</h1>"
 						+	"<p class='forum_description_name'>Forum: <a href='/forum/" + forumID + "'>" + renderMarkdown(forumName) + "</a></p>"
-						+	"<p class='forum_description_stats'>" + allPosts.size() + " posts</p>"
+						+	"<p class='forum_description_stats'>" + pluralForm(allPosts.size(), "post", "posts") + "</p>"
 						;
 
 			for (Post p : allPosts) {

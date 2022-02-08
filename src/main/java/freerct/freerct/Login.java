@@ -37,7 +37,7 @@ public class Login {
 							type="password" id="password" required name="password">
 
 					<input class='griditem form_button' style='grid-column:4/span 1; grid-row:3/span 1'
-							type="submit" value="Log In!"            formaction="/login/signin">
+							type="submit" value="Log In"             formaction="/login/signin">
 					<input class='griditem form_button' style='grid-column:4/span 1; grid-row:4/span 1'
 							type="submit" value="I lost my password" formaction="/login/forgotpassword" formnovalidate>
 
