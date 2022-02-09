@@ -367,7 +367,7 @@ input, textarea, .form_button {
 	font-size: 14px;
 }
 
-.forum_post_body, .new_post_preview {
+.forum_post_body {
 	border: var(--border-blue-thick);
 	border-radius: 5px;
 	background-color: var(--bg-overlay);
@@ -380,6 +380,10 @@ input, textarea, .form_button {
 }
 .forum_post_body>p:last-child {
 	margin-bottom: 0;
+}
+
+.forum_post_body ul, .forum_post_body ol {
+	margin-left: 32px;
 }
 
 .forum_new_topic_button_wrapper {
@@ -398,10 +402,6 @@ input, textarea, .form_button {
 	font-size: 18px;
 	color: var(--green-medium);
 	text-shadow: var(--text-shadow);
-}
-
-.new_post_preview_wrapper {
-	display: none;
 }
 
 /* Latest posts box. */

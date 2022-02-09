@@ -17,6 +17,7 @@ import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
 import static freerct.freerct.FreeRCTApplication.pluralForm;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+import static freerct.freerct.FreeRCTApplication.generateForumPostForm;
 
 /** The form to create a new topic in a forum. */
 @Controller
@@ -30,27 +31,9 @@ public class ForumNewTopic {
 			final String forumName = sql.getString("name");
 			final String forumDescription = sql.getString("description");
 
-			String body	=	"<h1>Forum: " + renderMarkdown(forumName, true) + ": New Topic</h1>"
-						+	"<p class='forum_description_name'>" + renderMarkdown(forumDescription, true) + "</p>"
-						+ """
-							<form class='grid' method='post' enctype='multipart/form-data'>
-								<label class='griditem'             style='grid-column:3/span 1; grid-row:1/span 1' for="subject">Subject:</label>
-								<label class='griditem'             style='grid-column:3/span 1; grid-row:2/span 1' for="content">Post:</label>
-
-								<input    class='griditem' style='grid-column:4/span 2; grid-row:1/span 1' type="text"
-										id="subject" required name="subject" autofocus>
-								<textarea class='griditem' style='grid-column:4/span 2; grid-row:2/span 1; resize:vertical'
-										id="content" required name="content"></textarea>
-
-								<input class='griditem form_button' style='grid-column:4/span 1; grid-row:3/span 1'
-						"""
-						+			"type='submit' value='Submit' formaction='/forum/" + forumID + "/submit_new'>"
-						+ """
-
-								<div   class='griditem'             style='grid-column:6/span 3; grid-row:1/span 3'></div>
-								<div   class='griditem'             style='grid-column:1/span 2; grid-row:1/span 3'></div>
-							</form>
-						""";
+			String body	=	"<h1>Forum: " + htmlEscape(forumName) + ": New Topic</h1>"
+						+	"<p class='forum_description_name'>" + htmlEscape(forumDescription) + "</p>"
+						+	generateForumPostForm(true, "Post", "/forum/" + forumID + "/submit_new");
 
 			return generatePage(request, "Forum | " + forumName + " | New Topic", body);
 		} catch (Exception e) {
@@ -81,5 +64,11 @@ public class ForumNewTopic {
 		} catch (Exception e) {
 			return "redirect:/error";
 		}
+	}
+
+	@PostMapping("/render_markdown")
+	@ResponseBody
+	public String getMarkdownPreview(@RequestBody String content) {
+		return renderMarkdown(content);
 	}
 }

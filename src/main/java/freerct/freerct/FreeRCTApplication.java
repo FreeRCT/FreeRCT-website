@@ -20,6 +20,8 @@ public class FreeRCTApplication {
 
 	private static final int LATEST_POSTS_DEFAULT_COUNT = 5;  ///< How many latest posts we normally show by default.
 
+	public static final long POST_EDIT_TIMEOUT = 1000 * 60 * 60 * 24;  ///< How long after posting a user may edit their post, in milliseconds.
+
 	private static final Map<String, Object> _config = new HashMap<>();
 	private static Connection _database = null;
 
@@ -157,26 +159,13 @@ public class FreeRCTApplication {
 
 	/**
 	 * Interpret an arbitrary string as a Markdown-styled text. Also takes care of HTML escaping.
+	 * Note that the result is always the concatenation of one or more <p> tags
+	 * and can therefore not be used as an inline element.
 	 * @param input Text to render (may be HTML-unsafe).
-	 * @param stripOuterTag Remove the outermost <p> tag from the result.
 	 * @return Rendered and HTML-safe string.
 	 */
-	public static String renderMarkdown(String input, boolean stripOuterTag) {
-		if (input == null) return null;
-
-		/* Render the HTML-escaped text as Markdown. */
-		input = htmlEscape(input);
-		String markdown = com.github.rjeschke.txtmark.Processor.process(input).trim();
-
-		if (!stripOuterTag) return markdown;
-
-		/* Remove the surrounding <p> tag because it messes up our markup. */
-		if (!markdown.startsWith("<p>") || !markdown.endsWith("</p>")) {
-			System.out.println("NOCOM: Markdown is not surrounded by <p> tag!\n\t^^^" + input + "^^^\n\t^^^" + markdown + "^^^");
-			return input;
-		}
-
-		return markdown.substring(3, markdown.length() - 4);
+	public static String renderMarkdown(String input) {
+		return input == null ? null : com.github.rjeschke.txtmark.Processor.process(htmlEscape(input)).trim();
 	}
 
 	/**
@@ -356,6 +345,68 @@ public class FreeRCTApplication {
 	}
 
 	/**
+	 * Generate the form in which a user can create or edit a post.
+	 * @param subjectLine Whether to include a "Subject" form field.
+	 * @param title Title to show above the form.
+	 * @param formaction URL to navigate to when clicking Submit.
+	 * @return The HTML string.
+	 */
+	public static String generateForumPostForm(boolean subjectLine, String title, String formaction) {
+		String body = "<form class='grid new_post_form' method='post' enctype='multipart/form-data'>"
+			+	"""
+					<script>
+						function updatePreview() {
+							const input = document.getElementById('content').value;
+							var preview = document.getElementById('preview');
+							var label = document.getElementById('preview_label');
+							if (!input) {
+								preview.style.display = 'none';
+								label.style.display = 'none';
+								return;
+							}
+
+							(async () => {
+								const response = await fetch("/render_markdown", {
+									method: 'POST',
+									body: input,
+								});
+								const result = await response.text();
+								preview.style.display = 'initial';
+								label.style.display = 'initial';
+								preview.innerHTML = result;
+							})()
+						}
+					</script>
+				""";
+
+		if (subjectLine) {
+			body	+=	"<label class='griditem' style='grid-column:2/span 1; grid-row:1/span 1' for='subject'>Subject</label>"
+					+	"<input class='griditem' style='grid-column:1/span 3; grid-row:2/span 1' "
+					+	"type='text' id='subject' required name='subject' autofocus>"
+					;
+		}
+
+		body	+=		"<label class='griditem' style='grid-column:2/span 1; grid-row:" + (subjectLine ? 3 : 1)
+				+		"/span 1' for='content'>" + title + "</label>"
+				+		"<textarea class='griditem' style='grid-column:1/span 3; grid-row:" + (subjectLine ? 4 : 2) + "/span 1; resize:vertical'"
+				+				"id='content' rows=8 required name='content'></textarea>"
+
+				+		"<input class='griditem form_button' style='grid-column:3/span 1; grid-row:" + (subjectLine ? 5 : 3) + "/span 1'"
+				+				"type='button' onclick='updatePreview()' value='Preview'>"
+				+		"<input class='griditem form_button' style='grid-column:1/span 1; grid-row:" + (subjectLine ? 5 : 3) + "/span 1'"
+				+			"type='submit' value='Submit' formaction='" + formaction + "'>"
+
+				+		"<label class='griditem' id='preview_label' style='display:none;grid-column:2/span 1; grid-row:"
+				+			(subjectLine ? 6 : 4) + "/span 1'>Preview</label>"
+				+		"<div class='griditem forum_post_body forum_list_entry' style='display:none;grid-column:1/span 3; grid-row:"
+				+			(subjectLine ? 7 : 5) + "/span 1' id='preview'></div>"
+				+		"</form>"
+				;
+
+		return body;
+	}
+
+	/**
 	 * Generate the complete HTML webpage for a request.
 	 * @param request Current web request.
 	 * @param pagename Title for the page.
@@ -508,7 +559,7 @@ public class FreeRCTApplication {
 				+	"</div>"
 				;
 		} else {
-			result += "<div class='right_column_box right_column_login'><a href='/login'>Log In</a> / <a href='/signup'>Register</a></div>";
+			result += "<div class='right_column_box right_column_login'><a href='/login?next=" + uri + "'>Log In</a> / <a href='/signup'>Register</a></div>";
 		}
 
 		SortedSet<String> allLoggedInUsers = SecurityManager.getLoggedInUsers();

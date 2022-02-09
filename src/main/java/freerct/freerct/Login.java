@@ -22,6 +22,7 @@ public class Login {
 	@GetMapping("/login")
 	@ResponseBody
 	public String fetch(WebRequest request,
+			@RequestParam(value="next", required=false) String next,
 			@RequestParam(value="type", required=false) String argument) {
 		String body = """
 			<div class='login_form_wrapper'>
@@ -37,7 +38,10 @@ public class Login {
 							type="password" id="password" required name="password">
 
 					<input class='griditem form_button' style='grid-column:4/span 1; grid-row:3/span 1'
-							type="submit" value="Log In"             formaction="/login/signin">
+							type="submit" value="Log In"
+			"""
+			+	"formaction='/login/signin" + (next == null ? "" : ("?next=" + next)) + "'>"
+			+ """
 					<input class='griditem form_button' style='grid-column:4/span 1; grid-row:4/span 1'
 							type="submit" value="I lost my password" formaction="/login/forgotpassword" formnovalidate>
 

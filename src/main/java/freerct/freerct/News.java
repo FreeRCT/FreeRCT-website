@@ -53,9 +53,9 @@ public class News {
 
 				body	+=	"<p id='" + slug + "' style='padding-top:" + margin + "px'></p><div class='news'>"
 					+		"<h3><a href='/news#" + slug + "' class='linkified_header'>"
-					+			renderMarkdown(sql.getString("title"), true)
+					+			htmlEscape(sql.getString("title"))
 					+		"</a></h3>"
-					+		renderMarkdown(sql.getString("body"), false)
+					+		renderMarkdown(sql.getString("body"))
 					+		"<p class='news_timestamp'>"
 					+			"<a href='/user/" + authorName + "'>" + authorName + "</a>"
 					+			" ~ "

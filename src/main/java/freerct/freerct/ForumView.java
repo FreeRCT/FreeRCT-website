@@ -71,13 +71,13 @@ public class ForumView {
 				Calendar calendarLast = getCalendar(lastPost, "created");
 
 				allTopics.add(new Topic(topicID, nrPostsInTopic, firstPost.getLong("id"), lastPost.getLong("id"),
-						renderMarkdown(topics.getString("name"), true), htmlEscape(firstAuthor.getString("username")),
+						htmlEscape(topics.getString("name")), htmlEscape(firstAuthor.getString("username")),
 						htmlEscape(lastAuthor.getString("username")), calendarFirst, calendarLast));
 				nrPosts += nrPostsInTopic;
 			}
 
-			String body	=	"<h1>Forum: " + renderMarkdown(forumName, true) + "</h1>"
-						+	"<p class='forum_description_name'>" + renderMarkdown(forumDescription, true) + "</p>"
+			String body	=	"<h1>Forum: " + htmlEscape(forumName) + "</h1>"
+						+	"<p class='forum_description_name'>" + htmlEscape(forumDescription) + "</p>"
 						+	"<p class='forum_description_stats'>"
 						+		pluralForm(allTopics.size(), "topic", "topics")
 						+		" · " + pluralForm(nrPosts, "post", "posts")

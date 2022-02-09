@@ -17,6 +17,7 @@ import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
 import static freerct.freerct.FreeRCTApplication.pluralForm;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+import static freerct.freerct.FreeRCTApplication.generateForumPostForm;
 
 /** The page that displays a single forum topic. */
 @Controller
@@ -74,11 +75,11 @@ public class ForumTopic {
 				Calendar calendarFirst = getCalendar(sql, "created");
 				Calendar calendarLast = getCalendar(sql, "edited");
 				allPosts.add(new Post(sql.getLong("id"), sql.getLong("user"), htmlEscape(authorName), sql.getLong("editor"), htmlEscape(editorName),
-						calendarFirst, calendarLast, renderMarkdown(sql.getString("body"), false)));
+						calendarFirst, calendarLast, renderMarkdown(sql.getString("body"))));
 			}
 
-			String body	=	"<h1>Topic: " + renderMarkdown(topicName, true) + "</h1>"
-						+	"<p class='forum_description_name'>Forum: <a href='/forum/" + forumID + "'>" + renderMarkdown(forumName, true) + "</a></p>"
+			String body	=	"<h1>Topic: " + htmlEscape(topicName) + "</h1>"
+						+	"<p class='forum_description_name'>Forum: <a href='/forum/" + forumID + "'>" + htmlEscape(forumName) + "</a></p>"
 						+	"<p class='forum_description_stats'>" + pluralForm(allPosts.size(), "post", "posts") + "</p>"
 						;
 
@@ -94,10 +95,10 @@ public class ForumTopic {
 						;
 
 				switch (userDetails.getInt("state")) {
-					case UserProfile.USER_STATE_ADMIN:
+					case SecurityManager.USER_STATE_ADMIN:
 						body += "<div class='forum_post_userdetails'><b>Administrator</b></div>";
 						break;
-					case UserProfile.USER_STATE_MODERATOR:
+					case SecurityManager.USER_STATE_MODERATOR:
 						body += "<div class='forum_post_userdetails'><b>Moderator</b></div>";
 						break;
 					default:
@@ -130,27 +131,7 @@ public class ForumTopic {
 			}
 
 			if (request.getUserPrincipal() != null) {
-				body += """
-						<form class='grid new_post_form' method='post' enctype='multipart/form-data'>
-							<label class='griditem' style='grid-column:2/span 1; grid-row:1/span 1' for="content">New Post</label>
-
-							<textarea class='griditem' style='grid-column:1/span 3; grid-row:2/span 1; resize:vertical'
-									id="content" required name="content" onchange="updatePreview()"></textarea>
-
-							<input class='griditem form_button' style='grid-column:3/span 1; grid-row:3/span 1'
-									type="button" value="Preview">
-							<input class='griditem form_button' style='grid-column:1/span 1; grid-row:3/span 1'
-					"""
-					+			"type='submit' value='Submit' formaction='/forum/topic/" + topicID + "/submit_new'>"
-					+	"""
-
-							<div class='new_post_preview_wrapper' id='preview_wrapper'>
-								<label class='griditem' style='grid-column:2/span 1; grid-row:4/span 1'>Preview</label>
-								<div class='griditem new_post_preview' style='grid-column:1/span 3; grid-row:5/span 1' id='preview'></div>
-							</div>
-							</form>
-						"""
-					;
+				body += generateForumPostForm(false, "New Post", "/forum/topic/" + topicID + "/submit_new");
 			}
 
 			return generatePage(request, "Forum | " + forumName + " | " + topicName, body);

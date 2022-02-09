@@ -19,12 +19,6 @@ import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 /** The user profile page. */
 @Controller
 public class UserProfile {
-	/* These constants are stored in the database, DO NOT CHANGE THEM. */
-	public static final int USER_STATE_NORMAL      = 0;  ///< State constant for normal users.
-	public static final int USER_STATE_ADMIN       = 1;  ///< State constant for administrators.
-	public static final int USER_STATE_MODERATOR   = 2;  ///< State constant for moderators.
-	public static final int USER_STATE_DEACTIVATED = 3;  ///< State constant for deactivated accounts.
-
 	private static class Post {
 		public final long id, topicID;
 		public final String topicName, forumName;
@@ -66,10 +60,10 @@ public class UserProfile {
 			}
 
 			switch (userDetails.getInt("state")) {
-				case USER_STATE_ADMIN:
+				case SecurityManager.USER_STATE_ADMIN:
 					body += "<b><div class='forum_description_name'>Administrator</div></b>";
 					break;
-				case USER_STATE_MODERATOR:
+				case SecurityManager.USER_STATE_MODERATOR:
 					body += "<b><div class='forum_description_name'>Moderator</div></b>";
 					break;
 				default:
@@ -84,8 +78,8 @@ public class UserProfile {
 			for (Post p : allPosts) {
 				body	+=	"<div class='forum_list_entry user_post_entry'>"
 						+		"<a href='/forum/post/" + p.id + "'>Post</a> on topic <a href='/forum/topic/"
-						+		p.topicID + "'>" + renderMarkdown(p.topicName, true) + "</a> <smallcaps>["
-						+		renderMarkdown(p.forumName, true) + "]</smallcaps>, "
+						+		p.topicID + "'>" + htmlEscape(p.topicName) + "</a> <smallcaps>["
+						+		htmlEscape(p.forumName) + "]</smallcaps>, "
 						+		datetimestring(p.created, request.getLocale())
 						+	"</div>"
 						;

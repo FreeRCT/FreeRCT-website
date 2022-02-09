@@ -36,6 +36,12 @@ import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 @Configuration
 @EnableWebSecurity
 public class SecurityManager extends WebSecurityConfigurerAdapter {
+	/* These constants are stored in the database, DO NOT CHANGE THEM. */
+	public static final int USER_STATE_NORMAL      = 0;  ///< State constant for normal users.
+	public static final int USER_STATE_ADMIN       = 1;  ///< State constant for administrators.
+	public static final int USER_STATE_MODERATOR   = 2;  ///< State constant for moderators.
+	public static final int USER_STATE_DEACTIVATED = 3;  ///< State constant for deactivated accounts.
+
 	/**
 	 * Create an encoder with which to encrypt user passwords.
 	 * @return Encoder to use.
@@ -47,6 +53,50 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 	@Bean
 	public HttpSessionEventPublisher httpSessionEventPublisher() {
 		return new HttpSessionEventPublisher();
+	}
+
+	/**
+	 * Check whether the current user may edit a forum post.
+	 * @param request Web request associated with the current session.
+	 * @param postID Post to edit.
+	 * @return The user may edit this post.
+	 */
+	public static boolean mayEdit(WebRequest request, long postID) {
+		if (request.getUserPrincipal() == null) return false;  // Not logged in.
+		try {
+			ResultSet sql = sql("select id,state from users where username=?", request.getRemoteUser());
+			sql.next();
+			long userID = sql.getLong("id");
+			switch (sql.getInt("state")) {
+				case USER_STATE_ADMIN:
+				case USER_STATE_MODERATOR:
+					// Admins and moderators may always edit all posts.
+					return true;
+				case USER_STATE_NORMAL:
+					// Continue below
+					break;
+				default:
+					// Deactivated or invalid account.
+					return false;
+			}
+
+			/* Normal users may edit only their own posts,
+			 * but only within 24 hours after posting,
+			 * and never if the post has been edited by an admin or moderator.
+			 */
+			sql = sql("select user,editor,created from posts where id=?", postID);
+			sql.next();
+
+			if (sql.getLong("user") != userID) return false;
+
+			long editor = sql.getLong("editor");
+			if (!sql.wasNull() && editor != userID) return false;
+
+			long delta = Calendar.getInstance().getTimeInMillis() - getCalendar(sql, "created").getTimeInMillis();
+			return delta < FreeRCTApplication.POST_EDIT_TIMEOUT;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	private class FreeRCTUserDetailsService implements UserDetailsService {
@@ -62,9 +112,9 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			@Override public String getUsername() { return username; }
 			@Override public String getPassword() { return password; }
 			@Override public Collection<? extends GrantedAuthority> getAuthorities() { return null; }
-			@Override public boolean isEnabled              () { return state != UserProfile.USER_STATE_DEACTIVATED; }
+			@Override public boolean isEnabled              () { return state != USER_STATE_DEACTIVATED; }
 			@Override public boolean isAccountNonExpired    () { return true; }
-			@Override public boolean isAccountNonLocked     () { return state != UserProfile.USER_STATE_DEACTIVATED; }
+			@Override public boolean isAccountNonLocked     () { return state != USER_STATE_DEACTIVATED; }
 			@Override public boolean isCredentialsNonExpired() { return true; }
 		}
 
@@ -170,7 +220,12 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			synchronized (_loggedInUsers) {
 				_loggedInUsers.add(((UserDetails)auth.getPrincipal()).getUsername());
 			}
-			super.onAuthenticationSuccess(request, response, auth);
+			String next = request.getParameter("next");
+			if (next == null) {
+				super.onAuthenticationSuccess(request, response, auth);
+			} else {
+				response.sendRedirect(next);
+			}
 		}
 	}
 	private class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
