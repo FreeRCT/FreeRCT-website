@@ -25,6 +25,7 @@ public class Login {
 			@RequestParam(value="next", required=false) String next,
 			@RequestParam(value="type", required=false) String argument) {
 		String body = """
+			<a class='anchor' id='login_form'></a>
 			<div class='login_form_wrapper'>
 				<h1>Log In</h1>
 
@@ -37,7 +38,7 @@ public class Login {
 					<input class='griditem'             style='grid-column:4/span 2; grid-row:2/span 1'
 							type="password" id="password" required name="password">
 
-					<input class='griditem form_button' style='grid-column:4/span 1; grid-row:3/span 1'
+					<input class='griditem form_button form_default_action' style='grid-column:4/span 1; grid-row:3/span 1'
 							type="submit" value="Log In"
 			"""
 			+	"formaction='/login/signin" + (next == null ? "" : ("?next=" + next)) + "'>"
@@ -89,9 +90,9 @@ public class Login {
 
 			// TODO actually send a password resetting e-mail...
 
-			return "redirect:/login?type=password_reset";
+			return "redirect:/login?type=password_reset#login_form";
 		} catch (Exception e) {
-			return "redirect:/login?type=wrong_username";
+			return "redirect:/login?type=wrong_username#login_form";
 		}
 	}
 }

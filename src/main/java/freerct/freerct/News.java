@@ -37,7 +37,7 @@ public class News {
 	 * @param margin Spacing between items.
 	 * @return HTML string.
 	 */
-	public static String printLatestNews(Locale locale, long howMany, int margin) {
+	public static String printLatestNews(Locale locale, long howMany) {
 		try {
 			final long nr = countNews();
 			if (howMany < 0 || howMany > nr) howMany = nr;
@@ -51,7 +51,7 @@ public class News {
 				author.next();
 				String authorName = htmlEscape(author.getString("username"));
 
-				body	+=	"<p id='" + slug + "' style='padding-top:" + margin + "px'></p><div class='news'>"
+				body	+=	"<a class='anchor' id='" + slug + "'></a><div class='news'>"
 					+		"<h3><a href='/news#" + slug + "' class='linkified_header'>"
 					+			htmlEscape(sql.getString("title"))
 					+		"</a></h3>"
@@ -81,7 +81,7 @@ public class News {
 		} else {
 			body += nr + " news items";
 		}
-		body += "</h2>" + printLatestNews(request.getLocale(), -1, DESIRED_PADDING_BELOW_MENU_BAR);
+		body += "</h2>" + printLatestNews(request.getLocale(), -1);
 
 		return generatePage(request, "News Archive", body);
 	}

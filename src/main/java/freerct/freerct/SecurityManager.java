@@ -184,7 +184,7 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			.loginPage("/login#")
 			.loginProcessingUrl("/login/signin")
 			.defaultSuccessUrl("/", false)
-			.failureUrl("/login?type=login_failed")
+			.failureUrl("/login?type=login_failed#login_form")
 			.successHandler(new CustomLoginSuccessHandler())
 //			.failureHandler(authenticationFailureHandler())  // We do not need a custom failure handler currently.
 			.and()
@@ -197,7 +197,7 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			/* When using an invalid or expired cookie. */
 			.and()
 			.sessionManagement()
-			.invalidSessionUrl("/login?type=expired");
+			.invalidSessionUrl("/login?type=expired#login_form");
 			;
 	}
 

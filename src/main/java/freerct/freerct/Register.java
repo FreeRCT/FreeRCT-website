@@ -32,6 +32,7 @@ public class Register {
 	public String fetch(WebRequest request,
 			@RequestParam(value="type", required=false) String argument) {
 		String body = """
+			<a class='anchor' id='signup_form'></a>
 			<div class='login_form_wrapper'>
 				<h1>Register</h1>
 
@@ -50,7 +51,7 @@ public class Register {
 					<input class='griditem'             style='grid-column:4/span 2; grid-row:4/span 1'
 							type="password" id="password2" required name="password2">
 
-					<input class='griditem form_button' style='grid-column:4/span 1; grid-row:5/span 1'
+					<input class='griditem form_button form_default_action' style='grid-column:4/span 1; grid-row:5/span 1'
 							type="submit" value="Create Account" formaction="/signup/complete">
 
 					<div   class='griditem'             style='grid-column:6/span 4; grid-row:1/span 3'></div>
@@ -92,11 +93,11 @@ public class Register {
 			@RequestPart("password") String password,
 			@RequestPart("password2") String password2) {
 		try {
-			if (username.length() > USERNAME_MAX_LENGTH || !username.matches(USERNAME_REGEX)) return "redirect:/signup?type=name_invalid";
+			if (username.length() > USERNAME_MAX_LENGTH || !username.matches(USERNAME_REGEX)) return "redirect:/signup?type=name_invalid#signup_form";
 
 			ResultSet userDetails = sql("select id from users where username=?", username);
-			if (!password.equals(password2)) return "redirect:/signup?type=passwords";
-			if (userDetails.next()) return "redirect:/signup?type=name_taken";
+			if (!password.equals(password2)) return "redirect:/signup?type=passwords#signup_form";
+			if (userDetails.next()) return "redirect:/signup?type=name_taken#signup_form";
 
 			sql("insert into users (username,email,password) value (?,?,?)",
 					username, email, SecurityManager.passwordEncoder().encode​(password));
@@ -106,7 +107,7 @@ public class Register {
 			request.login(username, password);
 			return "redirect:/user/" + username + "?new_user=true";
 		} catch (Exception e) {
-			return "redirect:/signup?type=error";
+			return "redirect:/signup?type=error#signup_form";
 		}
 	}
 }

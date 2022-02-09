@@ -115,7 +115,7 @@ public class ForumView {
 
 			return generatePage(request, "Forum | " + forumName, body);
 		} catch (Exception e) {
-			return new ErrorHandler().error(request);
+			return new ErrorHandler().error(request, "internal_server_error");
 		}
 	}
 }

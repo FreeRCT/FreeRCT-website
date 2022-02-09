@@ -168,23 +168,15 @@ public class FreeRCTApplication {
 	public static String renderMarkdown(String input) {
 		if (input == null) return null;
 
-		/* Escaping the '>' character means we cannot use Markdown's quote syntax.
-		 * So we first need to define a custom MD symbol for quotes (we use "§§§");
-		 * convert '>' to this symbol; then escape HTML; then change it back;
-		 * and only then run Markdown.
-		 * This means that there may be unescaped '>' symbols in the resulting
-		 * text, but since we don't allow any unescaped '<' symbols this alone
-		 * should not enable HTML injection.
-		 */
-		input = input.replaceAll(">", _markdown_quote_symbol);
-		input = htmlEscape(input);
-		input = input.replaceAll(_markdown_quote_symbol, ">");
-		input = Processor.process(input, _markdown_cfg).trim();
-		return input;
+		return Processor.process(input, _markdown_cfg);
 	}
 
-	private static final String _markdown_quote_symbol = "§§§";
-	private static final Configuration _markdown_cfg = Configuration.builder().forceExtentedProfile().build();
+	private static final Configuration _markdown_cfg =
+			Configuration.builder()
+					.enableSafeMode()        // Some safety stuff, seems recommended.
+					.enablePanicMode()       // Very important, prevents HTML injection.
+					.forceExtentedProfile()  // Enable "extra" features such as code blocks.
+			.build();
 
 	/**
 	 * Escape HTML characters in arbitrary text.
@@ -271,22 +263,21 @@ public class FreeRCTApplication {
 	}
 
 	private static class DropdownEntry {
-		public final String link, slug, label;
+		public final String link, label;
 		public final boolean newTab;
-		public DropdownEntry(String l, String u, String d, boolean t) {
+		public DropdownEntry(String l, String d, boolean t) {
 			link = l;
-			slug = u;
 			label = d;
 			newTab = t;
 		}
-		public DropdownEntry(String l, String u, String d) {
-			this(l, u, d, false);
+		public DropdownEntry(String l, String d) {
+			this(l, d, false);
 		}
 	}
 
 	public static String createLinkifiedHeader(String tag, String doc, String slug, String text) {
-		return	"<" + tag + " id='" + slug + "' style='padding-top:" + DESIRED_PADDING_BELOW_MENU_BAR + "px'>"
-			+	"<a href='" + doc + "#" + slug + "' class='linkified_header'>"
+		return	"<a class='anchor' id='" + slug + "'></a><" + tag
+			+	"><a href='" + doc + "#" + slug + "' class='linkified_header'>"
 			+	text
 			+	"</a></" + tag + ">";
 	}
@@ -295,7 +286,7 @@ public class FreeRCTApplication {
 	private static String createMenuBarEntry(String uri, DropdownEntry e) {
 		String str	=	"<li class='menubar_li'><a ";
 		if (Objects.equals(uri, e.link)) str += "class='menubar_active' ";
-		str			+=	"id='menubar_entry_" + e.slug + "' href='" + e.link + "'>" + e.label + "<span class='tooltip_bottom'>" + e.label + "</span></a>"
+		str			+=	"href='" + e.link + "'>" + e.label + "<span class='tooltip_bottom'>" + e.label + "</span></a>"
 					+	"</li>"
 					;
 		return str;
@@ -304,14 +295,14 @@ public class FreeRCTApplication {
 	private static String createMenuBarDropdown(String uri, DropdownEntry e, DropdownEntry ... content) {
 		String str	=	"<li class='menubar_li menubar_dropdown' onmouseover='dropdownMouse(this, true)' onmouseout='dropdownMouse(this, false)'><a ";
 		if (Objects.equals(uri, e.link)) str += "class='menubar_active' ";
-		str			+=	"id='menubar_entry_" + e.slug + "' href='" + e.link + "'>" + e.label + "<span class='tooltip_corner'>" + e.label + "</span></a>"
+		str			+=	"href='" + e.link + "'>" + e.label + "<span class='tooltip_corner'>" + e.label + "</span></a>"
 					+	"<div class='menubar_dropdown_content'>"
 					;
 		for (DropdownEntry d : content) {
 			str += "<a ";
 			if (Objects.equals(uri, d.link)) str += "class='menubar_active' ";
 			if (d.newTab) str += "target='_blank' ";
-			str += "id='menubar_entry_" + d.slug + "' href='" + d.link + "'>" + d.label + "<span class='tooltip_left'>" + d.label + "</span></a>";
+			str += "href='" + d.link + "'>" + d.label + "<span class='tooltip_left'>" + d.label + "</span></a>";
 		}
 		str += "</div></li>";
 		return str;
@@ -365,20 +356,22 @@ public class FreeRCTApplication {
 	/**
 	 * Generate the form in which a user can create or edit a post.
 	 * @param subjectLine Whether to include a "Subject" form field.
+	 * @param reset Whether to include a Reset Content button.
 	 * @param title Title to show above the form.
 	 * @param content Initial content of the textarea.
 	 * @param formaction URL to navigate to when clicking Submit.
+	 * @param error Error message to show from a previous failed attempt (may be null).
 	 * @return The HTML string.
 	 */
-	public static String generateForumPostForm(boolean subjectLine, String title, String content, String formaction) {
-		String body = "<form class='grid new_post_form' method='post' enctype='multipart/form-data'>"
+	public static String generateForumPostForm(boolean subjectLine, boolean reset, String title, String content, String formaction, String error) {
+		String body = "<a class='anchor' id='post_form'></a><form class='grid new_post_form' method='post' enctype='multipart/form-data'>"
 			+	"""
 					<script>
 						function updatePreview() {
 							const input = document.getElementById('content').value;
 							var preview = document.getElementById('preview');
 							var label = document.getElementById('preview_label');
-							if (!input) {
+							if (!input || !input.trim()) {
 								preview.style.display = 'none';
 								label.style.display = 'none';
 								return;
@@ -398,27 +391,58 @@ public class FreeRCTApplication {
 					</script>
 				""";
 
+		int rowOff = 0;
+
 		if (subjectLine) {
-			body	+=	"<label class='griditem' style='grid-column:2/span 1; grid-row:1/span 1' for='subject'>Subject</label>"
-					+	"<input class='griditem' style='grid-column:1/span 3; grid-row:2/span 1' "
+			body	+=	"<label class='griditem' style='grid-column:2/span 1; grid-row:" + (1 + rowOff) + "/span 1' for='subject'>Subject</label>"
+					+	"<input class='griditem' style='grid-column:1/span 3; grid-row:" + (2 + rowOff) + "/span 1' "
 					+	"type='text' id='subject' required name='subject' autofocus>"
 					;
+
+			rowOff += 2;
 		}
 
-		body	+=		"<label class='griditem' style='grid-column:2/span 1; grid-row:" + (subjectLine ? 3 : 1)
+		body	+=		"<label class='griditem' style='grid-column:2/span 1; grid-row:" + (1 + rowOff)
 				+		"/span 1' for='content'>" + title + "</label>"
-				+		"<textarea class='griditem' style='grid-column:1/span 3; grid-row:" + (subjectLine ? 4 : 2) + "/span 1; resize:vertical'"
+				+		"<textarea class='griditem' style='grid-column:1/span 3; grid-row:" + (2 + rowOff) + "/span 1; resize:vertical'"
 				+				"id='content' rows=8 required name='content'>" + content + "</textarea>"
 
-				+		"<input class='griditem form_button' style='grid-column:3/span 1; grid-row:" + (subjectLine ? 5 : 3) + "/span 1'"
+				+		"<input class='griditem form_button' style='grid-column:1/span 1; grid-row:" + (3 + rowOff) + "/span 1'"
 				+				"type='button' onclick='updatePreview()' value='Preview'>"
-				+		"<input class='griditem form_button' style='grid-column:1/span 1; grid-row:" + (subjectLine ? 5 : 3) + "/span 1'"
+				+		"<input class='griditem form_button form_default_action' style='grid-column:3/span 1; grid-row:" + (3 + rowOff) + "/span 1'"
 				+			"type='submit' value='Submit' formaction='" + formaction + "'>"
+				;
 
-				+		"<label class='griditem' id='preview_label' style='display:none;grid-column:2/span 1; grid-row:"
-				+			(subjectLine ? 6 : 4) + "/span 1'>Preview</label>"
+		if (reset) {
+			body	+=	"<input class='griditem form_button' style='grid-column:2/span 1; grid-row:" + (3 + rowOff) + "/span 1'"
+					+		"type='reset' value='Reset'>";
+		}
+
+		if (error != null) {
+			body += "<label class='griditem form_error form_error_caption' style='grid-column:1/span 3; grid-row:" + (4 + rowOff) + "/span 1'>";
+			switch (error.toLowerCase()) {
+				case "empty_post":
+					body += "This post is empty.";
+					break;
+				case "empty_title":
+					body += "Please add a topic title.";
+					break;
+				case "restricted":
+					body += "You may edit your posts only within 24 hours after posting and not if a moderator has previously edited your post.";
+					break;
+				default:
+					body += "An unknown error has occurred.";
+					break;
+			}
+			body += "</label>";
+
+			++rowOff;
+		}
+
+		body	+=		"<label class='griditem' id='preview_label' style='display:none;grid-column:2/span 1; grid-row:"
+				+			(5 + rowOff) + "/span 1' for='preview'>Preview</label>"
 				+		"<div class='griditem forum_post_body forum_list_entry' style='display:none;grid-column:1/span 3; grid-row:"
-				+			(subjectLine ? 7 : 5) + "/span 1' id='preview'></div>"
+				+			(6 + rowOff) + "/span 1' id='preview'></div>"
 				+		"</form>"
 				;
 
@@ -535,28 +559,28 @@ public class FreeRCTApplication {
 			+		"<ul id='menubar_ul'>"
 			+		"<p id='menubar_spacer_menu'></p>"
 
-			+		createMenuBarEntry   (uri, new DropdownEntry("/"           , "home"       , "FreeRCT Home"))
-			+		createMenuBarEntry   (uri, new DropdownEntry("/screenshots", "screenshots", "Screenshots" ))
-			+		createMenuBarEntry   (uri, new DropdownEntry("/download"   , "download"   , "Get It!"     ))
-			+		createMenuBarEntry   (uri, new DropdownEntry("/manual"     , "manual"     , "Manual"      ))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/"           , "FreeRCT Home"))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/screenshots", "Screenshots" ))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/download"   , "Get It!"     ))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/manual"     , "Manual"      ))
 			;
 
 		List<DropdownEntry> allForums = new ArrayList<>();
 		try {
 			ResultSet sql = sql("select id,name from forums");
 			while (sql.next()) {
-				allForums.add(new DropdownEntry("/forum/" + sql.getLong("id"), "forum_" + sql.getLong("id"), sql.getString("name")));
+				allForums.add(new DropdownEntry("/forum/" + sql.getLong("id"), sql.getString("name")));
 			}
 		} catch (SQLException e) {
 			allForums.clear();
 		}
-		result += createMenuBarDropdown(uri, new DropdownEntry("/forum", "forum", "Forums"), allForums.toArray(new DropdownEntry[0]));
+		result += createMenuBarDropdown(uri, new DropdownEntry("/forum", "Forums"), allForums.toArray(new DropdownEntry[0]));
 
 		result
-			+=		createMenuBarDropdown(uri, new DropdownEntry("/contribute"                              , "contribute" , "Contribute"          ),
-					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT"       , "github"     , "Git Repository", true),
-					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT/issues", "issues"     , "Issue Tracker" , true))
-			+		createMenuBarEntry   (uri, new DropdownEntry("/news"                                    , "news"       , "News Archive"        ))
+			+=		createMenuBarDropdown(uri, new DropdownEntry("/contribute"                              , "Contribute"          ),
+					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT"       , "Git Repository", true),
+					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT/issues", "Issue Tracker" , true))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/news"                                    , "News Archive"        ))
 			;
 
 		result

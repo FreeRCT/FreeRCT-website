@@ -19,14 +19,25 @@ import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 public class ErrorHandler implements ErrorController {
 	@RequestMapping("/error")
 	@ResponseBody
-	public String error(WebRequest request) {
-		return generatePage(request, "Not Found", """
-					<h1>Not Found</h1>
+	public String error(WebRequest request, @RequestParam(value="reason", required=false) String reason) {
+		String title = "Not Found";
+		String body = "The document you requested could not be found. Perhaps you misspelled the address or clicked on a bad link?";
 
-					<p>
-						The document you requested could not be found. Perhaps you misspelled the address or clicked on a bad link?
-					</p>
-		""");
+		if (reason != null) {
+			switch (reason.toLowerCase()) {
+				case "internal_server_error":
+					title = "Internal Server Error";
+					body = "An internal server error has occurred.";
+					break;
+
+				default:
+					title = "Unknown Error";
+					body = "An unknown error has occurred: '" + htmlEscape(reason) + "'";
+					break;
+			}
+		}
+
+		return generatePage(request, title, "<h1>" + title + "</h1><p>" + body + "</p>");
 	}
 
 	public String getErrorPath() {

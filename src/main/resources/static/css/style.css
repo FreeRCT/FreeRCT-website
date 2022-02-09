@@ -15,6 +15,7 @@
 	--blue-very-light  : #75aacd;
 	--bg-overlay       : rgba(  0,  48,   0, 0.5);
 	--bg-overlay-light : rgba(200, 255, 200, 0.1);
+	--bg-overlay-strong: rgba(  0,  48,   0, 0.7);
 	--border-blue-thick: 5px ridge var(--blue-light);
 	--border-blue-thin : 3px inset var(--blue-light);
 	--text-shadow      : 1px 1px var(--text-dark);
@@ -56,6 +57,9 @@ emp {
 }
 smallcaps {
 	font-variant: small-caps;
+}
+sup {
+	font-size: 12px;
 }
 
 tt, pre code, .codefield, .toc {
@@ -155,6 +159,13 @@ footer a, .latest_post_entry a, a .forum_list_header, .forum_list_entry a {
 }
 footer a, .latest_post_entry a, .forum_list_entry a {
 	text-decoration: none;
+}
+
+a.anchor {
+	display: block;
+	position: relative;
+	top: -58px;
+	visibility: hidden;
 }
 
 .linkified_header {
@@ -270,7 +281,7 @@ input, textarea, .form_button {
 	padding: 0 20%;
 	display: table;
 }
-.login_form_caption, .announcement_box, .new_post_form {
+.login_form_caption, .form_error_caption, .announcement_box, .new_post_form {
 	text-align: center;
 	background-color: var(--bg-overlay-light);
 	border: var(--border-blue-thin);
@@ -397,7 +408,7 @@ input, textarea, .form_button {
 	margin: 16px 20% 0 20%;
 }
 
-.new_post_form label {
+.new_post_form label:not(.form_error) {
 	font-size: 18px;
 	color: var(--green-medium);
 	text-shadow: var(--text-shadow);
@@ -411,6 +422,10 @@ input, textarea, .form_button {
 }
 .form_button:hover {
 	background-color: var(--green-light);
+}
+
+.form_default_action {
+	background-color: var(--bg-overlay-strong);
 }
 
 .forum_post_buttons_wrapper, .forum_post_buttons_wrapper>form {
@@ -490,6 +505,7 @@ input, textarea, .form_button {
 	border-radius: 5px;
 	overflow: auto;
 	padding: 8px 8px 4px 8px;
+	margin-top: 8px;
 }
 
 .news_count {

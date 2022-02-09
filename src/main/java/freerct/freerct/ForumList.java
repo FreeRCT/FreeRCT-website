@@ -79,7 +79,7 @@ public class ForumList {
 
 			return generatePage(request, "Forums", body);
 		} catch (SQLException e) {
-			return new ErrorHandler().error(request);
+			return new ErrorHandler().error(request, "internal_server_error");
 		}
 	}
 }

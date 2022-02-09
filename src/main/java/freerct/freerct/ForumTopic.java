@@ -45,13 +45,13 @@ public class ForumTopic {
 			sql.next();
 			return "redirect:/forum/topic/" + sql.getLong("topic") + "#post_" + postID;
 		} catch (Exception e) {
-			return "redirect:/error";
+			return "redirect:/error?reason=internal_server_error";
 		}
 	}
 
 	@GetMapping("/forum/topic/{topicID}")
 	@ResponseBody
-	public String fetch(WebRequest request, @PathVariable long topicID) {
+	public String fetch(WebRequest request, @PathVariable long topicID, @RequestParam(value="error", required=false) String error) {
 		try {
 			ResultSet sql = sql("select name,forum from topics where id=?", topicID);
 			sql.next();
@@ -89,7 +89,7 @@ public class ForumTopic {
 				ResultSet userDetails = sql("select joined,state from users where id=?", p.authorID);
 				userDetails.next();
 
-				body	+=	"<div class='forum_list_entry' id='post_" + p.id + "'>"
+				body	+=	"<a class='anchor' id='post_" + p.id + "'></a><div class='forum_list_entry'>"
 						+		"<div class='forum_post_usercolumn'>"
 						+			"<div><a href='/user/" + p.author + "'>" + p.author + "</a></div>"
 						;
@@ -140,12 +140,12 @@ public class ForumTopic {
 			}
 
 			if (request.getUserPrincipal() != null) {
-				body += generateForumPostForm(false, "New Post", "", "/forum/topic/" + topicID + "/submit_new");
+				body += generateForumPostForm(false, false, "New Post", "", "/forum/topic/" + topicID + "/submit_new", error);
 			}
 
 			return generatePage(request, "Forum | " + forumName + " | " + topicName, body);
 		} catch (Exception e) {
-			return new ErrorHandler().error(request);
+			return new ErrorHandler().error(request, "internal_server_error");
 		}
 	}
 
@@ -154,6 +154,9 @@ public class ForumTopic {
 			@PathVariable long topicID,
 			@RequestPart("content") String content) {
 		try {
+			content = content.trim();
+			if (content.isEmpty()) return "redirect:/forum/topic/" + topicID + "?error=empty_post#post_form";
+
 			ResultSet sql = sql("select id from users where username=?", request.getRemoteUser());
 			sql.next();
 			long userID = sql.getLong("id");
@@ -167,14 +170,17 @@ public class ForumTopic {
 
 			return "redirect:/forum/post/" + postID;
 		} catch (Exception e) {
-			return "redirect:/error";
+			return "redirect:/error?reason=internal_server_error";
 		}
 	}
 
 	@PostMapping("/forum/post/submit_edit/{postID}")
 	public String editPost(WebRequest request, @PathVariable long postID, @RequestPart("content") String content) {
 		try {
-			if (!SecurityManager.mayEdit(request, postID)) return "redirect:/error";
+			if (!SecurityManager.mayEdit(request, postID)) return "redirect:/forum/post/edit/" + postID + "?error=restricted#post_form";
+
+			content = content.trim();
+			if (content.isEmpty()) return "redirect:/forum/post/edit/" + postID + "?error=empty_post#post_form";
 
 			ResultSet sql = sql("select id from users where username=?", request.getRemoteUser());
 			sql.next();
@@ -183,7 +189,7 @@ public class ForumTopic {
 
 			return "redirect:/forum/post/" + postID;
 		} catch (Exception e) {
-			return "redirect:/error";
+			return "redirect:/error?reason=internal_server_error";
 		}
 	}
 }

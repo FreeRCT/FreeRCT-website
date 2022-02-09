@@ -45,8 +45,8 @@ public class Screenshots {
 
 				function createScreenshotGallery() {
 					ALL_SCREENSHOT_SECTIONS.forEach((section) => {
-						document.write("<h2 id='" + section.slug + "' style='padding-top:" + DESIRED_PADDING_BELOW_MENU_BAR + "px'>");
-						document.write("<a href='/screenshots#" + section.slug + "' class='linkified_header'>");
+						document.write("<a class='anchor' id='" + section.slug + "'></a>");
+						document.write("<h2><a href='/screenshots#" + section.slug + "' class='linkified_header'>");
 						document.write(section.label);
 						document.write("</a></h2>");
 

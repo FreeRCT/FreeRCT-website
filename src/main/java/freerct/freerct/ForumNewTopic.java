@@ -30,7 +30,7 @@ public class ForumNewTopic {
 
 	@GetMapping("/forum/{forumID}/new")
 	@ResponseBody
-	public String newTopic(WebRequest request, @PathVariable long forumID) {
+	public String newTopic(WebRequest request, @PathVariable long forumID, @RequestParam(value="error", required=false) String error) {
 		try {
 			ResultSet sql = sql("select name,description from forums where id=?", forumID);
 			sql.next();
@@ -39,11 +39,11 @@ public class ForumNewTopic {
 
 			String body	=	"<h1>Forum: " + htmlEscape(forumName) + ": New Topic</h1>"
 						+	"<p class='forum_description_name'>" + htmlEscape(forumDescription) + "</p>"
-						+	generateForumPostForm(true, "Post", "", "/forum/" + forumID + "/submit_new");
+						+	generateForumPostForm(true, false, "Post", "", "/forum/" + forumID + "/submit_new", error);
 
 			return generatePage(request, "Forum | " + forumName + " | New Topic", body);
 		} catch (Exception e) {
-			return new ErrorHandler().error(request);
+			return new ErrorHandler().error(request, "internal_server_error");
 		}
 	}
 
@@ -53,6 +53,11 @@ public class ForumNewTopic {
 			@RequestPart("subject") String subject,
 			@RequestPart("content") String content) {
 		try {
+			subject = subject.trim();
+			if (subject.isEmpty()) return "redirect:/forum/" + forumID + "/new?error=empty_title#post_form";
+			content = content.trim();
+			if (content.isEmpty()) return "redirect:/forum/" + forumID + "/new?error=empty_post#post_form";
+
 			ResultSet sql = sql("select id from users where username=?", request.getRemoteUser());
 			sql.next();
 			long userID = sql.getLong("id");
@@ -68,13 +73,13 @@ public class ForumNewTopic {
 
 			return "redirect:/forum/topic/" + topicID;
 		} catch (Exception e) {
-			return "redirect:/error";
+			return "redirect:/error?reason=internal_server_error";
 		}
 	}
 
 	@GetMapping("/forum/post/edit/{postID}")
 	@ResponseBody
-	public String editPost(WebRequest request, @PathVariable long postID) {
+	public String editPost(WebRequest request, @PathVariable long postID, @RequestParam(value="error", required=false) String error) {
 		try {
 			ResultSet sql = sql("select topic,body from posts where id=?", postID);
 			sql.next();
@@ -92,12 +97,12 @@ public class ForumNewTopic {
 
 			String body	=	"<h1>Topic: " + htmlEscape(topicName) + ": Edit Post</h1>"
 						+	"<p class='forum_description_name'>Forum: <a href='/forum/" + forumID + "'>" + htmlEscape(forumName) + "</a></p>"
-						+	generateForumPostForm(false, "Edit Post", content, "/forum/post/submit_edit/" + postID);
+						+	generateForumPostForm(false, true, "Edit Post", content, "/forum/post/submit_edit/" + postID, error);
 						;
 
 			return generatePage(request, "Forum | " + forumName + " | " + topicName + " | Edit Post", body);
 		} catch (Exception e) {
-			return new ErrorHandler().error(request);
+			return new ErrorHandler().error(request, "internal_server_error");
 		}
 	}
 }

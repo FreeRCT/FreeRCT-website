@@ -87,7 +87,7 @@ public class UserProfile {
 
 			return generatePage(request, "User | " + htmlEscape(username), body);
 		} catch (SQLException e) {
-			return new ErrorHandler().error(request);
+			return new ErrorHandler().error(request, "internal_server_error");
 		}
 	}
 }
