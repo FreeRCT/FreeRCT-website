@@ -435,6 +435,10 @@ input, textarea {
 .forum_post_buttons_wrapper, .forum_post_buttons_wrapper>form {
 	padding: 0;
 }
+.forum_post_buttons_wrapper>form {
+	float: left;
+	margin-right: 4px;
+}
 
 /* Latest posts box. */
 

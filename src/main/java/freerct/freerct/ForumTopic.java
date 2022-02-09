@@ -75,13 +75,38 @@ public class ForumTopic {
 				Calendar calendarFirst = getCalendar(sql, "created");
 				Calendar calendarLast = getCalendar(sql, "edited");
 				allPosts.add(new Post(sql.getLong("id"), sql.getLong("user"), htmlEscape(authorName), sql.getLong("editor"), htmlEscape(editorName),
-						calendarFirst, calendarLast, renderMarkdown(sql.getString("body"))));
+						calendarFirst, calendarLast, sql.getString("body")));
 			}
 
 			String body	=	"<h1>Topic: " + htmlEscape(topicName) + "</h1>"
 						+	"<p class='forum_description_name'>Forum: <a href='/forum/" + forumID + "'>" + htmlEscape(forumName) + "</a></p>"
 						+	"<p class='forum_description_stats'>" + pluralForm(allPosts.size(), "post", "posts") + "</p>"
-						;
+						+	"""
+							<script>
+								function quotePost(content) {
+									var textarea = document.getElementById('content');
+									const selStart = textarea.selectionStart;
+									const selEnd = textarea.selectionEnd;
+									const text = textarea.value;
+
+									var newText;
+									if (selStart > 0) {
+										newText = text.substring(0, selStart);
+										newText += "\\n\\n> ";
+									} else {
+										newText = "> ";
+									}
+
+									newText += content;
+									newText += "\\n\\n";
+									newText += text.substring(selEnd);
+
+									textarea.value = newText;
+
+									location.href = "#content";  // Jump down to textarea
+								}
+							</script>
+						""";
 
 			if (SecurityManager.isModerator(request)) {
 				body	+=	"<form><div class='forum_new_topic_button_wrapper'>"
@@ -134,13 +159,34 @@ public class ForumTopic {
 					body += datetimestring(p.edited, request.getLocale()) + "</div>";
 				}
 
-				body += "</div><div class='forum_post_body'>" + p.body + "</div>";
+				body += "</div><div class='forum_post_body'>" + renderMarkdown(p.body) + "</div>";
 
-				if (SecurityManager.mayEditPost(request, p.id)) {
-					body	+=	"<div class='forum_post_buttons_wrapper'><form>"
-							+		"<input class='form_button' type='submit' value='Edit Post' formaction='/forum/post/edit/" + p.id + "'>"
-							+	"</form></div>"
-							;
+				final boolean mayQuote = request.getUserPrincipal() != null;
+				final boolean mayEdit = SecurityManager.mayEditPost(request, p.id);
+				final boolean mayDelete = SecurityManager.mayDeletePost(request, p.id);
+				if (mayQuote || mayEdit || mayDelete) {
+					body += "<div class='forum_post_buttons_wrapper'>";
+
+					if (mayQuote) {
+						/* Those are Java regexex, so "\\\\" represents a single backslash.
+						 * Conveniently, we can escape problematic sequences by replacing them
+						 * with a backslash followed by 'x' and the ASCII code, and Javascript
+						 * will take care of replacing them back to the correct characters.
+						 */
+						String quotingFunctionCall = p.body.trim()
+								.replaceAll("\\\\", "\\\\x5c")
+								.replaceAll("'", "\\\\x27")
+								.replaceAll("\"", "\\\\x22")
+								.replaceAll("\r", "\\\\x0d")
+								.replaceAll("\n", "\\\\x0a");
+
+						body += "<form><input class='form_button' type='button' value='Quote' onclick=\"quotePost('" + quotingFunctionCall + "')\"></form>";
+					}
+
+					if (mayEdit  ) body += "<form><input class='form_button' type='submit' value='Edit'   formaction='/forum/post/edit/"   + p.id + "'></form>";
+					if (mayDelete) body += "<form><input class='form_button' type='submit' value='Delete' formaction='/forum/post/delete/" + p.id + "'></form>";
+
+					body += "</div>";
 				}
 
 				body += "</div></div>";

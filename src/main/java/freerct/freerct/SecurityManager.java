@@ -100,6 +100,36 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 	}
 
 	/**
+	 * Check whether the current user may delete a forum post.
+	 * @param request Web request associated with the current session.
+	 * @param postID Post to delete.
+	 * @return The user may delete this post.
+	 */
+	public static boolean mayDeletePost(WebRequest request, long postID) {
+		if (request.getUserPrincipal() == null) return false;  // Not logged in.
+		try {
+			ResultSet sql = sql("select id,state from users where username=?", request.getRemoteUser());
+			sql.next();
+			long userID = sql.getLong("id");
+			switch (sql.getInt("state")) {
+				case USER_STATE_ADMIN:
+				case USER_STATE_MODERATOR:
+					// Admins and moderators may always edit all posts.
+					return true;
+				default:
+					// Continue below
+					break;
+			}
+
+			sql = sql("select user from posts where id=?", postID);
+			sql.next();
+			return sql.getLong("user") == userID;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/**
 	 * Check whether the current user is a moderator or admin.
 	 * @param request Web request associated with the current session.
 	 * @return The user has moderator privileges.
