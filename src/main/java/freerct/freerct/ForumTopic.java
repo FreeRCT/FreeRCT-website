@@ -168,13 +168,13 @@ public class ForumTopic {
 					body += "<div class='forum_post_buttons_wrapper'>";
 
 					if (mayQuote) {
-						/* Those are Java regexex, so "\\\\" represents a single backslash.
+						/* Those are Java regexes, so "\\\\" represents a single backslash.
 						 * Conveniently, we can escape problematic sequences by replacing them
 						 * with a backslash followed by 'x' and the ASCII code, and Javascript
 						 * will take care of replacing them back to the correct characters.
 						 */
 						String quotingFunctionCall =
-								("> *" + p.author + " wrote:*\n\n" + p.body.trim())
+								("> *" + p.author + " wrote:*\n\n---\n" + p.body.trim())
 								.replaceAll("\\\\", "\\\\x5c")
 								.replaceAll("'", "\\\\x27")
 								.replaceAll("\"", "\\\\x22")

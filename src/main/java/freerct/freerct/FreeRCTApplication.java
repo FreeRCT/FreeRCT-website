@@ -416,15 +416,6 @@ public class FreeRCTApplication {
 			rowOff += 2;
 		}
 
-		body	+=	"<input class='griditem form_button form_default_action' style='grid-column:3/span 1; grid-row:" + (3 + rowOff) + "/span 1'"
-				+		"type='submit' value='Submit' formaction='" + formaction + "'>"
-				;
-
-		if (reset) {
-			body	+=	"<input class='griditem form_button' style='grid-column:2/span 1; grid-row:" + (3 + rowOff) + "/span 1'"
-					+		"type='reset' value='Reset'>";
-		}
-
 		if (textareaTitle != null) {
 			body	+=	"<label class='griditem' style='grid-column:2/span 1; grid-row:" + (1 + rowOff)
 					+	"/span 1' for='content'>" + textareaTitle + "</label>"
@@ -433,8 +424,18 @@ public class FreeRCTApplication {
 					+	"<input class='griditem form_button' style='grid-column:1/span 1; grid-row:" + (3 + rowOff) + "/span 1'"
 					+			"type='button' onclick='updatePreview()' value='Preview'>"
 					;
-			rowOff += 2;
 		}
+
+		if (reset) {
+			body	+=	"<input class='griditem form_button' style='grid-column:2/span 1; grid-row:" + (3 + rowOff) + "/span 1'"
+					+		"type='reset' value='Reset'>";
+		}
+
+		body	+=	"<input class='griditem form_button form_default_action' style='grid-column:3/span 1; grid-row:" + (3 + rowOff) + "/span 1'"
+				+		"type='submit' value='Submit' formaction='" + formaction + "'>"
+				;
+
+		if (textareaTitle != null) rowOff += 2;
 
 		if (error != null) {
 			body += "<label class='griditem form_error form_error_caption' style='grid-column:1/span 3; grid-row:" + (4 + rowOff) + "/span 1'>";
