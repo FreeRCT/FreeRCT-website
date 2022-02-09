@@ -92,9 +92,9 @@ public class ForumTopic {
 									var newText;
 									if (selStart > 0) {
 										newText = text.substring(0, selStart);
-										newText += "\\n\\n> ";
+										newText += "\\n\\n";
 									} else {
-										newText = "> ";
+										newText = "";
 									}
 
 									newText += content;
@@ -173,12 +173,14 @@ public class ForumTopic {
 						 * with a backslash followed by 'x' and the ASCII code, and Javascript
 						 * will take care of replacing them back to the correct characters.
 						 */
-						String quotingFunctionCall = p.body.trim()
+						String quotingFunctionCall =
+								("> *" + p.author + " wrote:*\n\n" + p.body.trim())
 								.replaceAll("\\\\", "\\\\x5c")
 								.replaceAll("'", "\\\\x27")
 								.replaceAll("\"", "\\\\x22")
 								.replaceAll("\r", "\\\\x0d")
-								.replaceAll("\n", "\\\\x0a");
+								.replaceAll("\n", "\\\\x0a> ")  // Here we add the "> " that indicates the block quote.
+								;
 
 						body += "<form><input class='form_button' type='button' value='Quote' onclick=\"quotePost('" + quotingFunctionCall + "')\"></form>";
 					}
