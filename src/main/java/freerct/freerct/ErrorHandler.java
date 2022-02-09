@@ -30,6 +30,11 @@ public class ErrorHandler implements ErrorController {
 					body = "An internal server error has occurred.";
 					break;
 
+				case "forbidden":
+					title = "Forbidden";
+					body = "You do not have sufficient privileges to do this.";
+					break;
+
 				default:
 					title = "Unknown Error";
 					body = "An unknown error has occurred: '" + htmlEscape(reason) + "'";

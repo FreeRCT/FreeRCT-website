@@ -61,7 +61,7 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 	 * @param postID Post to edit.
 	 * @return The user may edit this post.
 	 */
-	public static boolean mayEdit(WebRequest request, long postID) {
+	public static boolean mayEditPost(WebRequest request, long postID) {
 		if (request.getUserPrincipal() == null) return false;  // Not logged in.
 		try {
 			ResultSet sql = sql("select id,state from users where username=?", request.getRemoteUser());
@@ -94,6 +94,28 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 
 			long delta = Calendar.getInstance().getTimeInMillis() - getCalendar(sql, "created").getTimeInMillis();
 			return delta < FreeRCTApplication.POST_EDIT_TIMEOUT;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Check whether the current user is a moderator or admin.
+	 * @param request Web request associated with the current session.
+	 * @return The user has moderator privileges.
+	 */
+	public static boolean isModerator(WebRequest request) {
+		if (request.getUserPrincipal() == null) return false;  // Not logged in.
+		try {
+			ResultSet sql = sql("select state from users where username=?", request.getRemoteUser());
+			sql.next();
+			switch (sql.getInt("state")) {
+				case USER_STATE_ADMIN:
+				case USER_STATE_MODERATOR:
+					return true;
+				default:
+					return false;
+			}
 		} catch (Exception e) {
 			return false;
 		}

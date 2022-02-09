@@ -266,6 +266,10 @@ input, textarea, .form_button {
 	color: var(--text-light);
 }
 
+input, textarea {
+	font-family: monospace;
+}
+
 .form_error, .form_ok {
 	font-size: 18px;
 }

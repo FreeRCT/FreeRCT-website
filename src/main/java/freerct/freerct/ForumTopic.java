@@ -83,6 +83,13 @@ public class ForumTopic {
 						+	"<p class='forum_description_stats'>" + pluralForm(allPosts.size(), "post", "posts") + "</p>"
 						;
 
+			if (SecurityManager.isModerator(request)) {
+				body	+=	"<form><div class='forum_new_topic_button_wrapper'>"
+						+		"<input class='form_button' type='submit' value='Rename' formaction='/forum/topic/rename/" + topicID + "'>"
+						+	"</div></form>"
+						;
+			}
+
 			for (Post p : allPosts) {
 				ResultSet postCounter = sql("select count(user) as nr from posts where user=?", p.authorID);
 				postCounter.next();
@@ -129,7 +136,7 @@ public class ForumTopic {
 
 				body += "</div><div class='forum_post_body'>" + p.body + "</div>";
 
-				if (SecurityManager.mayEdit(request, p.id)) {
+				if (SecurityManager.mayEditPost(request, p.id)) {
 					body	+=	"<div class='forum_post_buttons_wrapper'><form>"
 							+		"<input class='form_button' type='submit' value='Edit Post' formaction='/forum/post/edit/" + p.id + "'>"
 							+	"</form></div>"
@@ -140,7 +147,7 @@ public class ForumTopic {
 			}
 
 			if (request.getUserPrincipal() != null) {
-				body += generateForumPostForm(false, false, "New Post", "", "/forum/topic/" + topicID + "/submit_new", error);
+				body += generateForumPostForm(false, null, "New Post", "", "/forum/topic/" + topicID + "/submit_new", error);
 			}
 
 			return generatePage(request, "Forum | " + forumName + " | " + topicName, body);
@@ -177,7 +184,7 @@ public class ForumTopic {
 	@PostMapping("/forum/post/submit_edit/{postID}")
 	public String editPost(WebRequest request, @PathVariable long postID, @RequestPart("content") String content) {
 		try {
-			if (!SecurityManager.mayEdit(request, postID)) return "redirect:/forum/post/edit/" + postID + "?error=restricted#post_form";
+			if (!SecurityManager.mayEditPost(request, postID)) return "redirect:/forum/post/edit/" + postID + "?error=restricted#post_form";
 
 			content = content.trim();
 			if (content.isEmpty()) return "redirect:/forum/post/edit/" + postID + "?error=empty_post#post_form";

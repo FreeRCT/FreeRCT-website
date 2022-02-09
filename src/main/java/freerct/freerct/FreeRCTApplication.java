@@ -366,14 +366,14 @@ public class FreeRCTApplication {
 	/**
 	 * Generate the form in which a user can create or edit a post.
 	 * @param subjectLine Whether to include a "Subject" form field.
-	 * @param reset Whether to include a Reset Content button.
-	 * @param title Title to show above the form.
+	 * @param subjectTitle Title to show above the form's subject field, or null to omit this field.
+	 * @param textareaTitle Title to show above the form's text area field, or null to omit this field.
 	 * @param content Initial content of the textarea.
 	 * @param formaction URL to navigate to when clicking Submit.
 	 * @param error Error message to show from a previous failed attempt (may be null).
 	 * @return The HTML string.
 	 */
-	public static String generateForumPostForm(boolean subjectLine, boolean reset, String title, String content, String formaction, String error) {
+	public static String generateForumPostForm(boolean reset, String subjectTitle, String textareaTitle, String content, String formaction, String error) {
 		String body = "<a class='anchor' id='post_form'></a><form class='grid new_post_form' method='post' enctype='multipart/form-data'>"
 			+	"""
 					<script>
@@ -403,29 +403,37 @@ public class FreeRCTApplication {
 
 		int rowOff = 0;
 
-		if (subjectLine) {
-			body	+=	"<label class='griditem' style='grid-column:2/span 1; grid-row:" + (1 + rowOff) + "/span 1' for='subject'>Subject</label>"
-					+	"<input class='griditem' style='grid-column:1/span 3; grid-row:" + (2 + rowOff) + "/span 1' "
-					+	"type='text' id='subject' required name='subject' autofocus>"
+		if (subjectTitle != null) {
+			body	+=	"<label class='griditem' style='grid-column:2/span 1; grid-row:" + (1 + rowOff) + "/span 1' for='subject'>"
+					+	subjectTitle + "</label><input class='griditem' style='grid-column:1/span 3; grid-row:" + (2 + rowOff)
+					+	"/span 1' type='text' id='subject' required name='subject' autofocus"
 					;
+
+			if (textareaTitle == null) body += " value='" + htmlEscape(content) + "'";
+
+			body += ">";
 
 			rowOff += 2;
 		}
 
-		body	+=		"<label class='griditem' style='grid-column:2/span 1; grid-row:" + (1 + rowOff)
-				+		"/span 1' for='content'>" + title + "</label>"
-				+		"<textarea class='griditem' style='grid-column:1/span 3; grid-row:" + (2 + rowOff) + "/span 1; resize:vertical'"
-				+				"id='content' rows=8 required name='content'>" + content + "</textarea>"
-
-				+		"<input class='griditem form_button' style='grid-column:1/span 1; grid-row:" + (3 + rowOff) + "/span 1'"
-				+				"type='button' onclick='updatePreview()' value='Preview'>"
-				+		"<input class='griditem form_button form_default_action' style='grid-column:3/span 1; grid-row:" + (3 + rowOff) + "/span 1'"
-				+			"type='submit' value='Submit' formaction='" + formaction + "'>"
+		body	+=	"<input class='griditem form_button form_default_action' style='grid-column:3/span 1; grid-row:" + (3 + rowOff) + "/span 1'"
+				+		"type='submit' value='Submit' formaction='" + formaction + "'>"
 				;
 
 		if (reset) {
 			body	+=	"<input class='griditem form_button' style='grid-column:2/span 1; grid-row:" + (3 + rowOff) + "/span 1'"
 					+		"type='reset' value='Reset'>";
+		}
+
+		if (textareaTitle != null) {
+			body	+=	"<label class='griditem' style='grid-column:2/span 1; grid-row:" + (1 + rowOff)
+					+	"/span 1' for='content'>" + textareaTitle + "</label>"
+					+	"<textarea class='griditem' style='grid-column:1/span 3; grid-row:" + (2 + rowOff) + "/span 1; resize:vertical'"
+					+			"id='content' rows=8 required name='content'>" + content + "</textarea>"
+					+	"<input class='griditem form_button' style='grid-column:1/span 1; grid-row:" + (3 + rowOff) + "/span 1'"
+					+			"type='button' onclick='updatePreview()' value='Preview'>"
+					;
+			rowOff += 2;
 		}
 
 		if (error != null) {
@@ -449,12 +457,14 @@ public class FreeRCTApplication {
 			++rowOff;
 		}
 
-		body	+=		"<label class='griditem' id='preview_label' style='display:none;grid-column:2/span 1; grid-row:"
-				+			(5 + rowOff) + "/span 1' for='preview'>Preview</label>"
-				+		"<div class='griditem forum_post_body forum_list_entry' style='display:none;grid-column:1/span 3; grid-row:"
-				+			(6 + rowOff) + "/span 1' id='preview'></div>"
-				+		"</form>"
-				;
+		if (textareaTitle != null) {
+			body	+=	"<label class='griditem' id='preview_label' style='display:none;grid-column:2/span 1; grid-row:"
+					+		(3 + rowOff) + "/span 1' for='preview'>Preview</label>"
+					+	"<div class='griditem forum_post_body forum_list_entry' style='display:none;grid-column:1/span 3; grid-row:"
+					+		(4 + rowOff) + "/span 1' id='preview'></div>"
+					+	"</form>"
+					;
+		}
 
 		return body;
 	}

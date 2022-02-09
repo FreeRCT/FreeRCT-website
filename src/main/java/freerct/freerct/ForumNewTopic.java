@@ -39,7 +39,7 @@ public class ForumNewTopic {
 
 			String body	=	"<h1>Forum: " + htmlEscape(forumName) + ": New Topic</h1>"
 						+	"<p class='forum_description_name'>" + htmlEscape(forumDescription) + "</p>"
-						+	generateForumPostForm(true, false, "Post", "", "/forum/" + forumID + "/submit_new", error);
+						+	generateForumPostForm(false, "Subject", "Post", "", "/forum/" + forumID + "/submit_new", error);
 
 			return generatePage(request, "Forum | " + forumName + " | New Topic", body);
 		} catch (Exception e) {
@@ -97,12 +97,54 @@ public class ForumNewTopic {
 
 			String body	=	"<h1>Topic: " + htmlEscape(topicName) + ": Edit Post</h1>"
 						+	"<p class='forum_description_name'>Forum: <a href='/forum/" + forumID + "'>" + htmlEscape(forumName) + "</a></p>"
-						+	generateForumPostForm(false, true, "Edit Post", content, "/forum/post/submit_edit/" + postID, error);
+						+	generateForumPostForm(true, null, "Edit Post", content, "/forum/post/submit_edit/" + postID, error);
 						;
 
 			return generatePage(request, "Forum | " + forumName + " | " + topicName + " | Edit Post", body);
 		} catch (Exception e) {
 			return new ErrorHandler().error(request, "internal_server_error");
+		}
+	}
+
+	@GetMapping("/forum/topic/rename/{topicID}")
+	@ResponseBody
+	public String renameTopic(WebRequest request, @PathVariable long topicID, @RequestParam(value="error", required=false) String error) {
+		try {
+			if (!SecurityManager.isModerator(request)) return new ErrorHandler().error(request, "forbidden");
+
+			ResultSet sql = sql("select forum,name from topics where id=?", topicID);
+			sql.next();
+			final long forumID = sql.getLong("forum");
+			final String topicName = sql.getString("name");
+
+			sql = sql("select name from forums where id=?", forumID);
+			sql.next();
+			final String forumName = sql.getString("name");
+
+			String body	=	"<h1>Topic: " + htmlEscape(topicName) + ": Rename Topic</h1>"
+						+	"<p class='forum_description_name'>Forum: <a href='/forum/" + forumID + "'>" + htmlEscape(forumName) + "</a></p>"
+						+	generateForumPostForm(true, "Rename Topic", null, topicName, "/forum/topic/submit_rename/" + topicID, error);
+						;
+
+			return generatePage(request, "Forum | " + forumName + " | " + topicName + " | Edit Post", body);
+		} catch (Exception e) {
+			return new ErrorHandler().error(request, "internal_server_error");
+		}
+	}
+
+	@PostMapping("/forum/topic/submit_rename/{topicID}")
+	public String doRenameTopic(WebRequest request, @PathVariable long topicID, @RequestPart("subject") String subject) {
+		try {
+			if (!SecurityManager.isModerator(request)) return "redirect:/error?reason=forbidden";
+
+			subject = subject.trim();
+			if (subject.isEmpty()) return "redirect:/forum/topic/rename/" + topicID + "?error=empty_post#post_form";
+
+			sql("update topics set name=? where id=?", subject, topicID);
+
+			return "redirect:/forum/topic/" + topicID;
+		} catch (Exception e) {
+			return "redirect:/error?reason=internal_server_error";
 		}
 	}
 }
