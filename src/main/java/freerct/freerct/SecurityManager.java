@@ -220,6 +220,7 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			synchronized (_loggedInUsers) {
 				_loggedInUsers.add(((UserDetails)auth.getPrincipal()).getUsername());
 			}
+
 			String next = request.getParameter("next");
 			if (next == null) {
 				super.onAuthenticationSuccess(request, response, auth);

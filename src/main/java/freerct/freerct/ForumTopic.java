@@ -127,11 +127,20 @@ public class ForumTopic {
 					body += datetimestring(p.edited, request.getLocale()) + "</div>";
 				}
 
-				body += "</div><div class='forum_post_body'>" + p.body + "</div></div></div>";
+				body += "</div><div class='forum_post_body'>" + p.body + "</div>";
+
+				if (SecurityManager.mayEdit(request, p.id)) {
+					body	+=	"<div class='forum_post_buttons_wrapper'><form>"
+							+		"<input class='form_button' type='submit' value='Edit Post' formaction='/forum/post/edit/" + p.id + "'>"
+							+	"</form></div>"
+							;
+				}
+
+				body += "</div></div>";
 			}
 
 			if (request.getUserPrincipal() != null) {
-				body += generateForumPostForm(false, "New Post", "/forum/topic/" + topicID + "/submit_new");
+				body += generateForumPostForm(false, "New Post", "", "/forum/topic/" + topicID + "/submit_new");
 			}
 
 			return generatePage(request, "Forum | " + forumName + " | " + topicName, body);
@@ -155,6 +164,22 @@ public class ForumTopic {
 			}
 			sql.next();
 			long postID = sql.getLong("new_id");
+
+			return "redirect:/forum/post/" + postID;
+		} catch (Exception e) {
+			return "redirect:/error";
+		}
+	}
+
+	@PostMapping("/forum/post/submit_edit/{postID}")
+	public String editPost(WebRequest request, @PathVariable long postID, @RequestPart("content") String content) {
+		try {
+			if (!SecurityManager.mayEdit(request, postID)) return "redirect:/error";
+
+			ResultSet sql = sql("select id from users where username=?", request.getRemoteUser());
+			sql.next();
+
+			sql("update posts set editor=?, edited=current_timestamp, body=? where id=?", sql.getLong("id"), content, postID);
 
 			return "redirect:/forum/post/" + postID;
 		} catch (Exception e) {

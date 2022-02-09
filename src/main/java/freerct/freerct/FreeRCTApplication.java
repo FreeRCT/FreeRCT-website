@@ -7,6 +7,7 @@ import java.text.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.github.rjeschke.txtmark.*;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.SpringApplication;
@@ -165,8 +166,25 @@ public class FreeRCTApplication {
 	 * @return Rendered and HTML-safe string.
 	 */
 	public static String renderMarkdown(String input) {
-		return input == null ? null : com.github.rjeschke.txtmark.Processor.process(htmlEscape(input)).trim();
+		if (input == null) return null;
+
+		/* Escaping the '>' character means we cannot use Markdown's quote syntax.
+		 * So we first need to define a custom MD symbol for quotes (we use "§§§");
+		 * convert '>' to this symbol; then escape HTML; then change it back;
+		 * and only then run Markdown.
+		 * This means that there may be unescaped '>' symbols in the resulting
+		 * text, but since we don't allow any unescaped '<' symbols this alone
+		 * should not enable HTML injection.
+		 */
+		input = input.replaceAll(">", _markdown_quote_symbol);
+		input = htmlEscape(input);
+		input = input.replaceAll(_markdown_quote_symbol, ">");
+		input = Processor.process(input, _markdown_cfg).trim();
+		return input;
 	}
+
+	private static final String _markdown_quote_symbol = "§§§";
+	private static final Configuration _markdown_cfg = Configuration.builder().forceExtentedProfile().build();
 
 	/**
 	 * Escape HTML characters in arbitrary text.
@@ -348,10 +366,11 @@ public class FreeRCTApplication {
 	 * Generate the form in which a user can create or edit a post.
 	 * @param subjectLine Whether to include a "Subject" form field.
 	 * @param title Title to show above the form.
+	 * @param content Initial content of the textarea.
 	 * @param formaction URL to navigate to when clicking Submit.
 	 * @return The HTML string.
 	 */
-	public static String generateForumPostForm(boolean subjectLine, String title, String formaction) {
+	public static String generateForumPostForm(boolean subjectLine, String title, String content, String formaction) {
 		String body = "<form class='grid new_post_form' method='post' enctype='multipart/form-data'>"
 			+	"""
 					<script>
@@ -389,7 +408,7 @@ public class FreeRCTApplication {
 		body	+=		"<label class='griditem' style='grid-column:2/span 1; grid-row:" + (subjectLine ? 3 : 1)
 				+		"/span 1' for='content'>" + title + "</label>"
 				+		"<textarea class='griditem' style='grid-column:1/span 3; grid-row:" + (subjectLine ? 4 : 2) + "/span 1; resize:vertical'"
-				+				"id='content' rows=8 required name='content'></textarea>"
+				+				"id='content' rows=8 required name='content'>" + content + "</textarea>"
 
 				+		"<input class='griditem form_button' style='grid-column:3/span 1; grid-row:" + (subjectLine ? 5 : 3) + "/span 1'"
 				+				"type='button' onclick='updatePreview()' value='Preview'>"
