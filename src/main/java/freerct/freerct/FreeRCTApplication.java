@@ -168,15 +168,25 @@ public class FreeRCTApplication {
 	public static String renderMarkdown(String input) {
 		if (input == null) return null;
 
-		return Processor.process(input, _markdown_cfg);
+		/* Escaping the '>' character means we cannot use Markdown's quote syntax.
+		 * So we first need to define a custom MD symbol for quotes (we use "§§§");
+		 * convert '>' to this symbol; then escape HTML; then change it back;
+		 * and only then run Markdown. Afterwards, convert double-escaped
+		 * characters back to single-escaped.
+		 * This means that there may be unescaped '>' symbols in the resulting
+		 * text, but since we don't allow any unescaped '<' symbols this alone
+		 * should not enable HTML injection.
+		 */
+		input = input.replaceAll(">", _markdown_quote_symbol);
+		input = htmlEscape(input);
+		input = input.replaceAll(_markdown_quote_symbol, ">");
+		input = Processor.process(input, _markdown_cfg).trim();
+		input = input.replaceAll("&amp;([a-z]+);", "&$1;");
+		return input;
 	}
 
-	private static final Configuration _markdown_cfg =
-			Configuration.builder()
-					.enableSafeMode()        // Some safety stuff, seems recommended.
-					.enablePanicMode()       // Very important, prevents HTML injection.
-					.forceExtentedProfile()  // Enable "extra" features such as code blocks.
-			.build();
+	private static final String _markdown_quote_symbol = "§§§";
+	private static final Configuration _markdown_cfg = Configuration.builder().enableSafeMode().forceExtentedProfile().build();
 
 	/**
 	 * Escape HTML characters in arbitrary text.
