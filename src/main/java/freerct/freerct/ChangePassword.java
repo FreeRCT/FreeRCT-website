@@ -3,6 +3,7 @@ package freerct.freerct;
 import java.sql.*;
 import java.util.*;
 
+import javax.servlet.http.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
@@ -21,7 +22,7 @@ import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 public class ChangePassword {
 	@GetMapping("/user/{username}/changepassword")
 	@ResponseBody
-	public String fetch(WebRequest request,
+	public String fetch(WebRequest request, HttpSession session,
 			@PathVariable String username,
 			@RequestParam(value="type", required=false) String argument) {
 		String body = """
@@ -74,7 +75,7 @@ public class ChangePassword {
 		}
 		body += "</div>";
 
-		return generatePage(request, "Log In", body);
+		return generatePage(request, session, "Log In", body);
 	}
 
 	@PostMapping("/user/{username}/submit_changepassword")

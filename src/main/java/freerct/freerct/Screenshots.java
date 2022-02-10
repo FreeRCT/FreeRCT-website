@@ -1,5 +1,6 @@
 package freerct.freerct;
 
+import javax.servlet.http.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
@@ -18,8 +19,8 @@ import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 public class Screenshots {
 	@GetMapping("/screenshots")
 	@ResponseBody
-	public String fetch(WebRequest request) {
-		return generatePage(request, "Screenshots", """
+	public String fetch(WebRequest request, HttpSession session) {
+		return generatePage(request, session, "Screenshots", """
 			<h1>Screenshots</h1>
 			<script>
 				const ALL_SCREENSHOT_SECTIONS = [

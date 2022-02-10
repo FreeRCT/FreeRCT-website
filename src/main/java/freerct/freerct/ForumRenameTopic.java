@@ -25,9 +25,9 @@ import static freerct.freerct.FreeRCTApplication.generateForumPostForm;
 public class ForumRenameTopic {
 	@GetMapping("/forum/topic/rename/{topicID}")
 	@ResponseBody
-	public String renameTopic(WebRequest request, @PathVariable long topicID, @RequestParam(value="error", required=false) String error) {
+	public String renameTopic(WebRequest request, HttpSession session, @PathVariable long topicID, @RequestParam(value="error", required=false) String error) {
 		try {
-			if (!SecurityManager.isModerator(request)) return new ErrorHandler().error(request, "forbidden");
+			if (!SecurityManager.isModerator(request)) return new ErrorHandler().error(request, session, "forbidden");
 
 			ResultSet sql = sql("select forum,name from topics where id=?", topicID);
 			sql.next();
@@ -48,9 +48,9 @@ public class ForumRenameTopic {
 						+	generateForumPostForm(true, "Rename Topic", null, topicName, "/forum/topic/submit_rename/" + topicID, error, false);
 						;
 
-			return generatePage(request, "Forum | " + forumName + " | " + topicName + " | Rename Topic", body);
+			return generatePage(request, session, "Forum | " + forumName + " | " + topicName + " | Rename Topic", body);
 		} catch (Exception e) {
-			return new ErrorHandler().error(request, "internal_server_error");
+			return new ErrorHandler().error(request, session, "internal_server_error");
 		}
 	}
 

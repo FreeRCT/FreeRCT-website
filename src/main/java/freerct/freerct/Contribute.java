@@ -1,5 +1,6 @@
 package freerct.freerct;
 
+import javax.servlet.http.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
@@ -18,8 +19,8 @@ import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 public class Contribute {
 	@GetMapping("/contribute")
 	@ResponseBody
-	public String fetch(WebRequest request) {
-		return generatePage(request, "Contribute", """
+	public String fetch(WebRequest request, HttpSession session) {
+		return generatePage(request, session, "Contribute", """
 				<h1>Contribute</h1>
 				<p>
 					So you want to help develop FreeRCT? That's great!

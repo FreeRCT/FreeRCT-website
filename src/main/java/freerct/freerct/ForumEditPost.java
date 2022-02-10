@@ -25,7 +25,7 @@ import static freerct.freerct.FreeRCTApplication.generateForumPostForm;
 public class ForumEditPost {
 	@GetMapping("/forum/post/edit/{postID}")
 	@ResponseBody
-	public String editPost(WebRequest request, @PathVariable long postID, @RequestParam(value="error", required=false) String error) {
+	public String editPost(WebRequest request, HttpSession session, @PathVariable long postID, @RequestParam(value="error", required=false) String error) {
 		try {
 			ResultSet sql = sql("select topic,body from posts where id=?", postID);
 			sql.next();
@@ -51,14 +51,14 @@ public class ForumEditPost {
 						+	generateForumPostForm(true, null, "Edit Post", content, "/forum/post/submit_edit/" + postID, error, false);
 						;
 
-			return generatePage(request, "Forum | " + forumName + " | " + topicName + " | Edit Post", body);
+			return generatePage(request, session, "Forum | " + forumName + " | " + topicName + " | Edit Post", body);
 		} catch (Exception e) {
-			return new ErrorHandler().error(request, "internal_server_error");
+			return new ErrorHandler().error(request, session, "internal_server_error");
 		}
 	}
 
 	@PostMapping("/forum/post/submit_edit/{postID}")
-	public String editPost(WebRequest request, HttpSession session, @PathVariable long postID, @RequestPart("content") String content) {
+	public String doEditPost(WebRequest request, HttpSession session, @PathVariable long postID, @RequestPart("content") String content) {
 		try {
 			session.setAttribute("freerct-edit-post-content", content);
 

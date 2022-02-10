@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.github.rjeschke.txtmark.*;
+import javax.servlet.http.*;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.SpringApplication;
@@ -525,13 +526,58 @@ public class FreeRCTApplication {
 	}
 
 	/**
+	 * Get a list of all currently logged-in users, sorted by name and without duplicates.
+	 * @return Set of logged-in users.
+	 */
+	private static SortedSet<String> updateAndGetLoggedInUsers(WebRequest request, HttpSession session) {
+		synchronized (_loggedInUsers) {
+			String loggedInAs = request.getRemoteUser();
+			SessionLogInInfo info = _loggedInUsers.get(session);
+			if (info != null) {  // Our session is already registered, so update it with our current status.
+				info.user = loggedInAs;
+				info.lastModified = Calendar.getInstance();
+			} else if (loggedInAs != null) {  // We don't have a session but we're logged in.
+				_loggedInUsers.put(session, new SessionLogInInfo(loggedInAs));
+			}
+
+			// Now clean up stale sessions.
+			boolean repeat;
+			do {
+				repeat = false;
+				for (HttpSession s : _loggedInUsers.keySet()) {
+					if (Calendar.getInstance().getTimeInMillis() - _loggedInUsers.get(s).lastModified.getTimeInMillis() > CURRENTLY_ONLINE_TIMEOUT) {
+						_loggedInUsers.remove(s);
+						repeat = true;
+						break;
+					}
+				}
+			} while (repeat);
+		}
+
+		SortedSet<String> set = new TreeSet<>();
+		for (SessionLogInInfo i : _loggedInUsers.values()) set.add(i.user);
+		return set;
+	}
+
+	private static class SessionLogInInfo {
+		public String user;
+		public Calendar lastModified;
+		public SessionLogInInfo(String u) {
+			user = u;
+			lastModified = Calendar.getInstance();
+		}
+	}
+	private static Map<HttpSession, SessionLogInInfo> _loggedInUsers = new HashMap<>();
+	private static final long CURRENTLY_ONLINE_TIMEOUT = 1000 * 60 * 15;  ///< After how many milliseconds of inactivity to kick a user from the Currently Online list.
+
+	/**
 	 * Generate the complete HTML webpage for a request.
 	 * @param request Current web request.
 	 * @param pagename Title for the page.
 	 * @param body Main content of the page.
 	 * @return Complete HTML-formatted webpage.
 	 */
-	public static String generatePage(WebRequest request, String pagename, String body) {
+	public static String generatePage(WebRequest request, HttpSession session, String pagename, String body) {
 		final String uri = uri(request);
 		String result =
 			"<!DOCTYPE HTML>"
@@ -680,7 +726,7 @@ public class FreeRCTApplication {
 			result += "<div class='right_column_box right_column_login'><a href='/login?next=" + uri + "'>Log In</a> / <a href='/signup'>Register</a></div>";
 		}
 
-		SortedSet<String> allLoggedInUsers = SecurityManager.getLoggedInUsers();
+		SortedSet<String> allLoggedInUsers = updateAndGetLoggedInUsers(request, session);
 		if (!allLoggedInUsers.isEmpty()) {
 			result += "<div class='right_column_box logged_in_users'>";
 			result += "<h2>Currently Online</h2>";
@@ -699,7 +745,7 @@ public class FreeRCTApplication {
 
 			+		"<p id='footer_spacer'></p><footer>"
 			+			"<div>© 2021-" + Calendar.getInstance().get(Calendar.YEAR) + " by the FreeRCT Development Team</div>"
-			+			"<div><a href='/contact'>Legal Notice / Contact</a></div>"
+			+			"<div><a href='/contact'>Legal Notice / Contact / Privacy Policy</a></div>"
 			+		"</footer>"
 			+		"<script>readjustMenuBarY();</script>"
 

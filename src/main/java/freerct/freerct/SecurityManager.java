@@ -6,12 +6,14 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import org.springframework.context.*;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.dao.*;
 import org.springframework.security.config.annotation.authentication.builders.*;
 import org.springframework.security.config.annotation.web.builders.*;
 import org.springframework.security.config.annotation.web.configuration.*;
 import org.springframework.security.core.*;
+import org.springframework.security.core.session.*;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.*;
 import org.springframework.security.crypto.factory.*;
@@ -260,7 +262,7 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			.logoutUrl("/logout")
 			.logoutSuccessUrl("/")
 			.deleteCookies("JSESSIONID")
-			.logoutSuccessHandler(new CustomLogoutSuccessHandler())
+//			.logoutSuccessHandler(new CustomLogoutSuccessHandler())  // We do not need a custom success handler currently.
 
 			/* When using an invalid or expired cookie. */
 			.and()
@@ -269,42 +271,16 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			;
 	}
 
-	private static List<String> _loggedInUsers = new ArrayList<>();  // Not a set because it may contain duplicates.
-
-	/**
-	 * Get a list of all currently logged-in users, sorted by name and without duplicates.
-	 * @return Set of logged-in users.
-	 */
-	public static SortedSet<String> getLoggedInUsers() {
-		SortedSet<String> set = new TreeSet<>();
-		for (String str : _loggedInUsers) set.add(str);
-		return set;
-	}
-
 	private class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 		@Override
 		public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication auth)
 		throws IOException, ServletException {
-			synchronized (_loggedInUsers) {
-				_loggedInUsers.add(((UserDetails)auth.getPrincipal()).getUsername());
-			}
-
 			String next = request.getParameter("next");
 			if (next == null) {
 				super.onAuthenticationSuccess(request, response, auth);
 			} else {
 				response.sendRedirect(next);
 			}
-		}
-	}
-	private class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
-		@Override
-		public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication auth)
-		throws IOException, ServletException {
-			synchronized (_loggedInUsers) {
-				_loggedInUsers.remove(((UserDetails)auth.getPrincipal()).getUsername());
-			}
-			super.onLogoutSuccess(request, response, auth);
 		}
 	}
 }

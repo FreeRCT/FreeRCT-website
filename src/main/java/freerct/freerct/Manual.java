@@ -1,5 +1,6 @@
 package freerct.freerct;
 
+import javax.servlet.http.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
@@ -18,8 +19,8 @@ import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 public class Manual {
 	@GetMapping("/manual")
 	@ResponseBody
-	public String fetch(WebRequest request) {
-		return generatePage(request, "Manual", """
+	public String fetch(WebRequest request, HttpSession session) {
+		return generatePage(request, session, "Manual", """
 			<div class="manual_section">
 				<div class="manual_margin hideme"">
 					<div></div>  <!-- spacer -->

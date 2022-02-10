@@ -3,6 +3,7 @@ package freerct.freerct;
 import java.sql.*;
 import java.util.*;
 
+import javax.servlet.http.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
@@ -72,7 +73,7 @@ public class News {
 
 	@GetMapping("/news")
 	@ResponseBody
-	public String fetch(WebRequest request) {
+	public String fetch(WebRequest request, HttpSession session) {
 		String body = "<h1>News Archive</h1>";
 		body += "<h2 class='news_count'>";
 		final long nr = countNews();
@@ -83,6 +84,6 @@ public class News {
 		}
 		body += "</h2>" + printLatestNews(request.getLocale(), -1);
 
-		return generatePage(request, "News Archive", body);
+		return generatePage(request, session, "News Archive", body);
 	}
 }

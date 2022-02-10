@@ -3,6 +3,7 @@ package freerct.freerct;
 import java.sql.*;
 import java.util.*;
 
+import javax.servlet.http.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
@@ -34,7 +35,7 @@ public class UserProfile {
 
 	@GetMapping("/user/{username}")
 	@ResponseBody
-	public String fetch(WebRequest request, @PathVariable String username, @RequestParam(value="type", required=false) String argument) {
+	public String fetch(WebRequest request, HttpSession session, @PathVariable String username, @RequestParam(value="type", required=false) String argument) {
 		try {
 			ResultSet userDetails = sql("select id,joined,state from users where username=?", username);
 			userDetails.next();
@@ -111,9 +112,9 @@ public class UserProfile {
 						;
 			}
 
-			return generatePage(request, "User | " + htmlEscape(username), body);
+			return generatePage(request, session, "User | " + htmlEscape(username), body);
 		} catch (SQLException e) {
-			return new ErrorHandler().error(request, "internal_server_error");
+			return new ErrorHandler().error(request, session, "internal_server_error");
 		}
 	}
 }

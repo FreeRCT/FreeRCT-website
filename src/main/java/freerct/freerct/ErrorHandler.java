@@ -1,5 +1,6 @@
 package freerct.freerct;
 
+import javax.servlet.http.*;
 import org.springframework.boot.web.servlet.error.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 public class ErrorHandler implements ErrorController {
 	@RequestMapping("/error")
 	@ResponseBody
-	public String error(WebRequest request, @RequestParam(value="reason", required=false) String reason) {
+	public String error(WebRequest request, HttpSession session, @RequestParam(value="reason", required=false) String reason) {
 		String title = "Not Found";
 		String body = "The document you requested could not be found. Perhaps you misspelled the address or clicked on a bad link?";
 
@@ -42,7 +43,7 @@ public class ErrorHandler implements ErrorController {
 			}
 		}
 
-		return generatePage(request, title, "<h1>" + title + "</h1><p>" + body + "</p>");
+		return generatePage(request, session, title, "<h1>" + title + "</h1><p>" + body + "</p>");
 	}
 
 	public String getErrorPath() {

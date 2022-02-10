@@ -3,6 +3,7 @@ package freerct.freerct;
 import java.sql.*;
 import java.util.*;
 
+import javax.servlet.http.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
@@ -39,7 +40,7 @@ public class ForumView {
 
 	@GetMapping("/forum/{forumID}")
 	@ResponseBody
-	public String fetch(WebRequest request, @PathVariable long forumID) {
+	public String fetch(WebRequest request, HttpSession session, @PathVariable long forumID) {
 		try {
 			ResultSet sql = sql("select name,description from forums where id=?", forumID);
 			sql.next();
@@ -117,9 +118,9 @@ public class ForumView {
 						+	"</div>";
 			}
 
-			return generatePage(request, "Forum | " + forumName, body);
+			return generatePage(request, session, "Forum | " + forumName, body);
 		} catch (Exception e) {
-			return new ErrorHandler().error(request, "internal_server_error");
+			return new ErrorHandler().error(request, session, "internal_server_error");
 		}
 	}
 }

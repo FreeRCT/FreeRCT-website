@@ -58,7 +58,7 @@ public class ForumTopic {
 
 	@GetMapping("/forum/topic/{topicID}")
 	@ResponseBody
-	public String fetch(WebRequest request, @PathVariable long topicID, @RequestParam(value="error", required=false) String error) {
+	public String fetch(WebRequest request, HttpSession session, @PathVariable long topicID, @RequestParam(value="error", required=false) String error) {
 		try {
 			ResultSet sql = sql("select name,forum from topics where id=?", topicID);
 			sql.next();
@@ -211,9 +211,9 @@ public class ForumTopic {
 				body += generateForumPostForm(false, null, "New Post", "", "/forum/topic/" + topicID + "/submit_new", error, false);
 			}
 
-			return generatePage(request, "Forum | " + forumName + " | " + topicName, body);
+			return generatePage(request, session, "Forum | " + forumName + " | " + topicName, body);
 		} catch (Exception e) {
-			return new ErrorHandler().error(request, "internal_server_error");
+			return new ErrorHandler().error(request, session, "internal_server_error");
 		}
 	}
 

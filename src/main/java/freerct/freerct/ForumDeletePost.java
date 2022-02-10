@@ -25,7 +25,7 @@ import static freerct.freerct.FreeRCTApplication.generateForumPostForm;
 public class ForumDeletePost {
 	@GetMapping("/forum/post/delete/{postID}")
 	@ResponseBody
-	public String deletePost(WebRequest request, @PathVariable long postID, @RequestParam(value="error", required=false) String error) {
+	public String deletePost(WebRequest request, HttpSession session, @PathVariable long postID, @RequestParam(value="error", required=false) String error) {
 		try {
 			ResultSet sql = sql("select topic,body from posts where id=?", postID);
 			sql.next();
@@ -51,9 +51,9 @@ public class ForumDeletePost {
 						+	generateForumPostForm(true, null, "Delete Post", content, "/forum/post/submit_delete/" + postID, error, true);
 						;
 
-			return generatePage(request, "Forum | " + forumName + " | " + topicName + " | Delete Post", body);
+			return generatePage(request, session, "Forum | " + forumName + " | " + topicName + " | Delete Post", body);
 		} catch (Exception e) {
-			return new ErrorHandler().error(request, "internal_server_error");
+			return new ErrorHandler().error(request, session, "internal_server_error");
 		}
 	}
 

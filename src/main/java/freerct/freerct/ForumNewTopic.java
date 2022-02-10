@@ -25,7 +25,7 @@ import static freerct.freerct.FreeRCTApplication.generateForumPostForm;
 public class ForumNewTopic {
 	@GetMapping("/forum/{forumID}/new")
 	@ResponseBody
-	public String newTopic(WebRequest request, @PathVariable long forumID, @RequestParam(value="error", required=false) String error) {
+	public String newTopic(WebRequest request, HttpSession session, @PathVariable long forumID, @RequestParam(value="error", required=false) String error) {
 		try {
 			ResultSet sql = sql("select name,description from forums where id=?", forumID);
 			sql.next();
@@ -41,9 +41,9 @@ public class ForumNewTopic {
 
 						+	generateForumPostForm(false, "Subject", "Post", "", "/forum/" + forumID + "/submit_new", error, false);
 
-			return generatePage(request, "Forum | " + forumName + " | New Topic", body);
+			return generatePage(request, session, "Forum | " + forumName + " | New Topic", body);
 		} catch (Exception e) {
-			return new ErrorHandler().error(request, "internal_server_error");
+			return new ErrorHandler().error(request, session, "internal_server_error");
 		}
 	}
 

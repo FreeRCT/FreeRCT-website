@@ -29,8 +29,7 @@ public class Register {
 
 	@GetMapping("/signup")
 	@ResponseBody
-	public String fetch(WebRequest request,
-			@RequestParam(value="type", required=false) String argument) {
+	public String fetch(WebRequest request, HttpSession session, @RequestParam(value="type", required=false) String argument) {
 		String body = """
 			<a class='anchor' id='signup_form'></a>
 			<div class='login_form_wrapper'>
@@ -83,7 +82,7 @@ public class Register {
 		}
 		body += "</div>";
 
-		return generatePage(request, "Register", body);
+		return generatePage(request, session, "Register", body);
 	}
 
 	@PostMapping("/signup/complete")
