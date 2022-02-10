@@ -171,8 +171,8 @@ public class FreeRCTApplication {
 		/* Escaping the '>' character means we cannot use Markdown's quote syntax.
 		 * So we first need to define a custom MD symbol for quotes (we use "§§§");
 		 * convert '>' to this symbol; then escape HTML; then change it back;
-		 * and only then run Markdown. Afterwards, convert double-escaped
-		 * characters back to single-escaped.
+		 * and only then run Markdown. After that, we can convert smileys.
+		 * Last of all, convert double-escaped characters back to single-escaped.
 		 * This means that there may be unescaped '>' symbols in the resulting
 		 * text, but since we don't allow any unescaped '<' symbols this alone
 		 * should not enable HTML injection.
@@ -181,12 +181,59 @@ public class FreeRCTApplication {
 		input = htmlEscape(input);
 		input = input.replaceAll(_markdown_quote_symbol, ">");
 		input = Processor.process(input, _markdown_cfg).trim();
+
+		// NOCOM:
+		// - Should only use whole-word matches, not within words
+		// - Should not happen within code blocks
+		// for (SmileyDefinition d : SmileyDefinition.SMILEYS) input = input.replaceAll(d.regex, d.smiley);
+
 		input = input.replaceAll("&amp;([a-z]+);", "&$1;");
+
 		return input;
 	}
 
 	private static final String _markdown_quote_symbol = "§§§";
 	private static final Configuration _markdown_cfg = Configuration.builder().enableSafeMode().forceExtentedProfile().build();
+
+	private static class SmileyDefinition {
+		public final String regex, smiley;
+		private SmileyDefinition(String r, String s) {
+			regex = r;
+			smiley = s;
+		}
+
+		/**
+		 * All supported smileys, with the Java regex to search for them.
+		 *Order matters, because some smiley definitions are part of another smiley definition.
+		 */
+		public static final SmileyDefinition[] SMILEYS = new SmileyDefinition[] {
+			new SmileyDefinition("(\\:-?D)",      "😁️"),  // :D  :-D
+			new SmileyDefinition("(\\:-?\\)\\))", "😀️"),  // :)) :-))
+			new SmileyDefinition("(\\:-?\\))",    "🙂️"),  // :)  :-)
+
+			new SmileyDefinition("(\\;-?D)",      "🤣️"),  // ;D  ;-D
+			new SmileyDefinition("(\\;-?\\)\\))", "😂️"),  // ;)) ;-))
+			new SmileyDefinition("(\\;-?\\))",    "😉️"),  // ;)  ;-)
+
+			new SmileyDefinition("(\\:\\'\\))",     "😅️"),  // :')
+			new SmileyDefinition("(\\:-?O)",      "😯️"),  // :O  :-O
+			new SmileyDefinition("(8-?\\()",      "😳️"),  // 8(  8-(
+			new SmileyDefinition("(\\^\\^)",      "🙄️"),  // ^^
+
+			new SmileyDefinition("(\\:-?\\|)",    "😐️"),  // :|  :-|
+			new SmileyDefinition("(\\;-?\\|)",    "🤨️"),  // ;| ;-|
+
+			new SmileyDefinition("(\\:-?\\/)",    "😕️"),  // :/  :-/
+			new SmileyDefinition("(\\:-?\\()",    "☹️"),  // :(  :-(
+
+			new SmileyDefinition("(\\:-?P)",      "😛️"),  // :P :-P
+			new SmileyDefinition("(\\;-?P)",      "😜️"),  // ;P ;-P
+
+			new SmileyDefinition("(\\+1\\!)",     "👋️"),  // +1!
+			new SmileyDefinition("(\\+1)",        "👍️"),  // +1
+			new SmileyDefinition("(-1)",          "👎️"),  // -1
+		};
+	}
 
 	/**
 	 * Escape HTML characters in arbitrary text.
@@ -371,9 +418,12 @@ public class FreeRCTApplication {
 	 * @param content Initial content of the textarea.
 	 * @param formaction URL to navigate to when clicking Submit.
 	 * @param error Error message to show from a previous failed attempt (may be null).
+	 * @param readOnly Disallow editing the form fields.
 	 * @return The HTML string.
 	 */
-	public static String generateForumPostForm(boolean reset, String subjectTitle, String textareaTitle, String content, String formaction, String error) {
+	public static String generateForumPostForm(
+			boolean reset, String subjectTitle, String textareaTitle,
+			String content, String formaction, String error, boolean readOnly) {
 		String body = "<a class='anchor' id='post_form'></a><form class='grid new_post_form' method='post' enctype='multipart/form-data'>"
 			+	"""
 					<script>
@@ -409,6 +459,7 @@ public class FreeRCTApplication {
 					+	"/span 1' type='text' id='subject' required name='subject' autofocus"
 					;
 
+			if (readOnly) body += " readonly";
 			if (textareaTitle == null) body += " value='" + htmlEscape(content) + "'";
 
 			body += ">";
@@ -419,14 +470,17 @@ public class FreeRCTApplication {
 		if (textareaTitle != null) {
 			body	+=	"<label class='griditem' style='grid-column:2/span 1; grid-row:" + (1 + rowOff)
 					+	"/span 1' for='content'>" + textareaTitle + "</label>"
-					+	"<textarea class='griditem' style='grid-column:1/span 3; grid-row:" + (2 + rowOff) + "/span 1; resize:vertical'"
-					+			"id='content' rows=8 required name='content'>" + content + "</textarea>"
-					+	"<input class='griditem form_button' style='grid-column:1/span 1; grid-row:" + (3 + rowOff) + "/span 1'"
-					+			"type='button' onclick='updatePreview()' value='Preview'>"
+					+	"<textarea class='griditem' style='grid-column:1/span 3; grid-row:" + (2 + rowOff) + "/span 1; resize:vertical' "
+					+			(readOnly ? "readonly " : "") + "required rows=8 id='content' name='content'>" + content + "</textarea>"
 					;
+			if (!readOnly) {
+				body	+=	"<input class='griditem form_button' style='grid-column:1/span 1; grid-row:" + (3 + rowOff) + "/span 1'"
+						+			"type='button' onclick='updatePreview()' value='Preview'>"
+						;
+			}
 		}
 
-		if (reset) {
+		if (reset && !readOnly) {
 			body	+=	"<input class='griditem form_button' style='grid-column:2/span 1; grid-row:" + (3 + rowOff) + "/span 1'"
 					+		"type='reset' value='Reset'>";
 		}
@@ -446,8 +500,11 @@ public class FreeRCTApplication {
 				case "empty_title":
 					body += "Please add a topic title.";
 					break;
-				case "restricted":
+				case "edit_restricted":
 					body += "You may edit your posts only within 24 hours after posting and not if a moderator has previously edited your post.";
+					break;
+				case "delete_restricted":
+					body += "You may not delete this post.";
 					break;
 				default:
 					body += "An unknown error has occurred.";
@@ -458,7 +515,7 @@ public class FreeRCTApplication {
 			++rowOff;
 		}
 
-		if (textareaTitle != null) {
+		if (textareaTitle != null && !readOnly) {
 			body	+=	"<label class='griditem' id='preview_label' style='display:none;grid-column:2/span 1; grid-row:"
 					+		(3 + rowOff) + "/span 1' for='preview'>Preview</label>"
 					+	"<div class='griditem forum_post_body forum_list_entry' style='display:none;grid-column:1/span 3; grid-row:"

@@ -39,7 +39,12 @@ public class ForumNewTopic {
 
 			String body	=	"<h1>Forum: " + htmlEscape(forumName) + ": New Topic</h1>"
 						+	"<p class='forum_description_name'>" + htmlEscape(forumDescription) + "</p>"
-						+	generateForumPostForm(false, "Subject", "Post", "", "/forum/" + forumID + "/submit_new", error);
+
+						+	"<form><div class='forum_back_button_wrapper'>"
+						+		"<input class='form_button' type='submit' value='Back' formaction='/forum/" + forumID + "'>"
+						+	"</div></form>"
+
+						+	generateForumPostForm(false, "Subject", "Post", "", "/forum/" + forumID + "/submit_new", error, false);
 
 			return generatePage(request, "Forum | " + forumName + " | New Topic", body);
 		} catch (Exception e) {
@@ -97,7 +102,46 @@ public class ForumNewTopic {
 
 			String body	=	"<h1>Topic: " + htmlEscape(topicName) + ": Edit Post</h1>"
 						+	"<p class='forum_description_name'>Forum: <a href='/forum/" + forumID + "'>" + htmlEscape(forumName) + "</a></p>"
-						+	generateForumPostForm(true, null, "Edit Post", content, "/forum/post/submit_edit/" + postID, error);
+
+						+	"<form><div class='forum_back_button_wrapper'>"
+						+		"<input class='form_button' type='submit' value='Back' formaction='/forum/post/" + postID + "'>"
+						+	"</div></form>"
+
+						+	generateForumPostForm(true, null, "Edit Post", content, "/forum/post/submit_edit/" + postID, error, false);
+						;
+
+			return generatePage(request, "Forum | " + forumName + " | " + topicName + " | Edit Post", body);
+		} catch (Exception e) {
+			return new ErrorHandler().error(request, "internal_server_error");
+		}
+	}
+
+	@GetMapping("/forum/post/delete/{postID}")
+	@ResponseBody
+	public String deletePost(WebRequest request, @PathVariable long postID, @RequestParam(value="error", required=false) String error) {
+		try {
+			ResultSet sql = sql("select topic,body from posts where id=?", postID);
+			sql.next();
+			final long topicID = sql.getLong("topic");
+			final String content = sql.getString("body");
+
+			sql = sql("select forum,name from topics where id=?", topicID);
+			sql.next();
+			final long forumID = sql.getLong("forum");
+			final String topicName = sql.getString("name");
+
+			sql = sql("select name from forums where id=?", forumID);
+			sql.next();
+			final String forumName = sql.getString("name");
+
+			String body	=	"<h1>Topic: " + htmlEscape(topicName) + ": Delete Post</h1>"
+						+	"<p class='forum_description_name'>Forum: <a href='/forum/" + forumID + "'>" + htmlEscape(forumName) + "</a></p>"
+
+						+	"<form><div class='forum_back_button_wrapper'>"
+						+		"<input class='form_button' type='submit' value='Back' formaction='/forum/post/" + postID + "'>"
+						+	"</div></form>"
+
+						+	generateForumPostForm(true, null, "Delete Post", content, "/forum/post/submit_delete/" + postID, error, true);
 						;
 
 			return generatePage(request, "Forum | " + forumName + " | " + topicName + " | Edit Post", body);
@@ -123,7 +167,12 @@ public class ForumNewTopic {
 
 			String body	=	"<h1>Topic: " + htmlEscape(topicName) + ": Rename Topic</h1>"
 						+	"<p class='forum_description_name'>Forum: <a href='/forum/" + forumID + "'>" + htmlEscape(forumName) + "</a></p>"
-						+	generateForumPostForm(true, "Rename Topic", null, topicName, "/forum/topic/submit_rename/" + topicID, error);
+
+						+	"<form><div class='forum_back_button_wrapper'>"
+						+		"<input class='form_button' type='submit' value='Back' formaction='/forum/topic/" + topicID + "'>"
+						+	"</div></form>"
+
+						+	generateForumPostForm(true, "Rename Topic", null, topicName, "/forum/topic/submit_rename/" + topicID, error, false);
 						;
 
 			return generatePage(request, "Forum | " + forumName + " | " + topicName + " | Edit Post", body);

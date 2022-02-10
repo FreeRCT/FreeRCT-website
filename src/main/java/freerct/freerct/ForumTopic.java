@@ -108,6 +108,11 @@ public class ForumTopic {
 							</script>
 						""";
 
+			body	+=	"<form><div class='forum_back_button_wrapper'>"
+					+		"<input class='form_button' type='submit' value='Back' formaction='/forum/" + forumID + "'>"
+					+	"</div></form>"
+					;
+
 			if (SecurityManager.isModerator(request)) {
 				body	+=	"<form><div class='forum_new_topic_button_wrapper'>"
 						+		"<input class='form_button' type='submit' value='Rename' formaction='/forum/topic/rename/" + topicID + "'>"
@@ -176,10 +181,10 @@ public class ForumTopic {
 						String quotingFunctionCall =
 								("> *" + p.author + " wrote:*\n\n---\n" + p.body.trim())
 								.replaceAll("\\\\", "\\\\x5c")
-								.replaceAll("'", "\\\\x27")
-								.replaceAll("\"", "\\\\x22")
-								.replaceAll("\r", "\\\\x0d")
-								.replaceAll("\n", "\\\\x0a> ")  // Here we add the "> " that indicates the block quote.
+								.replaceAll("'"   , "\\\\x27")
+								.replaceAll("\""  , "\\\\x22")
+								.replaceAll("\r"  , "\\\\x0d")
+								.replaceAll("\n"  , "\\\\x0a> ")  // Here we add the "> " that indicates the block quote.
 								;
 
 						body += "<form><input class='form_button' type='button' value='Quote' onclick=\"quotePost('" + quotingFunctionCall + "')\"></form>";
@@ -195,7 +200,7 @@ public class ForumTopic {
 			}
 
 			if (request.getUserPrincipal() != null) {
-				body += generateForumPostForm(false, null, "New Post", "", "/forum/topic/" + topicID + "/submit_new", error);
+				body += generateForumPostForm(false, null, "New Post", "", "/forum/topic/" + topicID + "/submit_new", error, false);
 			}
 
 			return generatePage(request, "Forum | " + forumName + " | " + topicName, body);
@@ -232,7 +237,7 @@ public class ForumTopic {
 	@PostMapping("/forum/post/submit_edit/{postID}")
 	public String editPost(WebRequest request, @PathVariable long postID, @RequestPart("content") String content) {
 		try {
-			if (!SecurityManager.mayEditPost(request, postID)) return "redirect:/forum/post/edit/" + postID + "?error=restricted#post_form";
+			if (!SecurityManager.mayEditPost(request, postID)) return "redirect:/forum/post/edit/" + postID + "?error=edit_restricted#post_form";
 
 			content = content.trim();
 			if (content.isEmpty()) return "redirect:/forum/post/edit/" + postID + "?error=empty_post#post_form";
@@ -243,6 +248,36 @@ public class ForumTopic {
 			sql("update posts set editor=?, edited=current_timestamp, body=? where id=?", sql.getLong("id"), content, postID);
 
 			return "redirect:/forum/post/" + postID;
+		} catch (Exception e) {
+			return "redirect:/error?reason=internal_server_error";
+		}
+	}
+
+	@PostMapping("/forum/post/submit_delete/{postID}")
+	public String editPost(WebRequest request, @PathVariable long postID) {
+		try {
+			if (!SecurityManager.mayDeletePost(request, postID)) return "redirect:/forum/post/edit/" + postID + "?error=delete_restricted#post_form";
+
+			ResultSet sql = sql("select topic from posts where id=?", postID);
+			sql.next();
+			final long topicID = sql.getLong("topic");
+
+			sql("delete from posts where id=?", postID);
+
+			sql = sql("select count(id) as nr from posts where topic=?", topicID);
+			sql.next();
+
+			if (sql.getLong("nr") > 0) {
+				return "redirect:/forum/topic/" + topicID;
+			}
+
+			sql = sql("select forum from topics where id=?", topicID);
+			sql.next();
+			final long forumID = sql.getLong("forum");
+
+			sql("delete from topics where id=?", topicID);
+
+			return "redirect:/forum/" + forumID;
 		} catch (Exception e) {
 			return "redirect:/error?reason=internal_server_error";
 		}

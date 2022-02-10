@@ -400,11 +400,14 @@ input, textarea {
 	margin-left: 32px;
 }
 
-.forum_new_topic_button_wrapper {
-	text-align: right;
+.forum_new_topic_button_wrapper, .forum_back_button_wrapper {
+	text-align: left;
 	padding: 0;
 	/* Ugh, pixel-perfect positioning. This is fragile, not sure if there is a better way. */
-	margin: -54px 8px 8px 0;
+	margin: -54px 8px 8px 8px;
+}
+.forum_new_topic_button_wrapper {
+	text-align: right;
 }
 
 .new_post_form {

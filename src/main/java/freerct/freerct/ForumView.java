@@ -82,6 +82,10 @@ public class ForumView {
 						+		pluralForm(allTopics.size(), "topic", "topics")
 						+		" · " + pluralForm(nrPosts, "post", "posts")
 						+	"</p>"
+
+						+	"<form><div class='forum_back_button_wrapper'>"
+						+		"<input class='form_button' type='submit' value='Back' formaction='/forum'>"
+						+	"</div></form>"
 						+	"<form><div class='forum_new_topic_button_wrapper'>"
 						+		"<input class='form_button' type='submit' value='New Topic' formaction='/forum/" + forumID + "/new'>"
 						+	"</div></form>"
