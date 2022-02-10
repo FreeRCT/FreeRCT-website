@@ -23,6 +23,12 @@ import static freerct.freerct.FreeRCTApplication.generateForumPostForm;
 /** The page that displays a single forum topic. */
 @Controller
 public class ForumTopic {
+	@PostMapping("/render_markdown")
+	@ResponseBody
+	public String getMarkdownPreview(@RequestBody String content) {
+		return renderMarkdown(content);
+	}
+
 	private static class Post {
 		public final long id, authorID, editorID;
 		public final String author, editor, body;
@@ -234,58 +240,6 @@ public class ForumTopic {
 
 			session.removeAttribute("freerct-new-post-content");
 			return "redirect:/forum/post/" + postID;
-		} catch (Exception e) {
-			return "redirect:/error?reason=internal_server_error";
-		}
-	}
-
-	@PostMapping("/forum/post/submit_edit/{postID}")
-	public String editPost(WebRequest request, HttpSession session, @PathVariable long postID, @RequestPart("content") String content) {
-		try {
-			session.setAttribute("freerct-edit-post-content", content);
-
-			if (!SecurityManager.mayEditPost(request, postID)) return "redirect:/forum/post/edit/" + postID + "?error=edit_restricted#post_form";
-
-			content = content.trim();
-			if (content.isEmpty()) return "redirect:/forum/post/edit/" + postID + "?error=empty_post#post_form";
-
-			ResultSet sql = sql("select id from users where username=?", request.getRemoteUser());
-			sql.next();
-
-			sql("update posts set editor=?, edited=current_timestamp, body=? where id=?", sql.getLong("id"), content, postID);
-
-			session.removeAttribute("freerct-edit-post-content");
-			return "redirect:/forum/post/" + postID;
-		} catch (Exception e) {
-			return "redirect:/error?reason=internal_server_error";
-		}
-	}
-
-	@PostMapping("/forum/post/submit_delete/{postID}")
-	public String editPost(WebRequest request, HttpSession session, @PathVariable long postID) {
-		try {
-			if (!SecurityManager.mayDeletePost(request, postID)) return "redirect:/forum/post/edit/" + postID + "?error=delete_restricted#post_form";
-
-			ResultSet sql = sql("select topic from posts where id=?", postID);
-			sql.next();
-			final long topicID = sql.getLong("topic");
-
-			sql("delete from posts where id=?", postID);
-
-			sql = sql("select count(id) as nr from posts where topic=?", topicID);
-			sql.next();
-
-			if (sql.getLong("nr") > 0) {
-				return "redirect:/forum/topic/" + topicID;
-			}
-
-			sql = sql("select forum from topics where id=?", topicID);
-			sql.next();
-			final long forumID = sql.getLong("forum");
-
-			sql("delete from topics where id=?", topicID);
-
-			return "redirect:/forum/" + forumID;
 		} catch (Exception e) {
 			return "redirect:/error?reason=internal_server_error";
 		}
