@@ -82,7 +82,7 @@ public class Login {
 	@PostMapping("/login/forgotpassword")
 	public String resetPassword(WebRequest request, @RequestPart(value="username", required=false) String username) {
 		try {
-			if (username == null) throw new Exception();
+			if (username == null) return "redirect:/login?type=wrong_username#login_form";
 
 			ResultSet userDetails = sql("select id,email from users where username=?", username);
 			userDetails.next();

@@ -58,9 +58,9 @@ public class ForumDeletePost {
 	}
 
 	@PostMapping("/forum/post/submit_delete/{postID}")
-	public String editPost(WebRequest request, HttpSession session, @PathVariable long postID) {
+	public String deletePost(WebRequest request, HttpSession session, @PathVariable long postID) {
 		try {
-			if (!SecurityManager.mayDeletePost(request, postID)) return "redirect:/forum/post/edit/" + postID + "?error=delete_restricted#post_form";
+			if (!SecurityManager.mayDeletePost(request, postID)) return "redirect:/error?reason=forbidden";
 
 			ResultSet sql = sql("select topic from posts where id=?", postID);
 			sql.next();

@@ -93,6 +93,8 @@ public class Register {
 			@RequestPart("password") String password,
 			@RequestPart("password2") String password2) {
 		try {
+			// We do not save the values in the Session here. The user should enter his credentials afresh on each try.
+
 			if (username.length() > USERNAME_MAX_LENGTH || !username.matches(USERNAME_REGEX)) return "redirect:/signup?type=name_invalid#signup_form";
 
 			ResultSet userDetails = sql("select id from users where username=?", username);
@@ -105,7 +107,7 @@ public class Register {
 			// TODO send a confirmation e-mail before activating the user's account
 
 			request.login(username, password);
-			return "redirect:/user/" + username + "?new_user=true";
+			return "redirect:/user/" + username + "?type=new_user";
 		} catch (Exception e) {
 			return "redirect:/signup?type=error#signup_form";
 		}

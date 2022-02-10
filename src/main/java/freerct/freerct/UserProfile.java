@@ -34,7 +34,7 @@ public class UserProfile {
 
 	@GetMapping("/user/{username}")
 	@ResponseBody
-	public String fetch(WebRequest request, @PathVariable String username, @RequestParam(value="new_user", required=false) boolean newUser) {
+	public String fetch(WebRequest request, @PathVariable String username, @RequestParam(value="type", required=false) String argument) {
 		try {
 			ResultSet userDetails = sql("select id,joined,state from users where username=?", username);
 			userDetails.next();
@@ -53,10 +53,24 @@ public class UserProfile {
 						topic, topicInfo.getString("name"), forumInfo.getString("name")));
 			}
 
+			final boolean isSelf = username.equals(request.getRemoteUser());
+
 			String body = "<h1>User " + htmlEscape(username) + "</h1>";
 
-			if (newUser) {
-				body += "<div class='forum_description_name announcement_box'>Welcome! Your account was created successfully.</div>";
+			if (argument != null) {
+				body += "<div class='forum_description_name announcement_box'>";
+				switch (argument.toLowerCase()) {
+					case "new_user":
+						body += "Welcome! Your account was created successfully.";
+						break;
+					case "password_changed":
+						body += isSelf ? "Your password was changed successfully." : "The user's password was changed successfully.";
+						break;
+					default:
+						body += "An unknown error has occurred.";
+						break;
+				}
+				body += "</div>";
 			}
 
 			switch (userDetails.getInt("state")) {
@@ -74,6 +88,18 @@ public class UserProfile {
 					+		shortDatetimestring(getCalendar(userDetails, "joined"), request.getLocale())
 					+	"</p><p class='forum_description_stats'>Posts: " + allPosts.size() + "</p>"
 					;
+
+			if (isSelf || SecurityManager.isAdmin(request)) {
+				body	+=	"<form><div class='forum_new_topic_button_wrapper'>"
+						+		"<input class='form_button' type='submit' value='Change Password' formaction='/user/" + username + "/changepassword'>"
+						;
+
+				if (isSelf) {
+					body	+=	"<input class='form_button' type='submit' value='Messages'        formaction='/inbox'>";
+				}
+
+				body += "</div></form>";
+			}
 
 			for (Post p : allPosts) {
 				body	+=	"<div class='forum_list_entry user_post_entry'>"

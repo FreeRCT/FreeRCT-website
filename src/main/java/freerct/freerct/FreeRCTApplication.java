@@ -503,9 +503,6 @@ public class FreeRCTApplication {
 				case "edit_restricted":
 					body += "You may edit your posts only within 24 hours after posting and not if a moderator has previously edited your post.";
 					break;
-				case "delete_restricted":
-					body += "You may not delete this post.";
-					break;
 				default:
 					body += "An unknown error has occurred.";
 					break;

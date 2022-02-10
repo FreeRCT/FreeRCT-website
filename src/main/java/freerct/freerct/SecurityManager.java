@@ -130,6 +130,22 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 	}
 
 	/**
+	 * Check whether the current user is a website administrator.
+	 * @param request Web request associated with the current session.
+	 * @return The user has admin privileges.
+	 */
+	public static boolean isAdmin(WebRequest request) {
+		if (request.getUserPrincipal() == null) return false;  // Not logged in.
+		try {
+			ResultSet sql = sql("select state from users where username=?", request.getRemoteUser());
+			sql.next();
+			return sql.getInt("state") == USER_STATE_ADMIN;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/**
 	 * Check whether the current user is a moderator or admin.
 	 * @param request Web request associated with the current session.
 	 * @return The user has moderator privileges.
