@@ -3,6 +3,7 @@ package freerct.freerct;
 import java.sql.*;
 import java.util.*;
 
+import javax.servlet.http.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
@@ -116,6 +117,7 @@ public class ForumTopic {
 			if (SecurityManager.isModerator(request)) {
 				body	+=	"<form><div class='forum_new_topic_button_wrapper'>"
 						+		"<input class='form_button' type='submit' value='Rename' formaction='/forum/topic/rename/" + topicID + "'>"
+						+		"<input class='form_button' type='submit' value='Delete' formaction='/forum/topic/delete/" + topicID + "'>"
 						+	"</div></form>"
 						;
 			}
@@ -210,10 +212,12 @@ public class ForumTopic {
 	}
 
 	@PostMapping("/forum/topic/{topicID}/submit_new")
-	public String createPost(WebRequest request,
+	public String createPost(WebRequest request, HttpSession session,
 			@PathVariable long topicID,
 			@RequestPart("content") String content) {
 		try {
+			session.setAttribute("freerct-new-post-content", content);
+
 			content = content.trim();
 			if (content.isEmpty()) return "redirect:/forum/topic/" + topicID + "?error=empty_post#post_form";
 
@@ -228,6 +232,7 @@ public class ForumTopic {
 			sql.next();
 			long postID = sql.getLong("new_id");
 
+			session.removeAttribute("freerct-new-post-content");
 			return "redirect:/forum/post/" + postID;
 		} catch (Exception e) {
 			return "redirect:/error?reason=internal_server_error";
@@ -235,8 +240,10 @@ public class ForumTopic {
 	}
 
 	@PostMapping("/forum/post/submit_edit/{postID}")
-	public String editPost(WebRequest request, @PathVariable long postID, @RequestPart("content") String content) {
+	public String editPost(WebRequest request, HttpSession session, @PathVariable long postID, @RequestPart("content") String content) {
 		try {
+			session.setAttribute("freerct-edit-post-content", content);
+
 			if (!SecurityManager.mayEditPost(request, postID)) return "redirect:/forum/post/edit/" + postID + "?error=edit_restricted#post_form";
 
 			content = content.trim();
@@ -247,6 +254,7 @@ public class ForumTopic {
 
 			sql("update posts set editor=?, edited=current_timestamp, body=? where id=?", sql.getLong("id"), content, postID);
 
+			session.removeAttribute("freerct-edit-post-content");
 			return "redirect:/forum/post/" + postID;
 		} catch (Exception e) {
 			return "redirect:/error?reason=internal_server_error";
@@ -254,7 +262,7 @@ public class ForumTopic {
 	}
 
 	@PostMapping("/forum/post/submit_delete/{postID}")
-	public String editPost(WebRequest request, @PathVariable long postID) {
+	public String editPost(WebRequest request, HttpSession session, @PathVariable long postID) {
 		try {
 			if (!SecurityManager.mayDeletePost(request, postID)) return "redirect:/forum/post/edit/" + postID + "?error=delete_restricted#post_form";
 

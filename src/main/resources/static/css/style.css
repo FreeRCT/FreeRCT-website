@@ -409,6 +409,12 @@ input, textarea {
 .forum_new_topic_button_wrapper {
 	text-align: right;
 }
+.forum_new_topic_button_wrapper>input {
+	margin-left: 8px;
+}
+.forum_back_button_wrapper>input {
+	margin-right: 8px;
+}
 
 .new_post_form {
 	padding: 8px;
