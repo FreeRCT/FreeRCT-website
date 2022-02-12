@@ -47,7 +47,7 @@ public class Contact {
 				You can delete and/or disallow cookies in your browser, though logging in will not be possible then.
 			</p>
 			<p>
-				The infrastructure and disk space for this website is providing by the web host <i>STRATO AG, Otto-Ostrowski-Straße 7, 10249 Berlin</i>.
+				The infrastructure and disk space for this website is provided by the web host <i>STRATO AG, Otto-Ostrowski-Straße 7, 10249 Berlin</i>.
 			</p>
 		""");
 	}

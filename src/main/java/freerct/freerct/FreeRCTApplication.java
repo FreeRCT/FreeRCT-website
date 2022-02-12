@@ -12,6 +12,9 @@ import javax.servlet.http.*;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.SpringApplication;
+import org.springframework.context.*;
+import org.springframework.security.core.session.*;
+import org.springframework.stereotype.*;
 import org.springframework.web.context.request.*;
 
 /** The main class. It provided the main loop and various important utility functions. */
@@ -532,19 +535,19 @@ public class FreeRCTApplication {
 	private static SortedSet<String> updateAndGetLoggedInUsers(WebRequest request, HttpSession session) {
 		synchronized (_loggedInUsers) {
 			String loggedInAs = request.getRemoteUser();
-			SessionLogInInfo info = _loggedInUsers.get(session);
+			SessionLogInInfo info = _loggedInUsers.get(session.getId());
 			if (info != null) {  // Our session is already registered, so update it with our current status.
 				info.user = loggedInAs;
 				info.lastModified = Calendar.getInstance();
 			} else if (loggedInAs != null) {  // We don't have a session but we're logged in.
-				_loggedInUsers.put(session, new SessionLogInInfo(loggedInAs));
+				_loggedInUsers.put(session.getId(), new SessionLogInInfo(loggedInAs));
 			}
 
 			// Now clean up stale sessions.
 			boolean repeat;
 			do {
 				repeat = false;
-				for (HttpSession s : _loggedInUsers.keySet()) {
+				for (String s : _loggedInUsers.keySet()) {
 					if (Calendar.getInstance().getTimeInMillis() - _loggedInUsers.get(s).lastModified.getTimeInMillis() > CURRENTLY_ONLINE_TIMEOUT) {
 						_loggedInUsers.remove(s);
 						repeat = true;
@@ -567,8 +570,24 @@ public class FreeRCTApplication {
 			lastModified = Calendar.getInstance();
 		}
 	}
-	private static Map<HttpSession, SessionLogInInfo> _loggedInUsers = new HashMap<>();
+	private static Map<String, SessionLogInInfo> _loggedInUsers = new HashMap<>();
 	private static final long CURRENTLY_ONLINE_TIMEOUT = 1000 * 60 * 15;  ///< After how many milliseconds of inactivity to kick a user from the Currently Online list.
+
+	@Component
+	public class CustomSessionChangedListener implements ApplicationListener<SessionIdChangedEvent> {
+		@Override
+		public void onApplicationEvent(SessionIdChangedEvent event) {
+			SessionLogInInfo i = _loggedInUsers.remove(event.getOldSessionId());
+			if (i != null) _loggedInUsers.put(event.getNewSessionId(), i);
+		}
+	}
+	@Component
+	public class CustomSessionDestroyedListener implements ApplicationListener<SessionDestroyedEvent> {
+		@Override
+		public void onApplicationEvent(SessionDestroyedEvent event) {
+			_loggedInUsers.remove(event.getId());
+		}
+	}
 
 	/**
 	 * Generate the complete HTML webpage for a request.
