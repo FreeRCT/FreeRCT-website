@@ -1,5 +1,6 @@
 package freerct.freerct;
 
+import java.io.*;
 import java.sql.*;
 import java.util.*;
 
@@ -60,10 +61,12 @@ public class ForumTopic {
 	@ResponseBody
 	public String fetch(WebRequest request, HttpSession session, @PathVariable long topicID, @RequestParam(value="error", required=false) String error) {
 		try {
-			ResultSet sql = sql("select name,forum from topics where id=?", topicID);
+			sql("update topics set views=views+1 where id=?", topicID);
+			ResultSet sql = sql("select name,forum,views from topics where id=?", topicID);
 			sql.next();
 			final String topicName = sql.getString("name");
 			final long forumID = sql.getLong("forum");
+			final long nrViews = sql.getLong("views");
 
 			sql = sql("select name from forums where id=?", forumID);
 			sql.next();
@@ -87,7 +90,8 @@ public class ForumTopic {
 
 			String body	=	"<h1>Topic: " + htmlEscape(topicName) + "</h1>"
 						+	"<p class='forum_description_name'>Forum: <a href='/forum/" + forumID + "'>" + htmlEscape(forumName) + "</a></p>"
-						+	"<p class='forum_description_stats'>" + pluralForm(allPosts.size(), "post", "posts") + "</p>"
+						+	"<p class='forum_description_stats'>" + pluralForm(allPosts.size(), "post", "posts")
+						+	" · " + pluralForm(nrViews, "view", "views") + "</p>"
 						+	"""
 							<script>
 								function quotePost(content) {
@@ -138,6 +142,10 @@ public class ForumTopic {
 						+		"<div class='forum_post_usercolumn'>"
 						+			"<div><a href='/user/" + p.author + "'>" + p.author + "</a></div>"
 						;
+
+				if (new File("src/main/resources/static/img/users/" + p.author + ".png").isFile()) {
+					body += "<div><img class='user_profile_image' src='/img/users/" + p.author + ".png' height='128px' width='128px'></div>";
+				}
 
 				switch (userDetails.getInt("state")) {
 					case SecurityManager.USER_STATE_ADMIN:

@@ -1,5 +1,6 @@
 package freerct.freerct;
 
+import java.io.*;
 import java.sql.*;
 import java.util.*;
 
@@ -55,8 +56,10 @@ public class UserProfile {
 			}
 
 			final boolean isSelf = username.equals(request.getRemoteUser());
+			final boolean actorIsAdmin = SecurityManager.isAdmin(request);
+			final boolean hasProfileImage = new File("src/main/resources/static/img/users/" + username + ".png").isFile();
 
-			String body = "<h1>User " + htmlEscape(username) + "</h1>";
+			String body = "<h1>User " + username + "</h1>";
 
 			if (argument != null) {
 				body += "<div class='forum_description_name announcement_box'>";
@@ -90,7 +93,21 @@ public class UserProfile {
 					+	"</p><p class='forum_description_stats'>Posts: " + allPosts.size() + "</p>"
 					;
 
-			if (isSelf || SecurityManager.isAdmin(request)) {
+			if (hasProfileImage) {
+				body += "<div class='user_profile_image_wrapper'><img class='user_profile_image' src='/img/users/" + username +
+						".png' height='128px' width='128px'></div>";
+			}
+			if (isSelf || actorIsAdmin) {
+				body += "<form";
+				if (hasProfileImage) body += " style='margin-left:136px'";
+
+				body	+=	"><div class='forum_back_button_wrapper'>"
+						+	"<input class='form_button' type='submit' value='Change Image' formaction='/user/"
+						+	username + "/changeimg'></div></form>"
+						;
+			}
+
+			if (isSelf || actorIsAdmin) {
 				body	+=	"<form><div class='forum_new_topic_button_wrapper'>"
 						+		"<input class='form_button' type='submit' value='Change Password' formaction='/user/" + username + "/changepassword'>"
 						;
@@ -112,7 +129,7 @@ public class UserProfile {
 						;
 			}
 
-			return generatePage(request, session, "User | " + htmlEscape(username), body);
+			return generatePage(request, session, "User | " + username, body);
 		} catch (SQLException e) {
 			return new ErrorHandler().error(request, session, "internal_server_error");
 		}

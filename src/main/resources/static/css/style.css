@@ -366,6 +366,9 @@ input, textarea {
 	flex-grow: 0;
 	flex-shrink: 0;
 }
+.forum_post_usercolumn * {
+	text-align: center;
+}
 
 .forum_post_meta {
 	margin: 0;
@@ -378,14 +381,14 @@ input, textarea {
 	align-items: stretch;
 }
 .forum_post_meta, .forum_post_meta *, .forum_post_userdetails {
-	font-size: 14px;
+	font-size: 13px;
 }
 
 .forum_post_body {
 	border: var(--border-blue-thick);
 	border-radius: 5px;
 	background-color: var(--bg-overlay);
-	margin: 4px 0;
+	margin: 0;
 	padding: 8px;
 }
 
@@ -441,12 +444,27 @@ input, textarea {
 	background-color: var(--bg-overlay-strong);
 }
 
+.forum_post_buttons_wrapper {
+	margin-top: 4px;
+}
 .forum_post_buttons_wrapper, .forum_post_buttons_wrapper>form {
 	padding: 0;
 }
 .forum_post_buttons_wrapper>form {
 	float: left;
 	margin-right: 4px;
+}
+
+.user_profile_image {
+	border: var(--border-blue-thin);
+	border-radius: 5px;
+	padding: 0;
+}
+.user_profile_image_wrapper {
+	text-align: left;
+	padding: 0;
+	/* Ugh, pixel-perfect positioning. This is fragile, not sure if there is a better way. */
+	margin: -136px 8px 4px 8px;
 }
 
 /* Latest posts box. */

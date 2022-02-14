@@ -3,6 +3,9 @@
 /*.p12
 /*.keystore
 
+# Userdata
+/src/main/resources/static/img/users
+
 ### Everything below has been auto-excluded by SpringBoot Initializr
 
 HELP.md

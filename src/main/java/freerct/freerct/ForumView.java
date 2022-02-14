@@ -22,11 +22,12 @@ import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 @Controller
 public class ForumView {
 	private static class Topic {
-		public final long id, nrPosts, firstPostID, lastPostID;
+		public final long id, nrPosts, firstPostID, lastPostID, views;
 		public final String name, creator, lastUpdater;
 		public final Calendar created, lastUpdated;
-		public Topic(long i, long nrP, long firstID, long lastID, String n, String auth, String lastUpd, Calendar timeFirst, Calendar timeLast) {
+		public Topic(long i, long nrP, long firstID, long lastID, String n, String auth, String lastUpd, Calendar timeFirst, Calendar timeLast, long v) {
 			id = i;
+			views = v;
 			nrPosts = nrP;
 			firstPostID = firstID;
 			lastPostID = lastID;
@@ -48,7 +49,7 @@ public class ForumView {
 			final String forumDescription = sql.getString("description");
 
 			List<Topic> allTopics = new ArrayList<>();
-			ResultSet topics = sql("select id,name from topics where forum=? order by id desc", forumID);
+			ResultSet topics = sql("select id,name,views from topics where forum=? order by id desc", forumID);
 			int nrPosts = 0;
 			while (topics.next()) {
 				final long topicID = topics.getLong("id");
@@ -73,7 +74,7 @@ public class ForumView {
 
 				allTopics.add(new Topic(topicID, nrPostsInTopic, firstPost.getLong("id"), lastPost.getLong("id"),
 						htmlEscape(topics.getString("name")), htmlEscape(firstAuthor.getString("username")),
-						htmlEscape(lastAuthor.getString("username")), calendarFirst, calendarLast));
+						htmlEscape(lastAuthor.getString("username")), calendarFirst, calendarLast, topics.getLong("views")));
 				nrPosts += nrPostsInTopic;
 			}
 
@@ -111,9 +112,10 @@ public class ForumView {
 						+		"</div>"
 						+		"<div class='forum_list_right_column'>"
 						+			"<div><a href='/forum/post/" + t.lastPostID + "'>Posts: " + t.nrPosts + "</a></div>"
-						+			"<div>Most recent post by <a href='/user/" + t.lastUpdater + "'>" + t.lastUpdater + "</a> on "
-						+				datetimestring(t.lastUpdated, request.getLocale())
-						+			"</div>"
+						+			"<div>Views: " + t.views + "</div>"
+//						+			"<div>Most recent post by <a href='/user/" + t.lastUpdater + "'>" + t.lastUpdater + "</a> on "
+//						+				datetimestring(t.lastUpdated, request.getLocale())
+//						+			"</div>"
 						+		"</div>"
 						+	"</div>";
 			}

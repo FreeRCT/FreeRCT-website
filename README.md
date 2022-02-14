@@ -94,6 +94,7 @@ Column               | Type             | Description
 id                   | int              | Unique topic ID.
 forum                | int              | The forum the topic belongs to.
 name                 | varchar          | The title of the topic.
+views                | int              | Topic view counter.
 
 ### `posts`
 
@@ -163,6 +164,7 @@ create table topics (
 	id    int          not null primary key auto_increment,
 	forum int          not null,
 	name  varchar(255) not null,
+	views int          not null default 0,
 	foreign key fk_forum (forum) references forums (id) on delete cascade on update cascade
 );
 create table posts (
