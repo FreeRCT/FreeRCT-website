@@ -264,10 +264,10 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			.deleteCookies("JSESSIONID")
 //			.logoutSuccessHandler(new CustomLogoutSuccessHandler())  // We do not need a custom success handler currently.
 
-			/* When using an invalid or expired cookie. */
-			.and()
-			.sessionManagement()
-			.invalidSessionUrl("/login?type=expired#login_form");
+			/* When using an invalid or expired cookie. */  // We do not need this at the moment.
+//			.and()
+//			.sessionManagement()
+//			.invalidSessionUrl("/login?type=expired#login_form");
 			;
 	}
 

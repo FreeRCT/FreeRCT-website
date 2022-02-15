@@ -43,7 +43,7 @@ public class Contact {
 				You can ask the website administrator (see above) to delete your account at any time.
 			</p>
 			<p>
-				This website stores a cookie named <tt>JSESSIONID</tt> in your browser when you log in. It will be deleted when you log out or close your browser.
+				This website stores a cookie named <tt>JSESSIONID</tt> in your browser. It will be deleted when you close your browser.
 				You can delete and/or disallow cookies in your browser, though logging in will not be possible then.
 			</p>
 			<p>
