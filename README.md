@@ -46,7 +46,7 @@ Key                  | Description                         | Example
 ## Database
 
 The server connects to a MySQL database.
-The user you specified in the config file must have `SELECT`, `INSERT`, and `DELETE` access to the database.
+The user you specified in the config file must have `SELECT`, `INSERT`, `UPDATE`, and `DELETE` access to the database.
 The database contains the following tables:
 
 ### `users`

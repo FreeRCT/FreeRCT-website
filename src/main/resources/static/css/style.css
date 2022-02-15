@@ -518,6 +518,9 @@ input, textarea {
 	font-weight: bold;
 	font-size: 18px;
 }
+.right_column_box smallcaps, .right_column_box smallcaps a {
+	font-size: 16px;
+}
 
 .logged_in_users .right_column_login {
 	padding: 0;

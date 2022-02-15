@@ -369,17 +369,17 @@ public class FreeRCTApplication {
 		return str;
 	}
 
-	private static String createLatestPost(long postID, String forum, String topic, String user, Calendar timestamp) {
+	private static String createLatestPost(long postID, long forumID, String forum, String topic, String user, Calendar timestamp, Locale locale) {
 		return	"<div class='latest_post_entry'>"
-			+		"<div>[" + forum + "]</div>"
+			+		"<div><smallcaps>[<a href='/forum/" + forumID + "'>" + forum + "</a>]</smallcaps></div>"
 			+		"<div><a href='/forum/post/" + postID + "'>" + topic + "</a></div>"
-			+		"<div>by <a href='/user/" + user + "'>" + user + "</a></div>"
-			+		"<div>" + timestringSince(timestamp) + "</div>"
+			+		"<div>by <smallcaps><a href='/user/" + user + "'>" + user + "</a></smallcaps></div>"
+			+		"<div><abbr title='" + datetimestring(timestamp, locale) + "'>" + timestringSince(timestamp) + "</abbr></div>"
 			+ 	"</div>"
 			;
 	}
 
-	private static String createLatestPosts(int howMany) {
+	private static String createLatestPosts(int howMany, Locale locale) {
 		if (howMany <= 0) return "";
 		try {
 			ResultSet allPosts = sql("select id,topic,user,created from posts order by id desc limit ?", howMany * howMany);
@@ -396,16 +396,17 @@ public class FreeRCTApplication {
 				ResultSet sql = sql("select name,forum from topics where id=?", topic);
 				sql.next();
 				String topicName = sql.getString("name");
+				long forumID = sql.getLong("forum");
 
-				sql = sql("select name from forums where id=?", sql.getLong("forum"));
+				sql = sql("select name from forums where id=?", forumID);
 				sql.next();
 				String forumName = sql.getString("name");
 
 				sql = sql("select username from users where id=?", allPosts.getLong("user"));
 				sql.next();
 				String userName = sql.getString("username");
-				result += createLatestPost(allPosts.getLong("id"), htmlEscape(forumName), htmlEscape(topicName),
-						htmlEscape(userName), getCalendar(allPosts, "created"));
+				result += createLatestPost(allPosts.getLong("id"), forumID, htmlEscape(forumName), htmlEscape(topicName),
+						htmlEscape(userName), getCalendar(allPosts, "created"), locale);
 			}
 
 			return result;
@@ -757,7 +758,7 @@ public class FreeRCTApplication {
 
 		result
 			+=				"<div class='right_column_box'>"
-			+					"<h1>Latest Posts</h1>" + createLatestPosts(LATEST_POSTS_DEFAULT_COUNT)
+			+					"<h1>Latest Posts</h1>" + createLatestPosts(LATEST_POSTS_DEFAULT_COUNT, request.getLocale())
 			+				"</div>"
 			+			"</div>"
 			+		"</div>"
