@@ -143,7 +143,7 @@ public class ForumTopic {
 						+			"<div><a href='/user/" + p.author + "'>" + p.author + "</a></div>"
 						;
 
-				if (new File("src/main/resources/static/img/users/" + p.author + ".png").isFile()) {
+				if (new File(Resources.RESOURCES_DIR, "img/users/" + p.author + ".png").isFile()) {
 					body	+=	"<div><a class='linkified_user_profile_image' href='/user/" + p.author
 							+	"' style='background-image: url(\"/img/users/" + p.author + ".png\")'></a></div>";
 				}

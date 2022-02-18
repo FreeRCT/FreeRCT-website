@@ -154,6 +154,28 @@ public class FreeRCTApplication {
 	}
 
 	/**
+	 * Run a shell script and return its standard output.
+	 * The standard error and exit value are discarded.
+	 * @param args The command and its arguments.
+	 * @return The output.
+	 * @throws Exception If the shell can't be accessed.
+	 */
+	public static String bash(String... args) throws Exception {
+		Process p = new ProcessBuilder(args).start();
+		BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		String str, result = null;
+		while ((str = b.readLine()) != null) {
+			if (result == null) {
+				result = str;
+			} else {
+				result += "\n";
+				result += str;
+			}
+		}
+		return (result == null ? "" : result);
+	}
+
+	/**
 	 * Get the URI of the current request.
 	 * @param request The current web request.
 	 * @return The URI of the current webpage.

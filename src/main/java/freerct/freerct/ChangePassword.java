@@ -28,7 +28,7 @@ public class ChangePassword {
 		String body = """
 			<a class='anchor' id='password_form'></a>
 			<div class='login_form_wrapper'>
-				<h1>Log In</h1>
+				<h1>Change Password</h1>
 
 				<form class='grid' method='post' enctype='multipart/form-data'>
 					<label class='griditem'             style='grid-column:3/span 1; grid-row:1/span 1' for="username"   >Username:</label>
@@ -75,7 +75,7 @@ public class ChangePassword {
 		}
 		body += "</div>";
 
-		return generatePage(request, session, "Log In", body);
+		return generatePage(request, session, "User | " + username + " | Change Password", body);
 	}
 
 	@PostMapping("/user/{username}/submit_changepassword")

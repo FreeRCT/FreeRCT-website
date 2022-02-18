@@ -57,7 +57,7 @@ public class UserProfile {
 
 			final boolean isSelf = username.equals(request.getRemoteUser());
 			final boolean actorIsAdmin = SecurityManager.isAdmin(request);
-			final boolean hasProfileImage = new File("src/main/resources/static/img/users/" + username + ".png").isFile();
+			final boolean hasProfileImage = new File(Resources.RESOURCES_DIR, "img/users/" + username + ".png").isFile();
 
 			String body = "<h1>User " + username + "</h1>";
 
@@ -130,7 +130,7 @@ public class UserProfile {
 			}
 
 			return generatePage(request, session, "User | " + username, body);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			return new ErrorHandler().error(request, session, "internal_server_error");
 		}
 	}

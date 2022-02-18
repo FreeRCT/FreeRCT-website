@@ -4,7 +4,7 @@
 /*.keystore
 
 # Userdata
-/src/main/resources/static/img/users
+/resources/img/users/
 
 ### Everything below has been auto-excluded by SpringBoot Initializr
 
