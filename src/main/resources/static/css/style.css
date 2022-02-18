@@ -455,11 +455,20 @@ input, textarea {
 	margin-right: 4px;
 }
 
-.user_profile_image {
+.user_profile_image, .linkified_user_profile_image {
 	border: var(--border-blue-thin);
 	border-radius: 5px;
 	padding: 0;
 }
+
+.linkified_user_profile_image {
+	display: block;
+	background-size: contain;
+	width: 128px;
+	height: 128px;
+	margin: 0 auto;
+}
+
 .user_profile_image_wrapper {
 	text-align: left;
 	padding: 0;

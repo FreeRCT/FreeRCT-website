@@ -144,7 +144,8 @@ public class ForumTopic {
 						;
 
 				if (new File("src/main/resources/static/img/users/" + p.author + ".png").isFile()) {
-					body += "<div><img class='user_profile_image' src='/img/users/" + p.author + ".png' height='128px' width='128px'></div>";
+					body	+=	"<div><a class='linkified_user_profile_image' href='/user/" + p.author
+							+	"' style='background-image: url(\"/img/users/" + p.author + ".png\")'></a></div>";
 				}
 
 				switch (userDetails.getInt("state")) {
