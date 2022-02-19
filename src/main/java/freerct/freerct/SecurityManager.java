@@ -255,6 +255,8 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			.antMatchers("/login/*").permitAll()
 			.antMatchers("/signup").permitAll()
 			.antMatchers("/signup/*").permitAll()
+			.antMatchers("/resetpassword").permitAll()
+			.antMatchers("/submit_resetpassword").permitAll()
 			.antMatchers("/ok").permitAll()
 			.antMatchers("/error").permitAll()
 

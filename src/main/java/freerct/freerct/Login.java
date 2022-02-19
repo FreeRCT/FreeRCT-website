@@ -53,18 +53,10 @@ public class Login {
 		""";
 
 		if (argument != null) {
-			boolean isGoodNews = false;
 			String message;
 			switch (argument.toLowerCase()) {
 				case "expired":
 					message = "Your session has expired. Please log in again.";
-					break;
-				case "password_reset":
-					isGoodNews = true;
-					// message = "An e-mail has been sent to your address. Please follow the link therein to reset your password.";
-					message	=	"We are sorry, but the feature to reset your password has not actually been implemented yet. "
-							+	"See the <a href='/contact'><i>Contact</i></a> page for information on how to contact the webmaster."
-							;
 					break;
 				case "wrong_username":
 					message = "Please enter a valid username.";
@@ -73,7 +65,7 @@ public class Login {
 					message = "Invalid username or password.";
 					break;
 			}
-			body += "<p class='" + (isGoodNews ? "form_ok" : "form_error") + " login_form_caption'>" + message + "</p>";
+			body += "<p class='form_error login_form_caption'>" + message + "</p>";
 		}
 		body += "</div>";
 
@@ -85,11 +77,31 @@ public class Login {
 		try {
 			if (username == null) return "redirect:/login?type=wrong_username#login_form";
 
-			ResultSet userDetails = sql("select id,email from users where username=?", username);
+			ResultSet userDetails = sql("select email,state from users where username=?", username);
 			userDetails.next();
+
+			switch (userDetails.getInt("state")) {
+				case SecurityManager.USER_STATE_NORMAL:
+				case SecurityManager.USER_STATE_MODERATOR:
+				case SecurityManager.USER_STATE_ADMIN:
+					break;
+				default:
+					return "redirect:/login?type=wrong_username#login_form";
+			}
+
 			String email = userDetails.getString("email");
 
+			final String randomToken = SecurityManager.generateRandomToken();
+			Calendar tokenExpiry = Calendar.getInstance();
+			tokenExpiry.roll(Calendar.DAY_OF_MONTH, 7);  // Keep the token valid for 7 days.
+
+			sql("update users set activation_token=?, activation_expire=? where username=?",
+					randomToken, new Timestamp(tokenExpiry.getTimeInMillis()), username);
+
+
 			// NOCOM actually send a password resetting e-mail...
+			System.out.println("NOCOM Your new token is: " + randomToken);
+
 
 			return "redirect:/ok?type=password_reset";
 		} catch (Exception e) {
