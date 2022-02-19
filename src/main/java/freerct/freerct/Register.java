@@ -20,6 +20,7 @@ import static freerct.freerct.FreeRCTApplication.renderMarkdown;
 import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+import static freerct.freerct.FreeRCTApplication.sendEMail;
 
 /** The registering page. */
 @Controller
@@ -104,13 +105,20 @@ public class Register {
 			Calendar tokenExpiry = Calendar.getInstance();
 			tokenExpiry.roll(Calendar.DAY_OF_MONTH, 7);  // Keep the token valid for 7 days.
 
+			// TODO run a scheduled job that frequently purges stale tokens from the database
+
 			sql("insert into users (username,email,password,activation_token,activation_expire) value (?,?,?,?,?)",
 					username, email, SecurityManager.passwordEncoder().encode​(password), randomToken, new Timestamp(tokenExpiry.getTimeInMillis()));
 
-
-			// NOCOM send a confirmation e-mail before activating the user's account
-			System.out.println("NOCOM Your new token is: " + randomToken);
-
+			sendEMail(email, "Activate Account",
+					"Dear " + username + ",\n\n"
+					+ "to activate your new FreeRCT account, please click on the following link:\n\n"
+					+ "https://freerct.net/signup/" + randomToken
+					+ "\n\nThis link remains valid for 7 days.\n\n"
+					+ "If you did not request the creation of an account on freerct.net, please ignore this e-mail.\n\n"
+					+ "Best regards,\n"
+					+ "The FreeRCT Development Team"
+				, false);
 
 			return "redirect:/ok?type=account_created";
 		} catch (Exception e) {

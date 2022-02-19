@@ -35,13 +35,14 @@ See [the docs](https://docs.spring.io/spring-boot/docs/current/reference/html/ap
 
 The second section sets variables for the server implementation. The server expects the following variables:
 
-Key                  | Description                         | Example
--------------------- | ----------------------------------- | ------------------
-`databasehost`       | IP address of the MySQL server      | `127.0.0.1`
-`databaseport`       | Port number of the MySQL server     | `3306`
-`databasename`       | Name of the database                | `freerct_db`
-`databaseuser`       | The database user                   | `freerct`
-`databasepassword`   | Password for the database user      | `123456`
+Key                  | Description                                                                      | Example
+-------------------- | -------------------------------------------------------------------------------- | ------------------
+`databasehost`       | IP address of the MySQL server                                                   | `127.0.0.1`
+`databaseport`       | Port number of the MySQL server                                                  | `3306`
+`databasename`       | Name of the database                                                             | `freerct_db`
+`databaseuser`       | The database user                                                                | `freerct`
+`databasepassword`   | Password for the database user                                                   | `123456`
+`printmail`          | Optional debugging option. If `true`, e-mails will be echoed to standard output. | `true`
 
 ## Database
 

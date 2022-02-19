@@ -176,6 +176,40 @@ public class FreeRCTApplication {
 	}
 
 	/**
+	 * Send an e-mail.
+	 * @param email E-Mail address of the recipient.
+	 * @param subject Subject line of the mail.
+	 * @param body Message text to send.
+	 * @param footer Whether to append a footer with a link to the notifications settings.
+	 * @throws Exception If anything at all goes wrong, throw an Exception.
+	 */
+	public static void sendEMail(String email, String subject, String body, boolean footer) throws Exception {
+		String debug = config("printmail");
+		if (debug != null && Boolean.parseBoolean(debug)) {
+			System.out.println("-------------------------\n" + body + "\n-------------------------");
+		}
+
+		File message = Files.createTempFile(null, null).toFile();
+		PrintWriter write = new PrintWriter(message);
+
+		write.println("From: noreply@freerct.net");
+		write.println("Subject: " + subject);
+		write.println();
+		write.println(body);
+
+		if (footer) {
+			write.print(
+			    "\n-------------------------\n"
+			    +
+			    "To change how you receive notifications, please go to https://freerct.net/notifications/.");
+		}
+
+		write.close();
+		bash("bash", "-c", "sendmail '" + email + "' < " + message.getAbsolutePath());
+		message.delete();
+	}
+
+	/**
 	 * Get the URI of the current request.
 	 * @param request The current web request.
 	 * @return The URI of the current webpage.

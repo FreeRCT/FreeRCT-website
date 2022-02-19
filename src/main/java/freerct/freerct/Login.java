@@ -16,6 +16,7 @@ import static freerct.freerct.FreeRCTApplication.renderMarkdown;
 import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+import static freerct.freerct.FreeRCTApplication.sendEMail;
 
 /** The login page and the password resetting page. */
 @Controller
@@ -98,10 +99,14 @@ public class Login {
 			sql("update users set activation_token=?, activation_expire=? where username=?",
 					randomToken, new Timestamp(tokenExpiry.getTimeInMillis()), username);
 
-
-			// NOCOM actually send a password resetting e-mail...
-			System.out.println("NOCOM Your new token is: " + randomToken);
-
+			sendEMail(email, "Reset Password",
+					"Dear " + username + ",\n\n"
+					+ "to reset your password, please visit https://freerct.net/resetpassword and use the following token to set a new password:\n\n"
+					+ randomToken
+					+ "\n\nYour token remains valid for 7 days and can be used only once.\n\n"
+					+ "Best regards,\n"
+					+ "The FreeRCT Development Team"
+				, false);
 
 			return "redirect:/ok?type=password_reset";
 		} catch (Exception e) {
