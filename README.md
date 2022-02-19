@@ -54,13 +54,25 @@ The database contains the following tables:
 Each row represents a registered website user.
 
 Column               | Type             | Description
--------------------- | ---------------- | -----------------------------------------------------------------------------------------
+-------------------- | ---------------- | -----------------------------------------------------------------------------------------------------------------------------
 id                   | int              | Unique user ID.
 username             | varchar          | The user's displayed name.
 email                | varchar          | E-mail address to send notifications.
 password             | varchar          | The hash of the user's password.
 joined               | datetime         | The time and date the user registered on the website.
-state                | int              | 0 for normal users, 1 for administrators, 2 for moderators, 3 for deactivated accounts.
+state                | int              | The user state, see below.
+activation_token     | varchar          | The activation or password resetting token, if applicable.
+activation_expire    | datetime         | Expiration time for the activation_token.
+
+Valid user states (the constants are hardcoded) are:
+
+Constant | Description
+-------- | -------------------------
+       0 | Normal user
+       1 | Administrator
+       2 | Moderator
+       3 | Deactivated account
+       4 | Awaiting activation
 
 ### `news`
 
@@ -139,12 +151,14 @@ drop table if exists users;
 
 -- Create the new tables.
 create table users (
-	id       int          not null  primary key auto_increment,
-	username varchar(255) not null,
-	email    varchar(255) not null,
-	password varchar(255) not null,
-	joined   datetime     not null  default current_timestamp,
-	state    int          not null  default 0
+	id                int          not null  primary key auto_increment,
+	username          varchar(255) not null,
+	email             varchar(255) not null,
+	password          varchar(255) not null,
+	joined            datetime     not null  default current_timestamp,
+	state             int          not null  default 4,
+	activation_token  varchar(255)           default null,
+	activation_expire datetime               default null
 );
 create table news (
 	id        int          not null primary key auto_increment,

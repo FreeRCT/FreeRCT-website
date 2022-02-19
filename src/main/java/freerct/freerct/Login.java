@@ -89,9 +89,9 @@ public class Login {
 			userDetails.next();
 			String email = userDetails.getString("email");
 
-			// TODO actually send a password resetting e-mail...
+			// NOCOM actually send a password resetting e-mail...
 
-			return "redirect:/login?type=password_reset#login_form";
+			return "redirect:/ok?type=password_reset";
 		} catch (Exception e) {
 			return "redirect:/login?type=wrong_username#login_form";
 		}

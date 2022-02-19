@@ -100,15 +100,58 @@ public class Register {
 			if (!password.equals(password2)) return "redirect:/signup?type=passwords#signup_form";
 			if (userDetails.next()) return "redirect:/signup?type=name_taken#signup_form";
 
-			sql("insert into users (username,email,password) value (?,?,?)",
-					username, email, SecurityManager.passwordEncoder().encode​(password));
+			final String randomToken = SecurityManager.generateRandomToken();
+			Calendar tokenExpiry = Calendar.getInstance();
+			tokenExpiry.roll(Calendar.DAY_OF_MONTH, 7);  // Keep the token valid for 7 days.
 
-			// TODO send a confirmation e-mail before activating the user's account
+			sql("insert into users (username,email,password,activation_token,activation_expire) value (?,?,?,?,?)",
+					username, email, SecurityManager.passwordEncoder().encode​(password), randomToken, new Timestamp(tokenExpiry.getTimeInMillis()));
 
-			request.login(username, password);
-			return "redirect:/user/" + username + "?type=new_user";
+
+			// NOCOM send a confirmation e-mail before activating the user's account
+			System.out.println("NOCOM Your new token is: " + randomToken);
+
+
+			return "redirect:/ok?type=account_created";
 		} catch (Exception e) {
 			return "redirect:/signup?type=error#signup_form";
+		}
+	}
+
+	@GetMapping("/signup/{token}")
+	public String activateAccount(HttpServletRequest request, @PathVariable String token) {
+		try {
+			ResultSet sql = sql("select id,username,activation_expire,password from users where state=? and activation_token=?",
+					SecurityManager.USER_STATE_AWAITING, token);
+			sql.next();
+
+			final long userID = sql.getLong("id");
+
+			if (getCalendar(sql, "activation_expire").getTimeInMillis() < Calendar.getInstance().getTimeInMillis()) {
+				sql("delete from users where id=?", userID);
+				return "redirect:/error?reason=expired";
+			}
+
+			final String username = sql.getString("username");
+			final String originalPasswordHash = sql.getString("password");
+
+			// Generate a temporary password to log in the user
+			final String tempPassword = SecurityManager.generateRandomToken();
+			sql("update users set password=?, state=? where id=?",
+					SecurityManager.passwordEncoder().encode​(tempPassword), SecurityManager.USER_STATE_NORMAL, userID);
+
+			try {
+				request.login(username, tempPassword);
+			} catch (Exception e) {
+				sql("update users set password=?, state=? where id=?", originalPasswordHash, SecurityManager.USER_STATE_AWAITING, userID);
+				return "redirect:/error";
+			}
+
+			sql("update users set activation_token=null, activation_expire=null, password=? where id=?", originalPasswordHash, userID);
+
+			return "redirect:/user/" + username + "?type=new_user";
+		} catch (Exception e) {
+			return "redirect:/error";
 		}
 	}
 }

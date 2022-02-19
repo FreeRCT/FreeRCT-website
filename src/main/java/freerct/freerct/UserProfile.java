@@ -65,7 +65,7 @@ public class UserProfile {
 				body += "<div class='forum_description_name announcement_box'>";
 				switch (argument.toLowerCase()) {
 					case "new_user":
-						body += "Welcome! Your account was created successfully.";
+						body += "Welcome! Your account was activated successfully.";
 						break;
 					case "password_changed":
 						body += isSelf ? "Your password was changed successfully." : "The user's password was changed successfully.";

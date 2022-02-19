@@ -36,6 +36,11 @@ public class ErrorHandler implements ErrorController {
 					body = "You do not have sufficient privileges to do this.";
 					break;
 
+				case "expired":
+					title = "Expired Token";
+					body = "This token has already expired.";
+					break;
+
 				default:
 					title = "Unknown Error";
 					body = "An unknown error has occurred: '" + htmlEscape(reason) + "'";

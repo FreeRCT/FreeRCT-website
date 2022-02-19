@@ -1,6 +1,7 @@
 package freerct.freerct;
 
-import java.io.IOException;
+import java.io.*;
+import java.security.*;
 import java.sql.*;
 import java.util.*;
 import javax.servlet.*;
@@ -43,6 +44,7 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 	public static final int USER_STATE_ADMIN       = 1;  ///< State constant for administrators.
 	public static final int USER_STATE_MODERATOR   = 2;  ///< State constant for moderators.
 	public static final int USER_STATE_DEACTIVATED = 3;  ///< State constant for deactivated accounts.
+	public static final int USER_STATE_AWAITING    = 4;  ///< State constant for not yet activated accounts.
 
 	/**
 	 * Create an encoder with which to encrypt user passwords.
@@ -56,6 +58,29 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 	public HttpSessionEventPublisher httpSessionEventPublisher() {
 		return new HttpSessionEventPublisher();
 	}
+
+	/**
+	 * Generate a unique random alphanumeric string sequence.
+	 * @return Unique token.
+	 * @throws Exception when no unique string can be generated.
+	 */
+	public static String generateRandomToken() throws Exception {
+		byte[] bytes = new byte[20];
+		for (int attempt = 0; attempt < 10; ++attempt) {
+			SecureRandom.getInstanceStrong().nextBytes(bytes);
+			String str = "";
+			for (byte b : bytes) str += String.format("%02x", b).toUpperCase();
+
+			ResultSet sql = sql("select count(id) as nr from users where activation_token=?", str);
+			sql.next();
+			if (sql.getLong("nr") != 0) continue;  // Token is not unique
+
+			return str;
+		}
+
+		throw new Exception("Could not generate a unique token after ten attempts");
+	}
+
 
 	/**
 	 * Check whether the current user may edit a forum post.
@@ -182,9 +207,9 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			@Override public String getUsername() { return username; }
 			@Override public String getPassword() { return password; }
 			@Override public Collection<? extends GrantedAuthority> getAuthorities() { return null; }
-			@Override public boolean isEnabled              () { return state != USER_STATE_DEACTIVATED; }
+			@Override public boolean isEnabled              () { return state != USER_STATE_DEACTIVATED && state != USER_STATE_AWAITING; }
 			@Override public boolean isAccountNonExpired    () { return true; }
-			@Override public boolean isAccountNonLocked     () { return state != USER_STATE_DEACTIVATED; }
+			@Override public boolean isAccountNonLocked     () { return state != USER_STATE_DEACTIVATED && state != USER_STATE_AWAITING; }
 			@Override public boolean isCredentialsNonExpired() { return true; }
 		}
 
@@ -230,6 +255,7 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			.antMatchers("/login/*").permitAll()
 			.antMatchers("/signup").permitAll()
 			.antMatchers("/signup/*").permitAll()
+			.antMatchers("/ok").permitAll()
 			.antMatchers("/error").permitAll()
 
 			/* Public-facing pages. */
