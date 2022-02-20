@@ -111,9 +111,9 @@ public class Contribute {
 				<p>
 					You're welcome to improve this website in every way you can think of.
 				</p><p>
-					The site is written in Java using the Spring Boot framework.
+					The site is written in Java 17 using the Spring Boot framework.
 					There's a lot of hand-crafted HTML, CSS, and JavaScript as well.
-					The site is stil heavily under development.
+					The site is still heavily under development.
 				</p>
 
 			"""

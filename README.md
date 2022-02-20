@@ -1,6 +1,6 @@
 # FreeRCT Website
 
-This is the new, under-development, not-yet-official website for [FreeRCT](https://github.com/FreeRCT/FreeRCT/).
+This is the new official website for [FreeRCT](https://github.com/FreeRCT/FreeRCT/).
 
 It is written in Java 17 using the Spring Boot framework.
 
