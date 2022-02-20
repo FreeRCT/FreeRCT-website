@@ -247,7 +247,7 @@ public class FreeRCTApplication {
 		// - Should not happen within code blocks
 		// for (SmileyDefinition d : SmileyDefinition.SMILEYS) input = input.replaceAll(d.regex, d.smiley);
 
-		input = input.replaceAll("&amp;([a-z]+);", "&$1;");
+		input = input.replaceAll("&amp;([a-z]+|#[0-9]+);", "&$1;");
 
 		return input;
 	}
@@ -301,13 +301,25 @@ public class FreeRCTApplication {
 	 * @return Escaped text.
 	 */
 	public static String htmlEscape(String input) {
-		return input == null ? null : (input
+		if (input == null) return null;
+
+		input = input
 			.replaceAll("&", "&amp;")  // This rule must come first!
 			.replaceAll("\"", "&quot;")
 			.replaceAll("\'", "&apos;")
 			.replaceAll("<", "&lt;")
 			.replaceAll(">", "&gt;")
-			);
+			;
+
+		StringBuilder escaped = new StringBuilder();
+		input.codePoints().forEach(c -> {
+			if (c < 0 || c > 127) {
+				escaped.append("&#" + c + ";");
+			} else {
+				escaped.append((char)c);
+			}
+		});
+		return escaped.toString();
 	}
 
 	/**
