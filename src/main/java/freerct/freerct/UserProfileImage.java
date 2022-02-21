@@ -29,7 +29,7 @@ import static freerct.freerct.FreeRCTApplication.generateForumPostForm;
 public class UserProfileImage {
 	@GetMapping("/user/{username}/changeimg")
 	@ResponseBody
-	public String deleteTopic(WebRequest request, HttpSession session, @PathVariable String username, @RequestParam(value="error", required=false) String error) {
+	public String changeImg(WebRequest request, HttpSession session, @PathVariable String username, @RequestParam(value="error", required=false) String error) {
 		try {
 			if (!username.equals(request.getRemoteUser())) return new ErrorHandler().error(request, session, "forbidden");
 

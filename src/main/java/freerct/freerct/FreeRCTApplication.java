@@ -229,7 +229,7 @@ public class FreeRCTApplication {
 		if (input == null) return null;
 
 		/* Escaping the '>' character means we cannot use Markdown's quote syntax.
-		 * So we first need to define a custom MD symbol for quotes (we use "§§§");
+		 * So we first need to define a custom MD symbol for quotes (we use ^Z);
 		 * convert '>' to this symbol; then escape HTML; then change it back;
 		 * and only then run Markdown. After that, we can convert smileys.
 		 * Last of all, convert double-escaped characters back to single-escaped.
@@ -252,7 +252,7 @@ public class FreeRCTApplication {
 		return input;
 	}
 
-	private static final String _markdown_quote_symbol = "§§§";
+	private static final String _markdown_quote_symbol = "\032";
 	private static final Configuration _markdown_cfg = Configuration.builder().enableSafeMode().forceExtentedProfile().build();
 
 	private static class SmileyDefinition {

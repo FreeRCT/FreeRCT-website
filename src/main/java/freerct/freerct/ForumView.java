@@ -79,18 +79,21 @@ public class ForumView {
 			}
 
 			String body	=	"<h1>Forum: " + htmlEscape(forumName) + "</h1>"
-						+	"<p class='forum_description_name'>" + htmlEscape(forumDescription) + "</p>"
-						+	"<p class='forum_description_stats'>"
-						+		pluralForm(allTopics.size(), "topic", "topics")
-						+		" · " + pluralForm(nrPosts, "post", "posts")
-						+	"</p>"
-
-						+	"<form><div class='forum_back_button_wrapper'>"
-						+		"<input class='form_button' type='submit' value='Back' formaction='/forum'>"
-						+	"</div></form>"
-						+	"<form><div class='forum_new_topic_button_wrapper'>"
-						+		"<input class='form_button' type='submit' value='New Topic' formaction='/forum/" + forumID + "/new'>"
-						+	"</div></form>"
+						+	"<div class='forum_header_grid_toplevel'>"
+						+		"<div class='griditem forum_header_grid_side_column_l'>"
+						+			"<a class='form_button' href='/forum'>Back</a>"
+						+		"</div>"
+						+		"<div class='griditem forum_header_grid_middle_column'>"
+						+			"<p class='forum_description_name'>" + htmlEscape(forumDescription) + "</p>"
+						+			"<p class='forum_description_stats'>"
+						+				pluralForm(allTopics.size(), "topic", "topics")
+						+				" · " + pluralForm(nrPosts, "post", "posts")
+						+			"</p>"
+						+		"</div>"
+						+		"<div class='griditem forum_header_grid_side_column_r'>"
+						+			"<a class='form_button' href='/forum/" + forumID + "/new'>New Topic</a>"
+						+		"</div>"
+						+	"</div>"
 						;
 
 			Topic[] topicsSorted = allTopics.toArray(new Topic[0]);

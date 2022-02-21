@@ -59,7 +59,7 @@ public class UserProfile {
 			final boolean actorIsAdmin = SecurityManager.isAdmin(request);
 			final boolean hasProfileImage = new File(Resources.RESOURCES_DIR, "img/users/" + username + ".png").isFile();
 
-			String body = "<h1>User " + username + "</h1>";
+			String body	= "<h1>User " + username + "</h1>";
 
 			if (argument != null) {
 				body += "<div class='forum_description_name announcement_box'>";
@@ -77,47 +77,49 @@ public class UserProfile {
 				body += "</div>";
 			}
 
+			String headerMiddleColumn = "", headerLeftColumn = "", headerRightColumn = "";
+
 			switch (userDetails.getInt("state")) {
 				case SecurityManager.USER_STATE_ADMIN:
-					body += "<b><div class='forum_description_name'>Administrator</div></b>";
+					headerMiddleColumn += "<b><div class='forum_description_name'>Administrator</div></b>";
 					break;
 				case SecurityManager.USER_STATE_MODERATOR:
-					body += "<b><div class='forum_description_name'>Moderator</div></b>";
+					headerMiddleColumn += "<b><div class='forum_description_name'>Moderator</div></b>";
 					break;
 				default:
 					break;
 			}
 
-			body	+=	"<p class='forum_description_name'>Joined: "
-					+		shortDatetimestring(getCalendar(userDetails, "joined"), request.getLocale())
-					+	"</p><p class='forum_description_stats'>Posts: " + allPosts.size() + "</p>"
-					;
+			headerMiddleColumn	+=	"<p class='forum_description_name'>Joined: "
+								+		shortDatetimestring(getCalendar(userDetails, "joined"), request.getLocale())
+								+	"</p><p class='forum_description_stats'>Posts: " + allPosts.size() + "</p>"
+								;
 
 			if (hasProfileImage) {
-				body += "<div class='user_profile_image_wrapper'><img class='user_profile_image' src='/img/users/" + username +
-						".png' height='128px' width='128px'></div>";
+				headerLeftColumn += "<img class='user_profile_image' src='/img/users/" + username +
+									".png' height='128px' width='128px'>";
 			}
-			if (isSelf || actorIsAdmin) {
-				body += "<form";
-				if (hasProfileImage) body += " style='margin-left:136px'";
-
-				body	+=	"><div class='forum_back_button_wrapper'>"
-						+	"<input class='form_button' type='submit' value='Change Image' formaction='/user/"
-						+	username + "/changeimg'></div></form>"
-						;
+			if (isSelf) {
+				headerLeftColumn += "<a class='form_button' href='/user/" + username + "/changeimg'>Change Image</a>";
 			}
 
 			if (isSelf || actorIsAdmin) {
-				body	+=	"<form><div class='forum_new_topic_button_wrapper'>"
-						+		"<input class='form_button' type='submit' value='Change Password' formaction='/user/" + username + "/changepassword'>"
-						;
-
-				if (isSelf) {
-					body	+=	"<input class='form_button' type='submit' value='Messages'        formaction='/inbox'>";
-				}
-
-				body += "</div></form>";
+				headerRightColumn += "<a class='form_button' href='/user/" + username + "/changepassword'>Change Password</a>";
 			}
+			if (isSelf) headerRightColumn += "<a class='form_button' href='/inbox'>Messages</a>";
+
+			body		+=	"<div class='forum_header_grid_toplevel'>"
+						+		"<div class='griditem forum_header_grid_side_column_l'>"
+						+			headerLeftColumn
+						+		"</div>"
+						+		"<div class='griditem forum_header_grid_middle_column'>"
+						+			headerMiddleColumn
+						+		"</div>"
+						+		"<div class='griditem forum_header_grid_side_column_r'>"
+						+			headerRightColumn
+						+		"</div>"
+						+	"</div>"
+						;
 
 			for (Post p : allPosts) {
 				body	+=	"<div class='forum_list_entry user_post_entry'>"

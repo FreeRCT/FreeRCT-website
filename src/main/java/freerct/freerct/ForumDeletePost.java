@@ -42,11 +42,16 @@ public class ForumDeletePost {
 			final String forumName = sql.getString("name");
 
 			String body	=	"<h1>Topic: " + htmlEscape(topicName) + ": Delete Post</h1>"
-						+	"<p class='forum_description_name'>Forum: <a href='/forum/" + forumID + "'>" + htmlEscape(forumName) + "</a></p>"
-
-						+	"<form><div class='forum_back_button_wrapper'>"
-						+		"<input class='form_button' type='submit' value='Back' formaction='/forum/post/" + postID + "'>"
-						+	"</div></form>"
+						+	"<div class='forum_header_grid_toplevel'>"
+						+		"<div class='griditem forum_header_grid_side_column_l'>"
+						+			"<a class='form_button' href='/forum/post/" + postID + "'>Back</a>"
+						+		"</div>"
+						+		"<div class='griditem forum_header_grid_middle_column'>"
+						+			"<p class='forum_description_name'>Forum: <a href='/forum/" + forumID + "'>" + htmlEscape(forumName) + "</a></p>"
+						+		"</div>"
+						+		"<div class='griditem forum_header_grid_side_column_r'>"
+						+		"</div>"
+						+	"</div>"
 
 						+	generateForumPostForm(true, null, "Delete Post", content, "/forum/post/submit_delete/" + postID, error, true);
 						;

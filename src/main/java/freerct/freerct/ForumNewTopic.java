@@ -33,11 +33,16 @@ public class ForumNewTopic {
 			final String forumDescription = sql.getString("description");
 
 			String body	=	"<h1>Forum: " + htmlEscape(forumName) + ": New Topic</h1>"
-						+	"<p class='forum_description_name'>" + htmlEscape(forumDescription) + "</p>"
-
-						+	"<form><div class='forum_back_button_wrapper'>"
-						+		"<input class='form_button' type='submit' value='Back' formaction='/forum/" + forumID + "'>"
-						+	"</div></form>"
+						+	"<div class='forum_header_grid_toplevel'>"
+						+		"<div class='griditem forum_header_grid_side_column_l'>"
+						+			"<a class='form_button' href='/forum/" + forumID + "'>Back</a>"
+						+		"</div>"
+						+		"<div class='griditem forum_header_grid_middle_column'>"
+						+			"<p class='forum_description_name'>" + htmlEscape(forumDescription) + "</p>"
+						+		"</div>"
+						+		"<div class='griditem forum_header_grid_side_column_r'>"
+						+		"</div>"
+						+	"</div>"
 
 						+	generateForumPostForm(false, "Subject", "Post", "", "/forum/" + forumID + "/submit_new", error, false);
 

@@ -50,6 +50,7 @@ h3 { font-size: 18px }
 strong {
 	color: var(--blue-dark);
 	font-weight: bold;
+	font-size: inherit;
 }
 emp {
 	color: var(--blue-dark);
@@ -147,15 +148,13 @@ footer a:link,
 a:link .forum_list_header,
 .forum_list_entry a:link,
 a:link .right_column_login,
-.right_column_box a:link,
-a.form_button:link
+.right_column_box a:link
 	{ color: var(--text-light-bluish) !important; }
 footer a:visited, .latest_post_entry a:visited,
 a:visited .forum_list_header,
 .forum_list_entry a:visited,
 a:visited .right_column_login,
-.right_column_box a:visited,
-a.form_button:visited
+.right_column_box a:visited
 	{ color: var(--blue-very-light) !important; }
 
 footer a, .latest_post_entry a, a .forum_list_header, .forum_list_entry a {
@@ -237,7 +236,7 @@ blockquote {
 	flex-grow: 1;
 }
 
-.grid {
+.grid, .forum_header_grid_toplevel {
 	display: grid;
 	grid-gap: 8px;
 	color: var(--text-dark);
@@ -245,6 +244,43 @@ blockquote {
 .griditem {
 	display: inline-grid;
 	padding: 8px;
+}
+.forum_header_grid_toplevel {
+	grid-auto-columns: minmax(0, 1fr);
+	grid-auto-flow: column;
+	padding: 0;
+	margin: 0;
+	grid-gap: 0;
+}
+.forum_header_grid_side_column_l, .forum_header_grid_side_column_r {
+	margin: auto 0 0 0;
+	padding: 0 8px;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	align-content: flex-end;
+	align-items: flex-end;
+}
+.forum_header_grid_side_column_l {
+	justify-content: flex-start;
+	align-content: flex-start;
+	align-items: flex-end;
+}
+.forum_header_grid_side_column_l>* {
+	margin-right: 8px;
+}
+.forum_header_grid_side_column_r>* {
+	margin-left: 8px;
+}
+.forum_header_grid_middle_column * {
+	padding: 0;
+	margin: 8px 0;
+}
+.forum_header_grid_middle_column>*:first-child {
+	margin-top: -8px;
+}
+.forum_header_grid_middle_column>*:last-child {
+	margin-bottom: 2px;
 }
 
 label, label.griditem {
@@ -268,7 +304,7 @@ input, textarea, .form_button {
 	background-color: var(--bg-overlay);
 	border: var(--border-blue-thick);
 	border-radius: 5px;
-	color: var(--text-light);
+	color: var(--text-light) !important;
 	text-decoration: none;
 }
 
@@ -409,28 +445,6 @@ input, textarea {
 	margin-left: 32px;
 }
 
-.forum_new_topic_button_wrapper, .forum_back_button_wrapper {
-	text-align: left;
-	padding: 0;
-	/* Ugh, pixel-perfect positioning. This is fragile, not sure if there is a better way. */
-	margin: -54px 8px 8px 8px;
-}
-.forum_new_topic_button_wrapper {
-	text-align: right;
-}
-.forum_new_topic_button_wrapper>input {
-	margin-left: 8px;
-}
-.forum_back_button_wrapper>input {
-	margin-right: 8px;
-}
-.playonline_button_wrapper {
-	text-align: right;
-	padding: 0;
-	/* Ugh, pixel-perfect positioning. This is fragile, not sure if there is a better way. */
-	margin: -54px 0 0 0;
-}
-
 .new_post_form {
 	padding: 8px;
 	margin: 16px 20% 0 20%;
@@ -442,23 +456,11 @@ input, textarea {
 	text-shadow: var(--text-shadow);
 }
 
-.playonline {
-	background-color: #000000;
-	border: var(--border-blue-thick);
-	border-radius: 5px;
-	text-align: center;
-	padding: 8px;
-	margin: 8px 0;
+.forum_post_buttons_wrapper {
+	padding: 4px 0 0 0;
 }
-.playonline canvas {
-	padding: 0;
-	margin: 0;
-}
-progress {
-	width: 100%;
-	height: 4px;
-	padding: 0;
-	margin: 0;
+.forum_post_buttons_wrapper>* {
+	margin-right: 4px;
 }
 
 .form_button {
@@ -475,17 +477,6 @@ progress {
 	background-color: var(--bg-overlay-strong);
 }
 
-.forum_post_buttons_wrapper {
-	margin-top: 4px;
-}
-.forum_post_buttons_wrapper, .forum_post_buttons_wrapper>form {
-	padding: 0;
-}
-.forum_post_buttons_wrapper>form {
-	float: left;
-	margin-right: 4px;
-}
-
 .user_profile_image, .linkified_user_profile_image {
 	border: var(--border-blue-thin);
 	border-radius: 5px;
@@ -500,11 +491,29 @@ progress {
 	margin: 0 auto;
 }
 
-.user_profile_image_wrapper {
-	text-align: left;
+/* Online playing frame. */
+
+.playonline {
+	background-color: #000000;
+	border: var(--border-blue-thick);
+	border-radius: 5px;
+	text-align: center;
+	padding: 8px;
+	margin: 8px 0 0 0;
+}
+
+.playonline canvas {
 	padding: 0;
-	/* Ugh, pixel-perfect positioning. This is fragile, not sure if there is a better way. */
-	margin: -136px 8px 4px 8px;
+	margin: 0;
+	min-width : 800px;
+	min-height: 600px;
+}
+
+progress {
+	width: 100%;
+	height: 4px;
+	padding: 0;
+	margin: 0;
 }
 
 /* Latest posts box. */
