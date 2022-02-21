@@ -768,8 +768,10 @@ public class FreeRCTApplication {
 			+		"<ul id='menubar_ul'>"
 			+		"<p id='menubar_spacer_menu'></p>"
 
-			+		createMenuBarEntry   (uri, new DropdownEntry("/"           , "FreeRCT Home"))
+			+		createMenuBarDropdown(uri, new DropdownEntry("/"           , "FreeRCT Home"),
+					                           new DropdownEntry("/news"       , "News Archive"))
 			+		createMenuBarEntry   (uri, new DropdownEntry("/screenshots", "Screenshots" ))
+			+		createMenuBarEntry   (uri, new DropdownEntry("/play/play"  , "Play Online" ))
 			+		createMenuBarEntry   (uri, new DropdownEntry("/download"   , "Get It!"     ))
 			+		createMenuBarEntry   (uri, new DropdownEntry("/manual"     , "Manual"      ))
 			;
@@ -783,17 +785,13 @@ public class FreeRCTApplication {
 		} catch (SQLException e) {
 			allForums.clear();
 		}
-		result += createMenuBarDropdown(uri, new DropdownEntry("/forum", "Forums"), allForums.toArray(new DropdownEntry[0]));
-
 		result
-			+=		createMenuBarDropdown(uri, new DropdownEntry("/contribute"                              , "Contribute"          ),
+			+=		createMenuBarDropdown(uri, new DropdownEntry("/forum", "Forums"), allForums.toArray(new DropdownEntry[0]))
+			+		createMenuBarDropdown(uri, new DropdownEntry("/contribute"                              , "Contribute"          ),
 					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT"       , "Git Repository", true),
 					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT/issues", "Issue Tracker" , true))
-			+		createMenuBarEntry   (uri, new DropdownEntry("/news"                                    , "News Archive"        ))
-			;
 
-		result
-			+=		"</ul>"
+			+		"</ul>"
 			+		"<p id='menubar_spacer_bottom'></p>"
 
 			+		"<div class='toplevel_content_flexbox'>"

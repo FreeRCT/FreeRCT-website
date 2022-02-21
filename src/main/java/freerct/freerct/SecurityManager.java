@@ -270,6 +270,7 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			.antMatchers("/forum/post/*").permitAll()
 			.antMatchers("/forum/topic/*").permitAll()
 			.antMatchers("/manual").permitAll()
+			.antMatchers("/play/*").permitAll()
 			.antMatchers("/news").permitAll()
 			.antMatchers("/screenshots").permitAll()
 			/* The "/user/*" pages are not public. */

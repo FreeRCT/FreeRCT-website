@@ -37,6 +37,7 @@ The second section sets variables for the server implementation. The server expe
 
 Key                  | Description                                                                      | Example
 -------------------- | -------------------------------------------------------------------------------- | ------------------
+`freerct`            | Path to the FreeRCT git checkout                                                 | `/var/freerct`
 `databasehost`       | IP address of the MySQL server                                                   | `127.0.0.1`
 `databaseport`       | Port number of the MySQL server                                                  | `3306`
 `databasename`       | Name of the database                                                             | `freerct_db`

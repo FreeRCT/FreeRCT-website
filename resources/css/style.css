@@ -61,6 +61,9 @@ smallcaps {
 sup {
 	font-size: 12px;
 }
+.center {
+	text-align: center;
+}
 
 tt, pre code, .codefield, .toc {
 	color: var(--text-light);
@@ -144,13 +147,15 @@ footer a:link,
 a:link .forum_list_header,
 .forum_list_entry a:link,
 a:link .right_column_login,
-.right_column_box a:link
+.right_column_box a:link,
+a.form_button:link
 	{ color: var(--text-light-bluish) !important; }
 footer a:visited, .latest_post_entry a:visited,
 a:visited .forum_list_header,
 .forum_list_entry a:visited,
 a:visited .right_column_login,
-.right_column_box a:visited
+.right_column_box a:visited,
+a.form_button:visited
 	{ color: var(--blue-very-light) !important; }
 
 footer a, .latest_post_entry a, a .forum_list_header, .forum_list_entry a {
@@ -247,7 +252,7 @@ label, label.griditem {
 	padding: 12px 0 8px 0;
 }
 
-.new_post_form label {
+.new_post_form label, .new_post_form .center {
 	text-align: center;
 }
 
@@ -264,6 +269,7 @@ input, textarea, .form_button {
 	border: var(--border-blue-thick);
 	border-radius: 5px;
 	color: var(--text-light);
+	text-decoration: none;
 }
 
 input, textarea {
@@ -418,6 +424,12 @@ input, textarea {
 .forum_back_button_wrapper>input {
 	margin-right: 8px;
 }
+.playonline_button_wrapper {
+	text-align: right;
+	padding: 0;
+	/* Ugh, pixel-perfect positioning. This is fragile, not sure if there is a better way. */
+	margin: -54px 0 0 0;
+}
 
 .new_post_form {
 	padding: 8px;
@@ -428,6 +440,25 @@ input, textarea {
 	font-size: 18px;
 	color: var(--green-medium);
 	text-shadow: var(--text-shadow);
+}
+
+.playonline {
+	background-color: #000000;
+	border: var(--border-blue-thick);
+	border-radius: 5px;
+	text-align: center;
+	padding: 8px;
+	margin: 8px 0;
+}
+.playonline canvas {
+	padding: 0;
+	margin: 0;
+}
+progress {
+	width: 100%;
+	height: 4px;
+	padding: 0;
+	margin: 0;
 }
 
 .form_button {

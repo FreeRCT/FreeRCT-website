@@ -3,6 +3,9 @@
 /*.p12
 /*.keystore
 
+# WASM game
+/resources/play/
+
 # Userdata
 /resources/img/users/
 
