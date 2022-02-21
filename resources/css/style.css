@@ -493,13 +493,17 @@ input, textarea {
 
 /* Online playing frame. */
 
+.playonline_buttons {
+	padding-right: 0;
+}
+
 .playonline {
 	background-color: #000000;
 	border: var(--border-blue-thick);
 	border-radius: 5px;
 	text-align: center;
 	padding: 8px;
-	margin: 8px 0 0 0;
+	margin: 0;
 }
 
 .playonline canvas {
@@ -509,11 +513,23 @@ input, textarea {
 	min-height: 600px;
 }
 
-progress {
+.playonline_textarea {
+	display: none;
 	width: 100%;
-	height: 4px;
+	resize: vertical;
+	margin-top: 8px;
+}
+
+.playonline_progressbar progress {
+	width: 100%;
+	height: 8px;
+}
+
+.playonline_progressbar {
 	padding: 0;
-	margin: 0;
+	margin: 4px 0;
+	display:flex;
+	align-items:center;
 }
 
 /* Latest posts box. */
