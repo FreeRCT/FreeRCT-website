@@ -78,6 +78,7 @@ public class ForumNewTopic {
 			long topicID = sql.getLong("new_id");
 
 			sql("insert into posts (topic,user,body) value(?,?,?)", topicID, userID, content);
+			sql("insert into subscriptions (user,topic) value(?,?)", userID, topicID);
 
 			session.removeAttribute("freerct-new-topic-subject");
 			session.removeAttribute("freerct-new-topic-content");

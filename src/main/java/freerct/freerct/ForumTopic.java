@@ -72,6 +72,14 @@ public class ForumTopic {
 			sql.next();
 			final String forumName = sql.getString("name");
 
+			Boolean subscribed = null;
+			if (request.getUserPrincipal() != null) {
+				sql = sql("select id from users where username=?", request.getRemoteUser());
+				sql.next();
+				sql = sql("select * from subscriptions where topic=? and user=?", topicID, sql.getLong("id"));
+				subscribed = sql.next();
+			}
+
 			List<Post> allPosts = new ArrayList<>();
 			sql = sql("select id,user,editor,created,edited,body from posts where topic=? order by id asc", topicID);
 			while (sql.next()) {
@@ -129,6 +137,9 @@ public class ForumTopic {
 										"<a class='form_button' href='/forum/topic/rename/" + topicID + "'>Rename</a>"
 						+				"<a class='form_button' href='/forum/topic/delete/" + topicID + "'>Delete</a>"
 									) : "")
+						+			(subscribed == null ? "" : subscribed ?
+										("<a class='form_button' href='/forum/topic/unsubscribe/" + topicID + "'>Unsubscribe</a>") :
+										("<a class='form_button' href='/forum/topic/subscribe/"   + topicID + "'>Subscribe</a>"))
 						+		"</div>"
 						+	"</div>"
 						;
@@ -247,6 +258,8 @@ public class ForumTopic {
 			}
 			sql.next();
 			long postID = sql.getLong("new_id");
+
+			Subscriptions.sendNewPostMails(postID);
 
 			session.removeAttribute("freerct-new-post-content");
 			return "redirect:/forum/post/" + postID;

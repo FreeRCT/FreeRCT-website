@@ -138,12 +138,48 @@ body                 | text             | The content of the message.
 timestamp            | datetime         | The time and date the message was sent.
 state                | int              | One of 0 (unread), 1 (read), or 2 (deleted).
 
+### `noticetypes`
+
+Each row represents a type of e-mail notification.
+
+Column               | Type             | Description
+-------------------- | ---------------- | ----------------------------------------------------------
+id                   | int              | The notice type ID.
+slug                 | varchar          | The internal name.
+name                 | varchar          | The human-readable name.
+description          | varchar          | The human-readable description.
+default_enable       | int              | Whether the notice type is enabled by default (1 or 0).
+
+### `notification_settings`
+
+Each row represents a user's setting for a specific notification type.
+
+Column               | Type             | Description
+-------------------- | ---------------- | ----------------------------------------------------------
+id                   | int              | Table key.
+user                 | int              | The user's ID.
+notice               | int              | The notice type ID.
+state                | int              | 1 if the notice type is enabled, 0 if it's disabled.
+
+### `subscriptions`
+
+Each row represents a user's subscription to a specific topic.
+
+Column               | Type             | Description
+-------------------- | ---------------- | ----------------------------------------------------------
+id                   | int              | Table key.
+user                 | int              | The user's ID.
+topic                | int              | The topic's ID.
+
 ### *ToDo add wiki tables*
 
 ### Table Schema
 ```sql
 -- Delete all current tables in the correct order.
 -- Do this only if you don't care about data loss!!!
+drop table if exists notification_settings;
+drop table if exists noticetypes;
+drop table if exists subscriptions;
 drop table if exists posts;
 drop table if exists topics;
 drop table if exists forums;
@@ -162,6 +198,7 @@ create table users (
 	activation_token  varchar(255)           default null,
 	activation_expire datetime               default null
 );
+
 create table news (
 	id        int          not null primary key auto_increment,
 	author    int          not null,
@@ -171,11 +208,13 @@ create table news (
 	body      text         not null,
 	foreign key fk_author (author) references users (id) on delete cascade on update cascade
 );
+
 create table forums (
 	id          int          not null primary key auto_increment,
 	name        varchar(255) not null,
 	description varchar(255) not null
 );
+
 create table topics (
 	id    int          not null primary key auto_increment,
 	forum int          not null,
@@ -183,6 +222,7 @@ create table topics (
 	views int          not null default 0,
 	foreign key fk_forum (forum) references forums (id) on delete cascade on update cascade
 );
+
 create table posts (
 	id      int      not null primary key auto_increment,
 	topic   int      not null,
@@ -195,6 +235,32 @@ create table posts (
 	foreign key fk_user   (user  ) references users  (id) on delete cascade on update cascade,
 	foreign key fk_editor (editor) references users  (id) on delete cascade on update cascade
 );
+
+create table noticetypes (
+	id             int          not null primary key auto_increment,
+	slug           varchar(255) not null,
+	name           varchar(255) not null,
+	description    varchar(255) not null,
+	default_enable int          not null
+);
+
+create table notification_settings (
+	id     int not null primary key auto_increment,
+	user   int not null,
+	notice int not null,
+	state  int not null,
+	foreign key fk_user  (user  ) references users       (id) on delete cascade on update cascade,
+	foreign key fk_notice(notice) references noticetypes (id) on delete cascade on update cascade
+);
+
+create table subscriptions (
+	id    int not null primary key auto_increment,
+	user  int not null,
+	topic int not null,
+	foreign key fk_user (user ) references users  (id) on delete cascade on update cascade,
+	foreign key fk_topic(topic) references topics (id) on delete cascade on update cascade
+);
+
 create table messages (
 	id        int          not null primary key auto_increment,
 	sender    int          not null,
