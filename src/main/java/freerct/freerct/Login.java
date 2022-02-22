@@ -48,6 +48,10 @@ public class Login {
 					<input class='griditem form_button' style='grid-column:4/span 1; grid-row:4/span 1'
 							type="submit" value="I lost my password" formaction="/login/forgotpassword" formnovalidate>
 
+					<div class='griditem' style='grid-column:4/span 4; grid-row:5/span 1'>
+						<span>Don't have an account yet? <a href='/signup'>Register now.</a></span>
+					</div>
+
 					<div   class='griditem'             style='grid-column:6/span 3; grid-row:1/span 3'></div>
 					<div   class='griditem'             style='grid-column:1/span 2; grid-row:1/span 3'></div>
 				</form>

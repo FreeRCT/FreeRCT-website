@@ -54,6 +54,10 @@ public class Register {
 					<input class='griditem form_button form_default_action' style='grid-column:4/span 1; grid-row:5/span 1'
 							type="submit" value="Create Account" formaction="/signup/complete">
 
+					<div class='griditem' style='grid-column:4/span 3; grid-row:6/span 1'>
+						<span>Already have an account? <a href='/login'>Log in.</a></span>
+					</div>
+
 					<div   class='griditem'             style='grid-column:6/span 4; grid-row:1/span 3'></div>
 					<div   class='griditem'             style='grid-column:1/span 2; grid-row:1/span 3'></div>
 				</form>

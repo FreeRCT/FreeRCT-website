@@ -259,14 +259,16 @@ public class FreeRCTApplication {
 		public final String regex, smiley;
 		private SmileyDefinition(String r, String s) {
 			regex = r;
-			smiley = s;
+			smiley = htmlEscape(s);
 		}
 
 		/**
 		 * All supported smileys, with the Java regex to search for them.
-		 *Order matters, because some smiley definitions are part of another smiley definition.
+		 * Order matters, because some smiley definitions are part of another smiley definition.
 		 */
 		public static final SmileyDefinition[] SMILEYS = new SmileyDefinition[] {
+			new SmileyDefinition("(\\:&apos;\\))","😅️"),  // :')
+
 			new SmileyDefinition("(\\:-?D)",      "😁️"),  // :D  :-D
 			new SmileyDefinition("(\\:-?\\)\\))", "😀️"),  // :)) :-))
 			new SmileyDefinition("(\\:-?\\))",    "🙂️"),  // :)  :-)
@@ -275,7 +277,6 @@ public class FreeRCTApplication {
 			new SmileyDefinition("(\\;-?\\)\\))", "😂️"),  // ;)) ;-))
 			new SmileyDefinition("(\\;-?\\))",    "😉️"),  // ;)  ;-)
 
-			new SmileyDefinition("(\\:\\'\\))",     "😅️"),  // :')
 			new SmileyDefinition("(\\:-?O)",      "😯️"),  // :O  :-O
 			new SmileyDefinition("(8-?\\()",      "😳️"),  // 8(  8-(
 			new SmileyDefinition("(\\^\\^)",      "🙄️"),  // ^^

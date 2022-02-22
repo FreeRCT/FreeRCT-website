@@ -304,8 +304,10 @@ input, textarea, .form_button {
 	background-color: var(--bg-overlay);
 	border: var(--border-blue-thick);
 	border-radius: 5px;
-	color: var(--text-light) !important;
 	text-decoration: none;
+}
+input, textarea, .form_button, a.form_button:link, a.form_button:visited {
+	color: var(--text-light) !important;
 }
 
 input, textarea {
