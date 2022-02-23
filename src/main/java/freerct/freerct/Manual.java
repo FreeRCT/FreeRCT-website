@@ -147,7 +147,7 @@ public class Manual {
 							The main view displays the game world.
 							You can navigate around by right-click-and-dragging.
 							Use the Left and Right arrow keys to rotate the view in 90° steps.
-							You can click on things (rides, guests, …) to open windows which display
+							You can click on things (rides, guests, &hellip;) to open windows which display
 							more information about the item as well as management options.
 						</p>
 
@@ -385,11 +385,11 @@ public class Manual {
 					</div>
 					<div class="manual_screenshot">
 						<img src="/img/screenshots/manual/rides_build_coaster1.png"></img>
-						<p> Building a tracked ride requires more planning from you… </p>
+						<p> Building a tracked ride requires more planning from you&hellip; </p>
 					</div>
 					<div class="manual_screenshot">
 						<img src="/img/screenshots/manual/rides_build_coaster2.png"></img>
-						<p> …since you need to spell out the entire path. </p>
+						<p> &hellip;since you need to spell out the entire path. </p>
 					</div>
 					<div class="manual_screenshot">
 						<img src="/img/screenshots/manual/entrances.png"></img>

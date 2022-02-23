@@ -69,12 +69,12 @@ public class Contribute {
 				</p><p>
 					When you add a new language, it additionally needs to be added to the list of all
 					languages in all of the following files:
-					<ul class="ttlist">
-						<li><code>src/language.cpp</code></li>
-						<li><code>src/language.h</code></li>
-						<li><code>src/rcdgen/nodes.cpp</code></li>
-						<li><code>src/rcdgen/nodes.h</code></li>
-					</ul>
+				</p><ul class="ttlist">
+					<li><code>src/language.cpp</code></li>
+					<li><code>src/language.h</code></li>
+					<li><code>src/rcdgen/nodes.cpp</code></li>
+					<li><code>src/rcdgen/nodes.h</code></li>
+				</ul><p>
 					Search for the string <code>NDS_DE</code> therein to find the section where the language code needs to be added.
 					The lists of languages should be kept in alphabetical order.
 				</p>
