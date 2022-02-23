@@ -25,7 +25,7 @@ public class Screenshots {
 			<script>
 				const ALL_SCREENSHOT_SECTIONS = [
 					{slug: '0_1', label: 'FreeRCT 0.1'},
-					{slug: 'test', label: 'Test Images <emp>(to be deleted)</emp>'},  // TODO delete
+					{slug: 'test', label: 'Test Images <em>(to be deleted)</em>'},  // TODO delete
 				];
 				const ALL_IMAGES = [
 					{section: '0_1', image: 'mainpage_slideshow/mainview'},

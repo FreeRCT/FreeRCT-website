@@ -84,7 +84,7 @@ public class Manual {
 			+ createLinkifiedHeader("h3", "/manual", "mm-newgame", "New Game")
 			+ """
 						<p>
-							When you click the <emp>New Game</emp> button, you are immediately presented with a brand-new empty park and ready to start playing.
+							When you click the <em>New Game</em> button, you are immediately presented with a brand-new empty park and ready to start playing.
 						</p>
 
 					</div><div>
@@ -92,8 +92,8 @@ public class Manual {
 			+ createLinkifiedHeader("h3", "/manual", "mm-loadgame", "Load")
 			+ """
 						<p>
-							When you click the <emp>Load</emp> button, a window with a list of all saved games appears.
-							Select a game and press <emp>Load</emp> to load it, or press <emp>Cancel</emp> to abort.
+							When you click the <em>Load</em> button, a window with a list of all saved games appears.
+							Select a game and press <em>Load</em> to load it, or press <em>Cancel</em> to abort.
 						</p>
 
 					</div><div>
@@ -101,7 +101,7 @@ public class Manual {
 			+ createLinkifiedHeader("h3", "/manual", "mm-settings", "Settings")
 			+ """
 						<p>
-							When you click the <emp>Settings</emp> button, the Settings window opens.
+							When you click the <em>Settings</em> button, the Settings window opens.
 							This window allows you to change the language of FreeRCT and the window resolution.
 							The window resolution can also be changed by manually resizing the game window.
 						</p>
@@ -111,7 +111,7 @@ public class Manual {
 			+ createLinkifiedHeader("h3", "/manual", "mm-quit", "Quit")
 			+ """
 						<p>
-							When you click the <emp>Quit</emp> button, FreeRCT closes immediately.
+							When you click the <em>Quit</em> button, FreeRCT closes immediately.
 						</p>
 					</div>
 					<div></div>  <!-- spacer -->
@@ -133,10 +133,10 @@ public class Manual {
 			+ createLinkifiedHeader("h2", "/manual", "game-window", "The Game Window")
 			+ """
 						<p>
-							The game window is divided into three areas. In the center of the window is the <emp>main view</emp>,
+							The game window is divided into three areas. In the center of the window is the <em>main view</em>,
 							which displays your park.
-							At the top of the window is the <emp>toolbar</emp>, which contains all the buttons and controls to manage both the park and FreeRCT.
-							At the bottom of the window is the <emp>info panel</emp>, which shows information about your park.
+							At the top of the window is the <em>toolbar</em>, which contains all the buttons and controls to manage both the park and FreeRCT.
+							At the bottom of the window is the <em>info panel</em>, which shows information about your park.
 						</p>
 
 					</div><div>
@@ -158,28 +158,28 @@ public class Manual {
 						<p>
 							The toolbar buttons, from left to right, mean:
 							<ul>
-								<li>      The <emp>Menu</emp> dropdown contains options to save the game, enable editor mode,
+								<li>      The <em>Menu</em> dropdown contains options to save the game, enable editor mode,
 										  open the Settings window, return to the main menu, and quit FreeRCT.
-								</li><li> The <emp>Game Speed</emp> dropdown allows you to change the speed of the running game
+								</li><li> The <em>Game Speed</em> dropdown allows you to change the speed of the running game
 										  as well as to pause and unpause it.
-								</li><li> The <emp>View</emp> dropdown contains settings and windows regarding the view on the map.
-								</li><li> The <emp>Terraform</emp> button opens a window which allows you to
+								</li><li> The <em>View</em> dropdown contains settings and windows regarding the view on the map.
+								</li><li> The <em>Terraform</em> button opens a window which allows you to
 										  modify the landscape in the park.
-								</li><li> The <emp>Paths</emp> button opens a window which allows you to
+								</li><li> The <em>Paths</em> button opens a window which allows you to
 										  build and remove paths and queue paths in your park.
-								</li><li> The <emp>Fences</emp> button opens a window which allows you to
+								</li><li> The <em>Fences</em> button opens a window which allows you to
 										  build and remove fences in your park.
-								</li><li> The <emp>Scenery</emp> button opens a window which allows you to
+								</li><li> The <em>Scenery</em> button opens a window which allows you to
 										  build and remove scenery items such as trees and fountains in your park.
-								</li><li> The <emp>Path Objects</emp> button opens a window which allows you to
+								</li><li> The <em>Path Objects</em> button opens a window which allows you to
 										  build and remove benches, lamps, and litter bins in your park.
-								</li><li> The <emp>Build Ride</emp> button opens a window which allows you to
+								</li><li> The <em>Build Ride</em> button opens a window which allows you to
 										  select a ride type to build in your park.
-								</li><li> The <emp>Staff</emp> button opens a window which allows you to
+								</li><li> The <em>Staff</em> button opens a window which allows you to
 										  hire and dismiss park staff.
-								</li><li> The <emp>Inbox</emp> button opens a window which allows you to
+								</li><li> The <em>Inbox</em> button opens a window which allows you to
 										  view all messages you received.
-								</li><li> The <emp>Finances</emp> button opens a window which
+								</li><li> The <em>Finances</em> button opens a window which
 										  provides an overview over your park's finances.
 								</li>
 							</ul>
@@ -190,13 +190,13 @@ public class Manual {
 			+ createLinkifiedHeader("h3", "/manual", "info-panel", "The Info Panel")
 			+ """
 						<p>
-							In the upper left corner of the info panel you can see the amount of <emp>cash</emp> your park currently has.
-							Below it is the number of <emp>guests</emp> in the park.
-							To the right of these figures is an indicator of the current <emp>weather</emp> in the park, ranging from sunny to thunderstorm,
-							with the <emp>temperature</emp> next to it.
-							At the right edge of the info panel is the current in-game <emp>date</emp>.
-							The <emp>compass</emp> to its left indicates the current rotation of your main view (the red arrow points north).
-							The large empty space in the middle of the info panel is where any <emp>messages</emp> you receive are previewed.
+							In the upper left corner of the info panel you can see the amount of <em>cash</em> your park currently has.
+							Below it is the number of <em>guests</em> in the park.
+							To the right of these figures is an indicator of the current <em>weather</em> in the park, ranging from sunny to thunderstorm,
+							with the <em>temperature</em> next to it.
+							At the right edge of the info panel is the current in-game <em>date</em>.
+							The <em>compass</em> to its left indicates the current rotation of your main view (the red arrow points north).
+							The large empty space in the middle of the info panel is where any <em>messages</em> you receive are previewed.
 						</p>
 					</div>
 					<div></div>  <!-- spacer -->
@@ -246,28 +246,28 @@ public class Manual {
 			+ """
 						<p>
 							Your guests will move only on footpaths. To build footpaths, click on the 
-							<emp>Paths</emp> button in the top toolbar and select a
-							<emp>normal path</emp> type. Now click anywhere in your park and a footpath
+							<em>Paths</em> button in the top toolbar and select a
+							<em>normal path</em> type. Now click anywhere in your park and a footpath
 							will appear. Right-click on an existing footpath to remove it.
 							Building paths costs money and may only be performed if you still have
 							enough cash. Deleting paths returns cash, but less than it cost to build the path.
 						</p><p>
-							At the bottom of the window, you can switch between <emp>single</emp> and
-							<emp>directional</emp> path building mode. In single mode, a click
+							At the bottom of the window, you can switch between <em>single</em> and
+							<em>directional</em> path building mode. In single mode, a click
 							corresponds to placing one tile of path. You can place paths only on flat terrain
 							and suitably formed slopes. In directional mode, you can also build elevated
 							paths. Click on the map to position the path building cursor there. Now use
 							the four yellow arrow buttons in the path building window to choose a direction,
-							and the three slope buttons to choose the angle. Finally, click the <emp>Buy</emp>
+							and the three slope buttons to choose the angle. Finally, click the <em>Buy</em>
 							button to build a path in the location indicated by the cursor. The cursor
 							automatically advances one step forward so you can build a longer path quickly.
-							Using the <emp>Remove</emp> button removes the last path segment and moves the
+							Using the <em>Remove</em> button removes the last path segment and moves the
 							cursor one step backwards. You can also move the cursor by clicking on the map
-							or using the <emp>Back</emp> and <emp>Forward</emp> buttons.
+							or using the <em>Back</em> and <em>Forward</em> buttons.
 						</p><p>
 							Queues for rides can be built in the same manner as normal paths.
-							Just select a <emp>queue path</emp> type instead of a <emp>normal path</emp>.
-							You will learn more about queues in the <emp>Rides</emp> section below.
+							Just select a <em>queue path</em> type instead of a <em>normal path</em>.
+							You will learn more about queues in the <em>Rides</em> section below.
 						</p>
 
 					</div><div>
@@ -276,28 +276,28 @@ public class Manual {
 			+ """
 						<p>
 							Those paths are a bit bare, aren't they? Let's add some path objects.
-							To do so, click the <emp>Path Objects</emp> button in the top toolbar.
+							To do so, click the <em>Path Objects</em> button in the top toolbar.
 						</p><p>
 							There are three types of path objects available:
 							<ul>
-									 <li> <emp>Benches</emp> allow guests to sit down and rest.
+									 <li> <em>Benches</em> allow guests to sit down and rest.
 										  This makes the guests happy and serves to reduce nausea and
 										  tiredness. Two guests can sit on each bench. Benches can only
 										  be built on flat paths.
-								</li><li> <emp>Litterbins</emp> are used by guests to throw away wrappers
+								</li><li> <em>Litterbins</em> are used by guests to throw away wrappers
 										  from food they bought. If a guest can't find a litterbin to dispose
 										  of his litter, he will simply throw it down, so make sure there
 										  are enough bins around! When a lot of litter has been thrown in
 										  a bin, the bin needs to be emptied by a handyman before guests
 										  can dispose of more litter there.
-								</li><li> <emp>Lamps</emp> look nice. They don't have a
+								</li><li> <em>Lamps</em> look nice. They don't have a
 										  function beyond decorating your park.
 								</li>
 							</ul>
 						</p><p>
 							Like almost everything in this game, path objects cost money to build.
 							To build a path object, select it in the Path Objects window and click on an
-							existing footpath. <emp>All</emp> edges of this footpath are immediately
+							existing footpath. <em>All</em> edges of this footpath are immediately
 							furnished with the selected object. Any other path object previously present
 							will be replaced.
 						</p>
@@ -308,7 +308,7 @@ public class Manual {
 			+ """
 						<p>
 							Most of your park is just a featureless green plain. How about adding some trees, flowers,
-							and other scenery? To do so, click the <emp>Scenery</emp> button in the top toolbar.
+							and other scenery? To do so, click the <em>Scenery</em> button in the top toolbar.
 						</p><p>
 							The Scenery window looks and behaves much like the Path Objects window.
 							However, there are more items available for purchase, so they're grouped into
@@ -316,7 +316,7 @@ public class Manual {
 							Click on an item to select it, then click on the map to buy it.
 							Scenery items can not be built on slopes.
 							Some items occupy just one field, but some occupy several. For items that are
-							not symmetrical, the two <emp>Rotate</emp> buttons in the top-right corner of
+							not symmetrical, the two <em>Rotate</em> buttons in the top-right corner of
 							the Scenery window allow you to choose the orientation of the item you're about to buy.
 						</p><p>
 							Right-click on an existing scenery item to remove it. Some items (e.g.
@@ -330,14 +330,14 @@ public class Manual {
 			+ """
 						<p>
 							The landscape is still looking a tad boring. Some hills or cliffs would be nice.
-							To add some, click the <emp>Landscaping</emp> button in the top toolbar.
+							To add some, click the <em>Landscaping</em> button in the top toolbar.
 						</p><p>
 							The Landscaping window has two important settings.
 							On the right are two buttons to increase and decrease the size of the area you will terraform.
 							Below is the option whether to level the area or move it as a whole.
 						</p><p>
 							Modifying the landscape is as easy as moving the mouse over the park so the cursor
-							indicates the area you want to edit and then using the <emp>mouse wheel</emp>
+							indicates the area you want to edit and then using the <em>mouse wheel</em>
 							to move the area up or down.
 						</p><p>
 							If the size of the terraforming cursor is just a single tile,
@@ -348,7 +348,7 @@ public class Manual {
 							surrounding tiles will be dragged along with the tile or corner you're
 							editing, allowing you to create large hills or valleys without cliffs quickly.
 						</p><p>
-							If you hold down the <emp>Shift</emp> key while terraforming,
+							If you hold down the <em>Shift</em> key while terraforming,
 							no changes will be applied and you will instead receive an estimate
 							of the cost required to actually apply the changes.
 							This works for several other types of modifications as well.
@@ -361,7 +361,7 @@ public class Manual {
 						<p>
 							If you played around with the various tools, your park should have a pretty
 							nice landscape by now. For the finishing touch, click the
-							<emp>Fences</emp> button in the top toolbar.
+							<em>Fences</em> button in the top toolbar.
 						</p><p>
 							Building fences is as easy as it can get: Select one of the three fence
 							types, then click on the map to build a fence segment.
@@ -419,12 +419,12 @@ public class Manual {
 			+ createLinkifiedHeader("h3", "/manual", "rides-selection", "Rides Selection")
 			+ """
 						<p>
-							To build a new ride, click the <emp>Rides</emp> button in the top toolbar.
+							To build a new ride, click the <em>Rides</em> button in the top toolbar.
 							The Rides Selection window displays a list of all rides you can buy,
 							sorted into several categories.
 						</p><p>
 							Clicking on a ride in the list displays more information about the ride.
-							Once you have made your choice, click the <emp>Select</emp> button to start
+							Once you have made your choice, click the <em>Select</em> button to start
 							building the ride.
 						</p>
 
@@ -433,7 +433,7 @@ public class Manual {
 			+ createLinkifiedHeader("h3", "/manual", "fixed-rides", "Building Fixed Rides")
 			+ """
 						<p>
-							There are two types of rides: <emp>Fixed</emp> and <emp>tracked</emp> rides.
+							There are two types of rides: <em>Fixed</em> and <em>tracked</em> rides.
 						</p><p>
 							A fixed ride consists of a single building, such as a shop. After you have
 							selected to build a fixed ride, a window with a preview and the placement
@@ -456,7 +456,7 @@ public class Manual {
 							Use the yellow arrow buttons in the Ride Build window to rotate the currently
 							selected tile, then click on the map to place the first station tile.
 						</p><p>
-							Now you can append more station tiles by clicking the big <emp>Buy Track Piece</emp>
+							Now you can append more station tiles by clicking the big <em>Buy Track Piece</em>
 							button in the Ride Build window, or you can change the type of track piece
 							you're placing. The buttons at the top of the Ride build window allow you to
 							switch between straight pieces and tracks with differing curve radii,
@@ -495,31 +495,31 @@ public class Manual {
 							Most rides need exactly one entrance and one exit. Building another one
 							moves the existing one, if any. However, there are two exceptions:
 							Shops do not have entrances or exits; the buttons are not available for them.
-							And tracked rides need exactly one entrance and one exit <emp>per station</emp>.
+							And tracked rides need exactly one entrance and one exit <em>per station</em>.
 						</p><p>
 							The Ride Management Window allows you to change the colouring of your ride
-							via the <emp>Recolour</emp> buttons. Which parts of the ride can be recoloured
+							via the <em>Recolour</em> buttons. Which parts of the ride can be recoloured
 							and which colours are available depends on the ride type. You can also
 							change the type and colouring of the entrances and exits.
 						</p><p>
-							The <emp>Shop</emp> Management Window shows some statistics about the items
+							The <em>Shop</em> Management Window shows some statistics about the items
 							that are being sold here. You can not change any additional settings yet.
 						</p><p>
 							The Management Window for all rides except shops allows you to define a few more
-							settings: The <emp>entrance fee</emp>, the minimal and maximal waiting time,
+							settings: The <em>entrance fee</em>, the minimal and maximal waiting time,
 							and how often to call a mechanic to inspect the ride. Inspecting a ride
 							increases its reliability and reduces the risk of breakdowns.
 						</p><p>
-							For <emp>fixed rides</emp>, you can additionally control the number of cycles the ride
+							For <em>fixed rides</em>, you can additionally control the number of cycles the ride
 							performs, if the ride type supports this.
 						</p><p>
-							For <emp>coasters</emp>, you can additionally decide how many trains the coaster
+							For <em>coasters</em>, you can additionally decide how many trains the coaster
 							has and how many cars each train consists of. Your choices are limited by
 							coaster type-specific restrictions and the amount of space available in the
 							coaster stations.
 						</p><p>
-							All rides except shops have <emp>Excitement</emp>, <emp>Intensity</emp>, and
-							<emp>Nausea</emp> ratings.
+							All rides except shops have <em>Excitement</em>, <em>Intensity</em>, and
+							<em>Nausea</em> ratings.
 							Coasters additionally display graphs about the speed and G forces along the
 							track. All these statistics are measured when the ride is actually working, so
 							the values are not available initially.
@@ -550,18 +550,18 @@ public class Manual {
 			+ createLinkifiedHeader("h3", "/manual", "ride-persons", "Interaction With Persons")
 			+ """
 						<p>
-							Guests enter rides though <emp>entrances</emp>. If a ride can not be entered yet,
+							Guests enter rides though <em>entrances</em>. If a ride can not be entered yet,
 							guests will patiently wait in a neat queue until the ride is free.
 							But queues will only form on queue paths &ndash; if the entrance is adjoined to a
 							normal path, at most one guest will queue. It is therefore recommended to
-							connect the ride entrance and the regular paths via a <emp>queue path</emp>
+							connect the ride entrance and the regular paths via a <em>queue path</em>
 							several tiles in length.
 						</p><p>
-							Guests leave rides through the <emp>exit</emp>. The exit should therefore be
+							Guests leave rides through the <em>exit</em>. The exit should therefore be
 							directly adjoined to a normal path.
 						</p><p>
 							When the ride is broken down or needs to be inspected, a mechanic enters the
-							ride through the ride's <emp>exit</emp>. For coasters with multiple stations,
+							ride through the ride's <em>exit</em>. For coasters with multiple stations,
 							the mechanic always picks the first station's exit.
 						</p><p>
 							Guests base their decision on whether to enter a ride on the ride's
@@ -617,22 +617,22 @@ public class Manual {
 			+ """
 						<p>
 							Hiring staff is an important aspect of keeping your park functional.
-							Click the <emp>Staff</emp> button in the top toolbar to open the staff window.
+							Click the <em>Staff</em> button in the top toolbar to open the staff window.
 						</p><p>
 							There are four types of staff for your park:
 							<ul>
-									 <li> <emp>Handymen</emp> take care of sweeping dirty paths, emptying full
+									 <li> <em>Handymen</em> take care of sweeping dirty paths, emptying full
 										  litterbins, watering the flowerbeds, and mowing the lawns.
-								</li><li> <emp>Mechanics</emp> repair broken rides, and inspect rides
+								</li><li> <em>Mechanics</em> repair broken rides, and inspect rides
 										  frequently to reduce the likelihood of breakdowns.
-								</li><li> <emp>Security guards</emp> prevent nearby guests from demolishing path objects.
-								</li><li> <emp>Entertainers</emp> increase the happiness and patience of nearby guests.
+								</li><li> <em>Security guards</em> prevent nearby guests from demolishing path objects.
+								</li><li> <em>Entertainers</em> increase the happiness and patience of nearby guests.
 								</li>
 							</ul>
 						</p><p>
 							Select one of the four tabs in the staff window to see how many of this staff
 							you currently have, what they're doing right now, and how high their monthly
-							salary is. Use the <emp>Hire</emp> button to hire more staff.
+							salary is. Use the <em>Hire</em> button to hire more staff.
 							You can click on any staff member to open his personal information window.
 							Next to each staff member is a black cross that allows you to dismiss him instantly.
 						</p>
@@ -644,7 +644,7 @@ public class Manual {
 						<p>
 							FreeRCT occasionally sends you a message to inform you about important events
 							such as availability of new ride types, common complaints, awards won, and more.
-							The newest message is previewed in the bottom toolbar. The <emp>Inbox</emp>
+							The newest message is previewed in the bottom toolbar. The <em>Inbox</em>
 							button in the top toolbar opens a list of all messages your park ever received.
 						</p>
 
@@ -653,7 +653,7 @@ public class Manual {
 			+ createLinkifiedHeader("h3", "/manual", "finances", "Finances")
 			+ """
 						<p>
-							The <emp>Finances</emp> button in the top toolbar shows you details
+							The <em>Finances</em> button in the top toolbar shows you details
 							about your monthly earnings and spendings. You can also take and repay loans here.
 							Other controls such as marketing and research, a history,
 							and further statistics such as park value are not yet implemented.
@@ -690,107 +690,107 @@ public class Manual {
 								<th>Action</th>
 							</tr>
 							<tr>
-								<td><emp>Left</emp> Arrow Key</td>
+								<td><em>Left</em> Arrow Key</td>
 								<td>Move the main view left.</td>
 							</tr>
 							<tr>
-								<td><emp>Right</emp> Arrow Key</td>
+								<td><em>Right</em> Arrow Key</td>
 								<td>Move the main view right.</td>
 							</tr>
 							<tr>
-								<td><emp>Up</emp> Arrow Key</td>
+								<td><em>Up</em> Arrow Key</td>
 								<td>Move the main view up.</td>
 							</tr>
 							<tr>
-								<td><emp>Down</emp> Arrow Key</td>
+								<td><em>Down</em> Arrow Key</td>
 								<td>Move the main view down.</td>
 							</tr>
 							<tr>
-								<td><emp>Page Up</emp></td>
+								<td><em>Page Up</em></td>
 								<td>Rotate the main view counter-clockwise.</td>
 							</tr>
 							<tr>
-								<td><emp>Page Down</emp></td>
+								<td><em>Page Down</em></td>
 								<td>Rotate the main view clockwise.</td>
 							</tr>
 							<tr>
-								<td><emp>Ctrl+S</emp></td>
+								<td><em>Ctrl+S</em></td>
 								<td>Save the game.</td>
 							</tr>
 							<tr>
-								<td><emp>Ctrl+O</emp></td>
+								<td><em>Ctrl+O</em></td>
 								<td>Open the options window.</td>
 							</tr>
 							<tr>
-								<td><emp>Ctrl+W</emp></td>
+								<td><em>Ctrl+W</em></td>
 								<td>Return to the main menu.</td>
 							</tr>
 							<tr>
-								<td><emp>Ctrl+Q</emp></td>
+								<td><em>Ctrl+Q</em></td>
 								<td>Quit the game.</td>
 							</tr>
 							<tr>
-								<td><emp>Alt+0</emp></td>
+								<td><em>Alt+0</em></td>
 								<td>Set the game speed to Paused.</td>
 							</tr>
 							<tr>
-								<td><emp>Alt+1</emp></td>
+								<td><em>Alt+1</em></td>
 								<td>Set the game speed to 1×.</td>
 							</tr>
 							<tr>
-								<td><emp>Alt+2</emp></td>
+								<td><em>Alt+2</em></td>
 								<td>Set the game speed to 2×.</td>
 							</tr>
 							<tr>
-								<td><emp>Alt+3</emp></td>
+								<td><em>Alt+3</em></td>
 								<td>Set the game speed to 4×.</td>
 							</tr>
 							<tr>
-								<td><emp>Alt+4</emp></td>
+								<td><em>Alt+4</em></td>
 								<td>Set the game speed to 8×.</td>
 							</tr>
 							<tr>
-								<td><emp>1</emp></td>
+								<td><em>1</em></td>
 								<td>Open the terraform window.</td>
 							</tr>
 							<tr>
-								<td><emp>2</emp></td>
+								<td><em>2</em></td>
 								<td>Open the paths window.</td>
 							</tr>
 							<tr>
-								<td><emp>3</emp></td>
+								<td><em>3</em></td>
 								<td>Open the fence window.</td>
 							</tr>
 							<tr>
-								<td><emp>4</emp></td>
+								<td><em>4</em></td>
 								<td>Open the scenery window.</td>
 							</tr>
 							<tr>
-								<td><emp>5</emp></td>
+								<td><em>5</em></td>
 								<td>Open the path objects window.</td>
 							</tr>
 							<tr>
-								<td><emp>6</emp></td>
+								<td><em>6</em></td>
 								<td>Open the rides window.</td>
 							</tr>
 							<tr>
-								<td><emp>7</emp></td>
+								<td><em>7</em></td>
 								<td>Open the staff management window.</td>
 							</tr>
 							<tr>
-								<td><emp>8</emp></td>
+								<td><em>8</em></td>
 								<td>Open the inbox window.</td>
 							</tr>
 							<tr>
-								<td><emp>9</emp></td>
+								<td><em>9</em></td>
 								<td>Open the finances window.</td>
 							</tr>
 							<tr>
-								<td><emp>M</emp></td>
+								<td><em>M</em></td>
 								<td>Open the minimap.</td>
 							</tr>
 							<tr>
-								<td><emp>U</emp></td>
+								<td><em>U</em></td>
 								<td>Toggle underground view mode.</td>
 							</tr>
 						</table> </p> <p>
@@ -817,8 +817,8 @@ public class Manual {
 								<td>Quit the game.</td>
 							</tr>
 						</table> </p> <p>
-							In all windows, <emp>Return</emp> selects the default option (if any), and the
-							<emp>Escape</emp>, <emp>Backspace</emp>, and <emp>Delete</emp> keys close the window.
+							In all windows, <em>Return</em> selects the default option (if any), and the
+							<em>Escape</em>, <em>Backspace</em>, and <em>Delete</em> keys close the window.
 						</p>
 					</div>
 				</div>  <!-- end of manual_body -->

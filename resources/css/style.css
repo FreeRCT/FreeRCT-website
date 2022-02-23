@@ -52,7 +52,7 @@ strong {
 	font-weight: bold;
 	font-size: inherit;
 }
-emp {
+em {
 	color: var(--blue-dark);
 	font-style: oblique;
 }
@@ -121,6 +121,10 @@ footer div {
 	content: '';
 	display: inline-block;
 	width: 100%;
+}
+
+p strong, p em, p a {
+	padding: 0 !important;
 }
 
 a { position:relative }
@@ -515,19 +519,20 @@ input[type=checkbox] {
 }
 
 .playonline {
-	background-color: #000000;
+	background-color: black;
 	border: var(--border-blue-thick);
 	border-radius: 5px;
 	text-align: center;
-	padding: 8px;
+	padding: 0;
 	margin: 0;
 }
 
 .playonline canvas {
+	display: block;
 	padding: 0;
 	margin: 0;
-	min-width : 800px;
-	min-height: 600px;
+	width: 100%;
+	height: 100%;
 }
 
 .playonline_textarea {
