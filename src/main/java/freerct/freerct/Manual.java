@@ -542,7 +542,7 @@ public class Manual {
 							but no guests will visit yet. This will create the ride statistics,
 							allowing you to see how interesting or boring your track design is,
 							and most importantly you will see whether your coaster actually manages
-							to climb all the hills – or whether it bounces back and perhaps even crashes.
+							to climb all the hills &ndash; or whether it bounces back and perhaps even crashes.
 						</p>
 
 					</div><div>
@@ -552,7 +552,7 @@ public class Manual {
 						<p>
 							Guests enter rides though <emp>entrances</emp>. If a ride can not be entered yet,
 							guests will patiently wait in a neat queue until the ride is free.
-							But queues will only form on queue paths – if the entrance is adjoined to a
+							But queues will only form on queue paths &ndash; if the entrance is adjoined to a
 							normal path, at most one guest will queue. It is therefore recommended to
 							connect the ride entrance and the regular paths via a <emp>queue path</emp>
 							several tiles in length.
@@ -603,7 +603,7 @@ public class Manual {
 					</div>
 					<div class="manual_screenshot">
 						<img src="/img/screenshots/manual/person.png"></img>
-						<p> Inspect any person in your park – simply by clicking on them. </p>
+						<p> Inspect any person in your park &ndash; simply by clicking on them. </p>
 					</div>
 					<div></div>  <!-- spacer -->
 				</div>  <!-- end of manual_margin -->
@@ -664,7 +664,7 @@ public class Manual {
 			+ createLinkifiedHeader("h3", "/manual", "person-window", "Personal Information Windows")
 			+ """
 						<p>
-							You can click on any person – guest or staff – in the main view
+							You can click on any person &ndash; guest or staff &ndash; in the main view
 							to open a window displaying personal information about them.
 							Staff can also be dismissed via a button in this window.
 						</p>

@@ -80,6 +80,13 @@ public class ForumNewTopic {
 			sql("insert into posts (topic,user,body) value(?,?,?)", topicID, userID, content);
 			sql("insert into subscriptions (user,topic) value(?,?)", userID, topicID);
 
+			Subscriptions.sendMailsToSubscribers(userID, "forum_new_topic", "Forum New Topic",
+					"The forum topic \"" + subject + "\" has been created by " + request.getRemoteUser() + ":\n\n"
+							+ content
+			    			+ "\n\n-------------------------\n"
+			    			+ "Link to topic: https://freerct.net/forum/topic/" + topicID
+	    			);
+
 			session.removeAttribute("freerct-new-topic-subject");
 			session.removeAttribute("freerct-new-topic-content");
 			return "redirect:/forum/topic/" + topicID;

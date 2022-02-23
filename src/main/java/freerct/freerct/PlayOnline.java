@@ -44,6 +44,8 @@ public class PlayOnline {
 				""");
 			}
 
+			String version = bash("bash", "-c", "cd '" + config("freerct") + "' && git describe --tags --always");
+
 			String body	= """
 				<h1>Play FreeRCT Online</h1>
 				<a class='anchor' id='anchor'></a>
@@ -60,7 +62,7 @@ public class PlayOnline {
 						<p class='forum_description_name' id='status'>Preparing...</p>
 						<p class='forum_description_stats'
 			"""
-			+				">Version: " + bash("bash", "-c", "cd '" + config("freerct") + "' && git describe --tags --always") + "</p>"
+			+				">Version: <a href='https://github.com/FreeRCT/FreeRCT/commit/" + version + "'>" + version + "</a></p>"
 			+ """
 					</div>
 					<div class='griditem forum_header_grid_side_column_r playonline_buttons'>

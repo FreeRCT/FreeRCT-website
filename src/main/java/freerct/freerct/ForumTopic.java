@@ -250,16 +250,25 @@ public class ForumTopic {
 
 			ResultSet sql = sql("select id from users where username=?", request.getRemoteUser());
 			sql.next();
-			long userID = sql.getLong("id");
+			final long userID = sql.getLong("id");
 
 			synchronized (sqlSync()) {
 				sql("insert into posts (topic,user,body) value(?,?,?)", topicID, userID, content);
 				sql = sql("select last_insert_id() as new_id");
 			}
 			sql.next();
-			long postID = sql.getLong("new_id");
+			final long postID = sql.getLong("new_id");
 
-			Subscriptions.sendNewPostMails(postID);
+			sql = sql("select name from topics where id=?", topicID);
+			sql.next();
+			final String topicName = sql.getString("name");
+
+			Subscriptions.sendMailsToTopicSubscribers(userID, topicID, "forum_new_post", "Forum New Post",
+					"A new post was added to the topic \"" + topicName + "\" by " + request.getRemoteUser() + ":\n\n"
+							+ content
+			    			+ "\n\n-------------------------\n"
+			    			+ "Link to post: https://freerct.net/forum/post/" + postID
+	    			);
 
 			session.removeAttribute("freerct-new-post-content");
 			return "redirect:/forum/post/" + postID;

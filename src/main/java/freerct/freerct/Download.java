@@ -17,6 +17,22 @@ import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 /** The Download page. */
 @Controller
 public class Download {
+	/* Notes on how to set up API calls for automatic integration.
+
+	The full command-line call is:
+		curl -u username:token URL
+
+	- https://api.github.com/repos/freerct/freerct/actions/runs?branch=master&created=2022-02-22..*
+		Returns all workflow runs on master which have been created since the given date.
+		Filter for those with "name"="CI" and pick the one with the latest "created_at" timestamp.
+		Note its "id" (e.g. 1882351097).
+	- https://api.github.com/repos/freerct/freerct/actions/runs/{run_id}/artifacts
+		Returns all artifacts. Get their properties: "id","name","size_in_bytes","archive_download_url".
+	- For each new artifact, call its archive_download_url (with additional curl parameters: `-L -o FILE`) to download it.
+		The result is a ZIP archive containing the ZIP file and its checksum file.
+		Extract the artifact archive, compare checksums, then provide the inner archive as the final result.
+	*/
+
 	@GetMapping("/download")
 	@ResponseBody
 	public String fetch(WebRequest request, HttpSession session) {
@@ -54,8 +70,32 @@ public class Download {
 			+ createLinkifiedHeader("h2", "/download", "daily", "Daily Builds")
 			+ """
 			<p>
-				There are no daily builds yet. When FreeRCT daily build integration has been set up,
-				links to the installers and instructions how to use them will be provided here.
+				Automated builds are provided for Windows and Debian/Ubuntu for every development version.
+				The latest builds are available
+				<a href='https://github.com/FreeRCT/FreeRCT/actions/workflows/ci-build.yml?query=branch%3Amaster'
+					>on GitHub here</a>.
+				Select the latest successful workflow run, then scroll down to the <emp>Artifacts</emp> section
+				and download the ZIP archive for your platform.
+			</p><p>
+				A GitHub account is needed to download packages this way.
+				In the near future, the latest packages will also be published on this website without the need to log in.
+			</p><p>
+				To install FreeRCT:
+				<ol>
+					<li>      Extract the downloaded ZIP archive. It contains two files: A binary file and a checksum file.
+					</li><li> If you wish, compute the SHA256 checksum of the binary file and
+					          check that it matches the checksum stated in the checksum file.
+					</li><li><ul>
+						<li>      If you downloaded a <emp>Debian/Ubuntu .deb package</emp>,
+						          simply install the package with your package manager.
+						</li><li> With other distributions, extract the archive to some place on your hard disk.
+						          No further installation is needed &ndash; you can directly run the executable file
+						          which is located in the <emp>bin</emp> directory of the extracted directory.
+						</li>
+					</ul></li>
+				</ol>
+			</p><p>
+				The most recent development version can also be played <a href='/play/play'>in the browser</a>.
 			</p>
 
 			"""
@@ -75,7 +115,7 @@ public class Download {
 	mkdir build
 	cd build
 
-	<emp># Generate Makefile. Some build options – all of them optional – are: </emp>
+	<emp># Generate Makefile. Some build options &ndash; all of them optional &ndash; are: </emp>
 	<emp>#   -DCMAKE_INSTALL_PREFIX=/usr/local   # Set install directory, default is '/usr'. </emp>
 	<emp>#   -DASAN=ON                           # Link with ASan memory checker. </emp>
 	<emp>#   -DUSERDATAPREFIX='~/.freerct'       # FreeRCT expands the '~' to the user home directory at runtime. </emp>

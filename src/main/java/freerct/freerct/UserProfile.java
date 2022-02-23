@@ -67,6 +67,9 @@ public class UserProfile {
 					case "new_user":
 						body += "Welcome! Your account was activated successfully.";
 						break;
+					case "profile_updated":
+						body += "Your profile settings have been updated.";
+						break;
 					case "password_changed":
 						body += isSelf ? "Your password was changed successfully." : "The user's password was changed successfully.";
 						break;
@@ -103,7 +106,9 @@ public class UserProfile {
 				headerLeftColumn += "<a class='form_button' href='/user/" + username + "/changeimg'>Change Image</a>";
 			}
 
-			if (isSelf || actorIsAdmin) {
+			if (isSelf) {
+				headerRightColumn += "<a class='form_button' href='/edit_profile'>Edit Profile</a>";
+			} else if (actorIsAdmin) {
 				headerRightColumn += "<a class='form_button' href='/user/" + username + "/changepassword'>Change Password</a>";
 			}
 			if (isSelf) headerRightColumn += "<a class='form_button' href='/inbox'>Messages</a>";

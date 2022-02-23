@@ -21,42 +21,44 @@ import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
 /** The pages to manage e-mail notification subscriptions. */
 @Controller
 public class Subscriptions {
-	public static void sendNewPostMails(long postID) {
+	public static void sendMailsToSubscribers(Long excludeUser, String noticetype, String subject, String message) {
 		try {
-			ResultSet sql = sql("select id,default_enable from noticetypes where slug='forum_new_post'");
+			ResultSet sql = sql("select id from noticetypes where slug=?", noticetype);
+			sql.next();
+			final long noticetypeID = sql.getLong("id");
+			/* `default_enable` is ignored in mails to all. */
+
+			sql = sql("select distinct user from notification_settings where notice=? and state>0", noticetypeID);
+			while (sql.next()) {
+				final long userID = sql.getLong("user");
+				if (excludeUser != null && excludeUser == userID) continue;
+
+				ResultSet userDetails = sql("select email from users where id=?", userID);
+				userDetails.next();
+				sendEMail(userDetails.getString("email"), subject, message, true);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void sendMailsToTopicSubscribers(Long excludeUser, long topicID, String noticetype, String subject, String message) {
+		try {
+			ResultSet sql = sql("select id,default_enable from noticetypes where slug=?", noticetype);
 			sql.next();
 			final long noticetypeID = sql.getLong("id");
 			final boolean sendDefault = sql.getInt("default_enable") > 0;
 
-			sql = sql("select topic,user,body from posts where id=?", postID);
-			sql.next();
-			final long topicID = sql.getLong("topic");
-			final long postAuthorID = sql.getLong("user");
-			final String postBody = htmlEscape(sql.getString("body"));
-
-			sql = sql("select name from topics where id=?", topicID);
-			sql.next();
-			final String topicName = htmlEscape(sql.getString("name"));
-
-			sql = sql("select username from users where id=?", postAuthorID);
-			sql.next();
-			final String authorName = htmlEscape(sql.getString("username"));
-
 			sql = sql("select distinct user from subscriptions where topic=?", topicID);
 			while (sql.next()) {
 				final long userID = sql.getLong("user");
-				if (userID == postAuthorID) continue;
+				if (excludeUser != null && excludeUser == userID) continue;
 
 				ResultSet userDetails = sql("select state from notification_settings where user=? and notice=?", userID, noticetypeID);
 				if (userDetails.next() ? userDetails.getInt("state") > 0 : sendDefault) {
 					userDetails = sql("select email from users where id=?", userID);
 					userDetails.next();
-					sendEMail(userDetails.getString("email"), "Forum New Post",
-							"A new post was added to the topic \"" + topicName + "\" by " + authorName + ":\n\n"
-							+ postBody
-			    			+ "\n\n-------------------------\n"
-			    			+ "Link to post: https://freerct.net/forum/post/" + postID
-						, true);
+					sendEMail(userDetails.getString("email"), subject, message, true);
 				}
 			}
 		} catch (Exception e) {
