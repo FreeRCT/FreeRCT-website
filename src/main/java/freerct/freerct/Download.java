@@ -109,7 +109,7 @@ public class Download {
 					      CMake will check that all required libraries are installed.
 					      If this fails, you need to install the libraries it complains about,
 					      and retry until all dependencies are found.
-				</li><li> <tt>cd</tt> into the downloaded <tt>FreeRCT</tt> directory and call:
+				</li><li> <code>cd</code> into the downloaded <code>FreeRCT</code> directory and call:
 					      <pre><code>
 	<em># Construct build directory and enter it:</em>
 	mkdir build
@@ -134,9 +134,9 @@ public class Download {
 			+ createLinkifiedHeader("h2", "/download", "play", "How To Play")
 			+ """
 			<p>
-				Just start the installed binary or type <tt>freerct</tt>.
-				If you compiled FreeRCT yourself and skipped the <tt>make install</tt> step,
-				use <tt>./build/bin/freerct</tt> or <tt>make run</tt>.
+				Just start the installed binary or type <code>freerct</code>.
+				If you compiled FreeRCT yourself and skipped the <code>make install</code> step,
+				use <code>./build/bin/freerct</code> or <code>make run</code>.
 			</p><p>
 				After installation, see the <a href="/manual">online manual</a> for information how to use FreeRCT.
 			</p><p>
@@ -171,6 +171,16 @@ public class Download {
 					<td class="codefield">-a LANG</td>
 					<td class="codefield">--language LANG</td>
 					<td>Start FreeRCT in the specified language. See below for supported languages.</td>
+				</tr>
+				<tr>
+					<td class="codefield">-i DIR</td>
+					<td class="codefield">--installdir DIR</td>
+					<td>Use the specified installation directory.</td>
+				</tr>
+				<tr>
+					<td class="codefield">-u DIR</td>
+					<td class="codefield">--userdatadir DIR</td>
+					<td>Use the specified user data directory.</td>
 				</tr>
 			</table></p>
 			<p>

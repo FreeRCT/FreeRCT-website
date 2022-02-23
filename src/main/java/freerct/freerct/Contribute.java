@@ -61,8 +61,8 @@ public class Contribute {
 			+ createLinkifiedHeader("h2", "/contribute", "translating", "Translating")
 			+ """
 				<p>
-					The source language of FreeRCT is British English (<tt>en_GB</tt>).
-					All strings are defined in <tt>graphics/rcd/lang/&lt;LANGUAGE_CODE&gt;.txt</tt>.
+					The source language of FreeRCT is British English (<code>en_GB</code>).
+					All strings are defined in <code>graphics/rcd/lang/&lt;LANGUAGE_CODE&gt;.txt</code>.
 					Enhancing translations for an existing language as well as adding a new language
 					is as easy as opening/creating the respective file for your language
 					and editing the strings therein.
@@ -70,12 +70,12 @@ public class Contribute {
 					When you add a new language, it additionally needs to be added to the list of all
 					languages in all of the following files:
 					<ul class="ttlist">
-						<li><tt>src/language.cpp</tt></li>
-						<li><tt>src/language.h</tt></li>
-						<li><tt>src/rcdgen/nodes.cpp</tt></li>
-						<li><tt>src/rcdgen/nodes.h</tt></li>
+						<li><code>src/language.cpp</code></li>
+						<li><code>src/language.h</code></li>
+						<li><code>src/rcdgen/nodes.cpp</code></li>
+						<li><code>src/rcdgen/nodes.h</code></li>
 					</ul>
-					Search for the string <tt>NDS_DE</tt> therein to find the section where the language code needs to be added.
+					Search for the string <code>NDS_DE</code> therein to find the section where the language code needs to be added.
 					The lists of languages should be kept in alphabetical order.
 				</p>
 
@@ -127,7 +127,7 @@ public class Contribute {
 					If your feature requires new graphics, it is acceptable to create simple placeholder
 					pics until someone else creates final images.
 				</p><p>
-					You can find more technical information in the <tt>developer_documentation/</tt> folder of the Git checkout.
+					You can find more technical information in the <code>developer_documentation/</code> folder of the Git checkout.
 				</p>
 		""");
 	}

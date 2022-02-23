@@ -73,7 +73,7 @@ public class Register {
 					body += "This username is already in use.";
 					break;
 				case "name_invalid":
-					body	+=	"Usernames may contain only Latin characters, digits, and the special characters <tt>.-_+</tt> "
+					body	+=	"Usernames may contain only Latin characters, digits, and the special characters <code>.-_+</code> "
 							+	"and may not be longer than " + USERNAME_MAX_LENGTH + " characters."
 							;
 					break;

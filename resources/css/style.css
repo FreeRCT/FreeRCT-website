@@ -1,24 +1,24 @@
 /* General definitions. */
 
 :root {
-	--bg-blue:      #add8f6;
-	--text-light:   #eeeeee;
-	--text-dark:    #001000;
-	--green-dark:   #003000;
-	--green-medium: #006000;
-	--green-light:  #009000;
-	--blue-light:   #396878;
-	--blue-medium:  #0000f0;
-	--blue-dark:    #000b2a;
-	--red-warning:  #e60a12;
-	--text-light-bluish: #e0eeff;
-	--blue-very-light  : #a7bfd0;
-	--bg-overlay       : rgba(  0,  48,   0, 0.5);
-	--bg-overlay-light : rgba(200, 255, 200, 0.1);
-	--bg-overlay-strong: rgba(  0,  48,   0, 0.7);
-	--border-blue-thick: 5px ridge var(--blue-light);
-	--border-blue-thin : 3px inset var(--blue-light);
-	--text-shadow      : 1px 1px var(--text-dark);
+	--bg-blue           : #add8f6;
+	--text-light        : #eeeeee;
+	--text-dark         : #001000;
+	--green-dark        : #003000;
+	--green-medium      : #006000;
+	--green-light       : #009000;
+	--blue-light        : #396878;
+	--blue-medium       : #0000f0;
+	--blue-dark         : #000b2a;
+	--red-warning       : #e60a12;
+	--text-light-bluish : #e0eeff;
+	--blue-very-light   : #a7bfd0;
+	--bg-overlay        : rgba(  0,  48,   0, 0.5);
+	--bg-overlay-light  : rgba(200, 255, 200, 0.1);
+	--bg-overlay-strong : rgba(  0,  48,   0, 0.7);
+	--border-blue-thick : 5px ridge var(--blue-light);
+	--border-blue-thin  : 3px inset var(--blue-light);
+	--text-shadow       : 1px 1px var(--text-dark);
 }
 
 * {
@@ -66,10 +66,10 @@ sup {
 	text-align: center;
 }
 
-tt, pre code, .codefield, .toc {
+code, .codefield, .toc {
 	color: var(--text-light);
 	background-color: var(--bg-overlay);
-	padding: 1px 4px;
+	padding: 4px 8px;
 	font-family: monospace;
 }
 pre code {
@@ -123,7 +123,7 @@ footer div {
 	width: 100%;
 }
 
-p strong, p em, p a {
+strong, em, p a, p code, li:not(.menubar_li) a, li code {
 	padding: 0 !important;
 }
 
