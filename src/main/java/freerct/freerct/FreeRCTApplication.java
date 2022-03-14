@@ -344,6 +344,16 @@ public class FreeRCTApplication {
 	}
 
 	/**
+	 * Format a date string with no time information with the user's locale in a long format.
+	 * @param c Date and time to format.
+	 * @param locale Locale to use.
+	 * @return Formatted and HTML-escaped string.
+	 */
+	public static String datestring(Calendar c, Locale locale) {
+		return htmlEscape(DateFormat.getDateInstance(DateFormat.FULL, locale).format(c.getTime()));
+	}
+
+	/**
 	 * Get a string representation of the difference of a given date and time to the present.
 	 * @param timestamp Date and time to compare.
 	 * @return The time string.

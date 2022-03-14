@@ -1,5 +1,6 @@
 package freerct.freerct;
 
+import java.util.*;
 import javax.servlet.http.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import static freerct.freerct.FreeRCTApplication.sql;
 import static freerct.freerct.FreeRCTApplication.getCalendar;
 import static freerct.freerct.FreeRCTApplication.htmlEscape;
 import static freerct.freerct.FreeRCTApplication.renderMarkdown;
+import static freerct.freerct.FreeRCTApplication.datestring;
 import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
@@ -48,13 +50,16 @@ public class Download {
 					<th>Release Date</th>
 					<th>Windows (64 bit)</th>
 					<th>Windows (32 bit)</th>
-					<th>MacOS</th>
 					<th>Debian/Ubuntu</th>
+					<th>Linux (Flatpak)</th>
 					<th>Source Code</th>
 				</tr>
 				<tr>
 					<td class="table_release">0.1</td>
-					<td>To be announced</td>
+			"""
+			+		"<td>" + datestring(new Calendar.Builder().setFields(Calendar.YEAR, 2022, Calendar.MONTH, 2, Calendar.DAY_OF_MONTH, 19).build(),
+							request.getLocale()) + "</td>"
+			+ """
 					<td class="invalid">N/A</td>
 					<td class="invalid">N/A</td>
 					<td class="invalid">N/A</td>
