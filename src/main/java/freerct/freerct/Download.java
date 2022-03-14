@@ -63,7 +63,6 @@ public class Download {
 				</tr>
 			</table> </p> <p>
 				When FreeRCT 0.1 is released, links to the installers and instructions how to use them will be provided here.
-				<!-- TODO: Each installer should also provide a checksum so the user can check that the download is valid. -->
 			</p>
 
 			"""
@@ -83,8 +82,8 @@ public class Download {
 				To install FreeRCT:
 				<ol>
 					<li>      Extract the downloaded ZIP archive. It contains two files: A binary file and a checksum file.
-					</li><li> If you wish, compute the SHA256 checksum of the binary file and
-					          check that it matches the checksum stated in the checksum file.
+					</li><li> If you wish, compute the SHA256 checksum of the binary file and check that it matches the
+					          checksum stated in the checksum file by running <code>md5sum FILENAME</code>.
 					</li><li><ul>
 						<li>      If you downloaded a <em>Debian/Ubuntu .deb package</em>,
 						          simply install the package with your package manager.
