@@ -13,12 +13,14 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.*;
+import org.springframework.scheduling.annotation.*;
 import org.springframework.security.core.session.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.context.request.*;
 
 /** The main class. It provided the main loop and various important utility functions. */
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
+@EnableScheduling
 public class FreeRCTApplication {
 	public static final int MENU_BAR_BAR_HEIGHT            =                      50;  ///< Height of the menu bar in pixels.
 	public static final int DESIRED_PADDING_BELOW_MENU_BAR = MENU_BAR_BAR_HEIGHT + 8;  ///< Spacing above the topmost content element in pixels.
@@ -207,6 +209,19 @@ public class FreeRCTApplication {
 		write.close();
 		bash("bash", "-c", "sendmail '" + email + "' < " + message.getAbsolutePath());
 		message.delete();
+	}
+
+	/**
+	 * Recursively delete a directory or file.
+	 * @param f Directory or file to delete.
+	 */
+	public static void doDelete(File f) {
+		if (f.isDirectory()) {
+			for (File file : f.listFiles()) {
+				doDelete(file);
+			}
+		}
+		f.delete();
 	}
 
 	/**

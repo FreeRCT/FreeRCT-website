@@ -249,6 +249,7 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			/* Static assets. */
 			.antMatchers("/css/**").permitAll()
 			.antMatchers("/img/**").permitAll()
+			.antMatchers("/public/**").permitAll()
 
 			/* Logging in and error handling. */
 			.antMatchers("/login").permitAll()

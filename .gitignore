@@ -9,6 +9,9 @@
 # Userdata
 /resources/img/users/
 
+# Binaries
+/resources/public/daily_builds/
+
 ### Everything below has been auto-excluded by SpringBoot Initializr
 
 HELP.md

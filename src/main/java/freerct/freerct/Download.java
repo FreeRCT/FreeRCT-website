@@ -1,12 +1,19 @@
 package freerct.freerct;
 
+import java.io.*;
+import java.text.*;
 import java.util.*;
+import org.json.simple.parser.*;
+
 import javax.servlet.http.*;
+import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
 
 import static freerct.freerct.FreeRCTApplication.generatePage;
+import static freerct.freerct.FreeRCTApplication.bash;
+import static freerct.freerct.FreeRCTApplication.config;
 import static freerct.freerct.FreeRCTApplication.sql;
 import static freerct.freerct.FreeRCTApplication.getCalendar;
 import static freerct.freerct.FreeRCTApplication.htmlEscape;
@@ -15,10 +22,64 @@ import static freerct.freerct.FreeRCTApplication.datestring;
 import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
 import static freerct.freerct.FreeRCTApplication.createLinkifiedHeader;
+import static freerct.freerct.FreeRCTApplication.doDelete;
 
 /** The Download page. */
 @Controller
 public class Download {
+	public static final File DAILY_BUILD_DIR = new File(Resources.RESOURCES_DIR, "public/daily_builds");
+
+	@Scheduled(cron = "0 0 3 * * *")
+	public void updateDailyBuilds() {
+		try {
+			ContainerFactory cf = new ContainerFactory() {
+				public List creatArrayContainer() { return new LinkedList(); }
+				public Map createObjectContainer() { return new LinkedHashMap(); }
+			};
+
+			JSONParser parser = new JSONParser();
+			Map json = (Map)parser.parse(
+				bash("curl", "-u", config("githublogin"),
+					"https://api.github.com/repos/freerct/freerct/actions/runs?branch=master"
+				), cf);
+
+			Map newestWorkflow = null;
+			Date newestDate = null;
+			for (Object key : (List)json.get("workflow_runs")) if (key instanceof Map m) {
+				if (!m.get("name").toString().equals("CI") || !m.get("head_branch").toString().equals("master")) continue;
+				Date d = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(m.get("created_at").toString());
+				if (newestDate == null || newestDate.before(d)) {
+					newestDate = d;
+					newestWorkflow = m;
+				}
+			}
+
+			json = (Map)parser.parse(bash("curl", "-u", config("githublogin"), newestWorkflow.get("artifacts_url").toString()), cf);
+
+			for (Object key : (List)json.get("artifacts")) if (key instanceof Map m) {
+				String name = m.get("name").toString().trim().replaceAll("[\\s()]+", "_");
+				File dir = new File(DAILY_BUILD_DIR, newestWorkflow.get("id").toString());
+				dir = new File(dir, name);
+				dir.mkdirs();
+				File zipfile = new File(dir, name + ".zip");
+				bash("curl", "-L", "-o", zipfile.getAbsolutePath(), "-u", config("githublogin"), m.get("archive_download_url").toString());
+				bash("unzip", zipfile.getAbsolutePath(), "-d", dir.getAbsolutePath());
+				zipfile.delete();
+				bash("bash", "-c", "cd \"" + dir.getAbsolutePath() + "\" && sha256sum -c *.sha256");
+			}
+
+			File[] oldBuilds = DAILY_BUILD_DIR.listFiles();
+			Arrays.sort(oldBuilds, (a, b) -> {
+				Long la = Long.valueOf(a.getName());
+				Long lb = Long.valueOf(b.getName());
+				return la == lb ? 0 : la < lb ? 1 : -1;
+			});
+			for (int i = 2; i < oldBuilds.length; ++i) doDelete(oldBuilds[i]);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	/* Notes on how to set up API calls for automatic integration.
 
 	The full command-line call is:
@@ -38,7 +99,17 @@ public class Download {
 	@GetMapping("/download")
 	@ResponseBody
 	public String fetch(WebRequest request, HttpSession session) {
-		return generatePage(request, session, "Get It!", """
+		File latestDaily = null;
+		File[] oldBuilds = DAILY_BUILD_DIR.listFiles();
+		if (oldBuilds != null) {
+			for (File f : oldBuilds) {
+				if (latestDaily == null || Long.valueOf(f.getName()) > Long.valueOf(latestDaily.getName())) {
+					latestDaily = f;
+				}
+			}
+		}
+
+		String body = """
 			<h1>Get It!</h1>
 
 			"""
@@ -75,20 +146,43 @@ public class Download {
 			+ """
 			<p>
 				Automated builds are provided for Windows and Debian/Ubuntu for every development version.
-				The latest builds are available
-				<a href='https://github.com/FreeRCT/FreeRCT/actions/workflows/ci-build.yml?query=branch%3Amaster'
-					>on GitHub here</a>.
-				Select the latest successful workflow run, then scroll down to the <em>Artifacts</em> section
-				and download the ZIP archive for your platform.
-			</p><p>
-				A GitHub account is needed to download packages this way.
-				In the near future, the latest packages will also be published on this website without the need to log in.
-			</p><p>
+			</p>
+		""";
+
+		if (latestDaily == null) {
+			body += "<p><em>Due to an error, the list of builds is temporarily unavailable.</em></p>";
+		} else {
+			body	+=	"<p style='text-align:center'><table><tr>"
+					+	"<th>Build Configuration</th>"
+					+	"<th class='center'>Installer / Package</th>"
+					+	"<th class='center'>Checksum</th>"
+					+	"</tr>";
+
+			File[] builds = latestDaily.listFiles();
+			Arrays.sort(builds, (a, b) -> a.getName().compareTo(b.getName()));
+			for (File build : builds) {
+				String pathAsset = "/error";
+				String pathSHA = "/error";
+				for (File f : build.listFiles()) {
+					String path = f.getAbsolutePath().replaceFirst(Resources.RESOURCES_DIR.getAbsolutePath(), "");
+					if (path.endsWith("sha256")) pathSHA = path;
+					else pathAsset = path;
+				}
+				body	+=	"<tr><th>" + htmlEscape(build.getName().replaceAll("_", " ").trim()) + "</th>"
+						+	"<td class='center'><strong><a href='" + pathAsset + "'>Download</a></strong></td>"
+						+	"<td class='center'><a href='" + pathSHA + "'>SHA256</a></td></tr>"
+						;
+			}
+			body += "</table></p>";
+		}
+
+		body += """
+			<p>
 				To install FreeRCT:
 				<ol>
-					<li>      Extract the downloaded ZIP archive. It contains two files: A binary file and a checksum file.
-					</li><li> If you wish, compute the SHA256 checksum of the binary file and check that it matches the
-					          checksum stated in the checksum file by running <code>md5sum FILENAME</code>.
+					<li>      Download the installer for your desired platform and configuration from the list above.
+					</li><li> If you wish, compute the SHA256 checksum of the downloaded file and check that it matches the
+					          checksum stated in the checksum file by running <code>sha256sum FILENAME</code>.
 					</li><li><ul>
 						<li>      If you downloaded a <em>Debian/Ubuntu .deb package</em>,
 						          simply install the package with your package manager.
@@ -231,6 +325,7 @@ public class Download {
 					<td>Swedish (Sweden)</td>
 				</tr>
 			</table></p>
-		""");
+		""";
+		return generatePage(request, session, "Get It!", body);
 	}
 }
