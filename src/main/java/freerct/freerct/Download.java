@@ -163,14 +163,33 @@ public class Download {
 			for (File build : builds) {
 				String pathAsset = "/error";
 				String pathSHA = "/error";
+				String filesizeString = "<em>broken link</em>";
+				String shaString = "<em>This file seems to be corrupted.</em>";
 				for (File f : build.listFiles()) {
 					String path = f.getAbsolutePath().replaceFirst(Resources.RESOURCES_DIR.getAbsolutePath(), "");
-					if (path.endsWith("sha256")) pathSHA = path;
-					else pathAsset = path;
+					if (path.endsWith("sha256")) {
+						pathSHA = path;
+						try {
+							BufferedReader r = new BufferedReader(new FileReader(f));
+							shaString = r.readLine().trim().split("\\s")[0];
+						} catch (Exception e) {}
+					} else {
+						pathAsset = path;
+						long l = f.length();
+						if (l > 1000 * 1000 * 1000) {
+							filesizeString = String.format(request.getLocale(), "%.2f GB", (l / (1000f * 1000f * 1000f)));
+						} else if (l > 1000 * 1000) {
+							filesizeString = String.format(request.getLocale(), "%.2f MB", (l / (1000f * 1000f)));
+						} else if (l > 1000) {
+							filesizeString = String.format(request.getLocale(), "%.2f kB", (l / 1000f));
+						} else {
+							filesizeString = String.format(request.getLocale(), "%d bytes", l);
+						}
+					}
 				}
 				body	+=	"<tr><th>" + htmlEscape(build.getName().replaceAll("_", " ").trim()) + "</th>"
-						+	"<td class='center'><strong><a href='" + pathAsset + "'>Download</a></strong></td>"
-						+	"<td class='center'><a href='" + pathSHA + "'>SHA256</a></td></tr>"
+						+	"<td class='center'><strong><a href='" + pathAsset + "'>Download (" + filesizeString + ")</a></strong></td>"
+						+	"<td class='center'><abbr title='" + shaString + "'><a href='" + pathSHA + "'>SHA256</a></abbr></td></tr>"
 						;
 			}
 			body += "</table></p>";

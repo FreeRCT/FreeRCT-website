@@ -215,6 +215,11 @@ th, .table_release {
 	opacity: 0;
 }
 
+abbr, abbr a {
+	text-decoration-line: underline;
+	text-decoration-style: dotted;
+}
+
 blockquote {
 	background-color: var(--bg-overlay-light);
 	border: var(--border-blue-thin);
