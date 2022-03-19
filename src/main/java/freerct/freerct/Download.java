@@ -80,21 +80,31 @@ public class Download {
 		}
 	}
 
-	/* Notes on how to set up API calls for automatic integration.
+	private String createAssetDownloadLink(WebRequest request, boolean linebreak, File file, String text) {
+		String path = file.getAbsolutePath().replaceFirst(Resources.RESOURCES_DIR.getAbsolutePath(), "");
+		String filesizeString = "This link seems to be broken.";
+		long l = file.length();
+		if (l > 1000 * 1000 * 1000) {
+			filesizeString = String.format(request.getLocale(), "%.2f GB", (l / (1000f * 1000f * 1000f)));
+		} else if (l > 1000 * 1000) {
+			filesizeString = String.format(request.getLocale(), "%.2f MB", (l / (1000f * 1000f)));
+		} else if (l > 1000) {
+			filesizeString = String.format(request.getLocale(), "%.2f kB", (l / 1000f));
+		} else {
+			filesizeString = String.format(request.getLocale(), "%d bytes", l);
+		}
+		return "<strong><a href='" + path + "'>" + text + (linebreak ? "<br>" : " ") + "(" + filesizeString + ")</a></strong>";
+	}
 
-	The full command-line call is:
-		curl -u username:token URL
-
-	- https://api.github.com/repos/freerct/freerct/actions/runs?branch=master&created=2022-02-22..*
-		Returns all workflow runs on master which have been created since the given date.
-		Filter for those with "name"="CI" and pick the one with the latest "created_at" timestamp.
-		Note its "id" (e.g. 1882351097).
-	- https://api.github.com/repos/freerct/freerct/actions/runs/{run_id}/artifacts
-		Returns all artifacts. Get their properties: "id","name","size_in_bytes","archive_download_url".
-	- For each new artifact, call its archive_download_url (with additional curl parameters: `-L -o FILE`) to download it.
-		The result is a ZIP archive containing the ZIP file and its checksum file.
-		Extract the artifact archive, compare checksums, then provide the inner archive as the final result.
-	*/
+	private String createChecksumDownloadLink(File file) {
+		String path = file.getAbsolutePath().replaceFirst(Resources.RESOURCES_DIR.getAbsolutePath(), "");
+		String shaString = "This file seems to be corrupted.";
+		try {
+			BufferedReader r = new BufferedReader(new FileReader(file));
+			shaString = r.readLine().trim().split("\\s")[0];
+		} catch (Exception e) {}
+		return "<abbr title='" + shaString + "'><a href='" + path + "'>SHA256</a></abbr>";
+	}
 
 	@GetMapping("/download")
 	@ResponseBody
@@ -130,12 +140,24 @@ public class Download {
 			"""
 			+		"<td>" + datestring(new Calendar.Builder().setFields(Calendar.YEAR, 2022, Calendar.MONTH, 2, Calendar.DAY_OF_MONTH, 19).build(),
 							request.getLocale()) + "</td>"
+			+		"<td class='center'>" + createAssetDownloadLink(request, true,
+						new File(Resources.RESOURCES_DIR, "/public/release/0.1/freerct-0.1-windows-win64.exe"), "Download Installer")
+			+			"<br>" + createChecksumDownloadLink(
+						new File(Resources.RESOURCES_DIR, "/public/release/0.1/freerct-0.1-windows-win64.exe.sha256")) + "</td>"
+			+		"<td class='center'>" + createAssetDownloadLink(request, true,
+						new File(Resources.RESOURCES_DIR, "/public/release/0.1/freerct-0.1-windows-win32.exe"), "Download Installer")
+			+			"<br>" + createChecksumDownloadLink(
+						new File(Resources.RESOURCES_DIR, "/public/release/0.1/freerct-0.1-windows-win32.exe.sha256")) + "</td>"
+			+		"<td class='center'>" + createAssetDownloadLink(request, true,
+						new File(Resources.RESOURCES_DIR, "/public/release/0.1/freerct-0.1-linux-amd64.deb"), "Download Package")
+			+			"<br>" + createChecksumDownloadLink(
+						new File(Resources.RESOURCES_DIR, "/public/release/0.1/freerct-0.1-linux-amd64.deb.sha256")) + "</td>"
+			+		"<td class='center invalid'>Flatpakref<br>Available soon</td>"
+			+		"<td class='center'>" + createAssetDownloadLink(request, true,
+						new File(Resources.RESOURCES_DIR, "/public/release/0.1/0.1.zip"), "Source ZIP")
+			+			"<br>" + createChecksumDownloadLink(
+						new File(Resources.RESOURCES_DIR, "/public/release/0.1/0.1.zip.sha256")) + "</td>"
 			+ """
-					<td class='center'><strong><a href='/public/release/0.1/freerct-0.1-windows-win64.exe'>Installer</a></strong><br><br><a href='/public/release/0.1/freerct-0.1-windows-win64.exe.sha256'>Checksum</a></td>
-					<td class='center'><strong><a href='/public/release/0.1/freerct-0.1-windows-win32.exe'>Installer</a></strong><br><br><a href='/public/release/0.1/freerct-0.1-windows-win32.exe.sha256'>Checksum</a></td>
-					<td class='center'><strong><a href='/public/release/0.1/freerct-0.1-linux-amd64.deb'>Installer</a></strong><br><br><a href='/public/release/0.1/freerct-0.1-linux-amd64.deb.sha256'>Checksum</a></td>
-					<td class='center invalid'>Available soon</td>
-					<td class='center'><strong><a href='/public/release/0.1/0.1.zip'>Installer</a></strong><br><br><a href='/public/release/0.1/0.1.zip.sha256'>Checksum</a></td>
 				</tr>
 			</table> </p> <p>
 				To install FreeRCT:
@@ -169,35 +191,18 @@ public class Download {
 			File[] builds = latestDaily.listFiles();
 			Arrays.sort(builds, (a, b) -> a.getName().compareTo(b.getName()));
 			for (File build : builds) {
-				String pathAsset = "/error";
-				String pathSHA = "/error";
-				String filesizeString = "<em>broken link</em>";
-				String shaString = "<em>This file seems to be corrupted.</em>";
+				String assetLink = "<em>N/A</em>";
+				String checksumLink = "<em>N/A</em>";
 				for (File f : build.listFiles()) {
-					String path = f.getAbsolutePath().replaceFirst(Resources.RESOURCES_DIR.getAbsolutePath(), "");
-					if (path.endsWith("sha256")) {
-						pathSHA = path;
-						try {
-							BufferedReader r = new BufferedReader(new FileReader(f));
-							shaString = r.readLine().trim().split("\\s")[0];
-						} catch (Exception e) {}
+					if (f.getName().endsWith("sha256")) {
+						checksumLink = createChecksumDownloadLink(f);
 					} else {
-						pathAsset = path;
-						long l = f.length();
-						if (l > 1000 * 1000 * 1000) {
-							filesizeString = String.format(request.getLocale(), "%.2f GB", (l / (1000f * 1000f * 1000f)));
-						} else if (l > 1000 * 1000) {
-							filesizeString = String.format(request.getLocale(), "%.2f MB", (l / (1000f * 1000f)));
-						} else if (l > 1000) {
-							filesizeString = String.format(request.getLocale(), "%.2f kB", (l / 1000f));
-						} else {
-							filesizeString = String.format(request.getLocale(), "%d bytes", l);
-						}
+						assetLink = createAssetDownloadLink(request, false, f, "Download");
 					}
 				}
 				body	+=	"<tr><th>" + htmlEscape(build.getName().replaceAll("_", " ").trim()) + "</th>"
-						+	"<td class='center'><strong><a href='" + pathAsset + "'>Download (" + filesizeString + ")</a></strong></td>"
-						+	"<td class='center'><abbr title='" + shaString + "'><a href='" + pathSHA + "'>SHA256</a></abbr></td></tr>"
+						+	"<td class='center'>" + assetLink + "</td>"
+						+	"<td class='center'>" + checksumLink + "</td></tr>"
 						;
 			}
 			body += "</table></p>";
