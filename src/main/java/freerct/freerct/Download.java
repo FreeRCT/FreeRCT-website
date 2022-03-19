@@ -131,14 +131,22 @@ public class Download {
 			+		"<td>" + datestring(new Calendar.Builder().setFields(Calendar.YEAR, 2022, Calendar.MONTH, 2, Calendar.DAY_OF_MONTH, 19).build(),
 							request.getLocale()) + "</td>"
 			+ """
-					<td class="invalid">N/A</td>
-					<td class="invalid">N/A</td>
-					<td class="invalid">N/A</td>
-					<td class="invalid">N/A</td>
-					<td class="invalid">N/A</td>
+					<td class='center'><strong><a href='/public/release/0.1/freerct-0.1-windows-win64.exe'>Installer</a></strong><br><br><a href='/public/release/0.1/freerct-0.1-windows-win64.exe.sha256'>Checksum</a></td>
+					<td class='center'><strong><a href='/public/release/0.1/freerct-0.1-windows-win32.exe'>Installer</a></strong><br><br><a href='/public/release/0.1/freerct-0.1-windows-win32.exe.sha256'>Checksum</a></td>
+					<td class='center'><strong><a href='/public/release/0.1/freerct-0.1-linux-amd64.deb'>Installer</a></strong><br><br><a href='/public/release/0.1/freerct-0.1-linux-amd64.deb.sha256'>Checksum</a></td>
+					<td class='center invalid'>Available soon</td>
+					<td class='center'><strong><a href='/public/release/0.1/0.1.zip'>Installer</a></strong><br><br><a href='/public/release/0.1/0.1.zip.sha256'>Checksum</a></td>
 				</tr>
 			</table> </p> <p>
-				When FreeRCT 0.1 is released, links to the installers and instructions how to use them will be provided here.
+				To install FreeRCT:
+				<ol>
+					<li>      Download the installer for your desired platform and configuration from the list above.
+					</li><li> If you wish, compute the SHA256 checksum of the downloaded file and check that it matches the
+					          checksum stated in the checksum file by running <code>sha256sum FILENAME</code>.
+					</li><li> Doubleclick on the downloaded file to start installation.
+					</li><li> If you downloaded the source code archive, extract it and continue <a href='#compile'>below</a> for instructions how to compile.
+					</li>
+				</ol>
 			</p>
 
 			"""
