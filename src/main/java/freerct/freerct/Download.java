@@ -216,8 +216,8 @@ public class Download {
 					</li><li> If you wish, compute the SHA256 checksum of the downloaded file and check that it matches the
 					          checksum stated in the checksum file by running <code>sha256sum FILENAME</code>.
 					</li><li><ul>
-						<li>      If you downloaded a <em>Debian/Ubuntu .deb package</em>,
-						          simply install the package with your package manager.
+						<li>      If you downloaded a <em>Windows .exe installer</em> or <em>Debian/Ubuntu .deb package</em>,
+						          simply doubleclick on the downloaded file to start installation.
 						</li><li> With other distributions, extract the archive to some place on your hard disk.
 						          No further installation is needed &ndash; you can directly run the executable file
 						          which is located in the <em>bin</em> directory of the extracted directory.
@@ -235,7 +235,7 @@ public class Download {
 				<li>      Check out the commit you wish to build in Git,
 					      or download and extract a ZIP/tarball of the latest development version from
 					      <a target="_blank" href="https://github.com/FreeRCT/FreeRCT">GitHub</a>.
-				</li><li> You need to have CMake and Make installed in order to do compile FreeRCT.
+				</li><li> You need to have CMake and Make installed in order to compile FreeRCT.
 					      CMake will check that all required libraries are installed.
 					      If this fails, you need to install the libraries it complains about,
 					      and retry until all dependencies are found.
@@ -245,12 +245,12 @@ public class Download {
 	mkdir build
 	cd build
 
-	<em># Generate Makefile. Some build options &ndash; all of them optional &ndash; are: </em>
+	<em># Generate Makefile. Some of the more common build options &ndash; all of them optional &ndash; are: </em>
 	<em>#   -DCMAKE_INSTALL_PREFIX=/usr/local   # Set install directory, default is '/usr'. </em>
+	<em>#   -DRELEASE=ON                        # Build a release build. </em>
 	<em>#   -DASAN=ON                           # Link with ASan memory checker. </em>
-	<em>#   -DUSERDATAPREFIX='~/.freerct'       # FreeRCT expands the '~' to the user home directory at runtime. </em>
-	<em>#   -DVERSION_STRING="0.0-alpha"        # Set custom version string. </em>
-	<em># Further details can be found in the README file in the root source directory. </em>
+	<em>#   -DUSERDATAPREFIX="$HOME/.freerct"   # Where user data such as savegames is stored. </em>
+	<em># Further details and more specialised options can be found in the README file in the root source directory. </em>
 	cmake ..
 
 	<em># Compile and install: </em>
