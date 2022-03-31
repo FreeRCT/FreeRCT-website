@@ -159,7 +159,11 @@ public class Download {
 						new File(Resources.RESOURCES_DIR, "/public/release/0.1/0.1.zip.sha256")) + "</td>"
 			+ """
 				</tr>
-			</table> </p> <p>
+			</table></p>
+			<a href="https://repology.org/project/freerct/versions">
+				<img src="https://repology.org/badge/vertical-allrepos/freerct.svg" alt="Packaging status" style="float: right; margin-left: 16px">
+			</a>
+			<p>
 				To install FreeRCT:
 				<ol>
 					<li>      Download the installer for your desired platform and configuration from the list above.
@@ -169,6 +173,7 @@ public class Download {
 					</li><li> If you downloaded the source code archive, extract it and continue <a href='#compile'>below</a> for instructions how to compile.
 					</li>
 				</ol>
+				FreeRCT is also available in the package repositories for several distributions. See the column on the right for details.
 			</p>
 
 			"""
