@@ -196,6 +196,8 @@ public class FreeRCTApplication {
 
 		write.println("From: noreply@freerct.net");
 		write.println("Subject: " + subject);
+		write.println("To: " + email);
+		write.println("Content-Type: text/plain; charset=\"utf-8\"");
 		write.println();
 		write.println(body);
 

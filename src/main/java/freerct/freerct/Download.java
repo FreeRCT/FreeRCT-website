@@ -180,7 +180,7 @@ public class Download {
 			+ createLinkifiedHeader("h2", "/download", "daily", "Daily Builds")
 			+ """
 			<p>
-				Automated builds are provided for Windows and Debian/Ubuntu for every development version.
+				Automated builds are provided for Windows, MacOS, and Debian/Ubuntu for every development version.
 			</p>
 		""";
 
