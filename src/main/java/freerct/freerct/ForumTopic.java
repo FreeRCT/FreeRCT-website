@@ -14,6 +14,7 @@ import static freerct.freerct.FreeRCTApplication.sql;
 import static freerct.freerct.FreeRCTApplication.sqlSync;
 import static freerct.freerct.FreeRCTApplication.getCalendar;
 import static freerct.freerct.FreeRCTApplication.htmlEscape;
+import static freerct.freerct.FreeRCTApplication.htmlEscapeNonASCII;
 import static freerct.freerct.FreeRCTApplication.renderMarkdown;
 import static freerct.freerct.FreeRCTApplication.datetimestring;
 import static freerct.freerct.FreeRCTApplication.shortDatetimestring;
@@ -208,7 +209,7 @@ public class ForumTopic {
 						 * will take care of replacing them back to the correct characters.
 						 */
 						String quotingFunctionCall =
-								("> *" + p.author + " wrote:*\n\n---\n" + p.body.trim())
+								("> *" + p.author + " wrote:*\n\n---\n" + htmlEscapeNonASCII(p.body.trim()))
 								.replaceAll("\\\\", "\\\\x5c")
 								.replaceAll("'"   , "\\\\x27")
 								.replaceAll("\""  , "\\\\x22")

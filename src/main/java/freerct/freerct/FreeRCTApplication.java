@@ -7,7 +7,10 @@ import java.text.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.github.rjeschke.txtmark.*;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.data.MutableDataSet;
 import javax.servlet.http.*;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -36,6 +39,11 @@ public class FreeRCTApplication {
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(FreeRCTApplication.class);
 		Map<String, Object> properties = new HashMap<>();
+
+		MutableDataSet markdown_cfg = new MutableDataSet();
+		// markdown_cfg.set(Parser.EXTENSIONS, Arrays.asList(TablesExtension.create(), StrikethroughExtension.create()));
+		_markdown_parser = Parser.builder(markdown_cfg).build();
+		_markdown_renderer = HtmlRenderer.builder(markdown_cfg).build();
 
 		try {
 			File file = new File("config");
@@ -257,7 +265,9 @@ public class FreeRCTApplication {
 		input = input.replaceAll(">", _markdown_quote_symbol);
 		input = htmlEscape(input);
 		input = input.replaceAll(_markdown_quote_symbol, ">");
-		input = Processor.process(input, _markdown_cfg).trim();
+		input = _markdown_renderer.render(_markdown_parser.parse(input));
+		input = input.trim();
+		input = htmlEscapeNonASCII(input);
 
 		// NOCOM:
 		// - Should only use whole-word matches, not within words
@@ -270,7 +280,8 @@ public class FreeRCTApplication {
 	}
 
 	private static final String _markdown_quote_symbol = "\032";
-	private static final Configuration _markdown_cfg = Configuration.builder().enableSafeMode().forceExtentedProfile().build();
+	private static Parser _markdown_parser;
+	private static HtmlRenderer _markdown_renderer;
 
 	private static class SmileyDefinition {
 		public final String regex, smiley;
@@ -314,6 +325,23 @@ public class FreeRCTApplication {
 	}
 
 	/**
+	 * Replace non-ASCII characters in arbitrary text with their HTML code.
+	 * @param input Arbitrary text to escape.
+	 * @return Escaped text.
+	 */
+	public static String htmlEscapeNonASCII(String input) {
+		StringBuilder escaped = new StringBuilder();
+		input.codePoints().forEach(c -> {
+			if (c < 0 || c > 127) {
+				escaped.append("&#" + c + ";");
+			} else {
+				escaped.append((char)c);
+			}
+		});
+		return escaped.toString();
+	}
+
+	/**
 	 * Escape HTML characters in arbitrary text.
 	 * @param input (Possibly unsafe) text to escape.
 	 * @return Escaped text.
@@ -329,15 +357,7 @@ public class FreeRCTApplication {
 			.replaceAll(">", "&gt;")
 			;
 
-		StringBuilder escaped = new StringBuilder();
-		input.codePoints().forEach(c -> {
-			if (c < 0 || c > 127) {
-				escaped.append("&#" + c + ";");
-			} else {
-				escaped.append((char)c);
-			}
-		});
-		return escaped.toString();
+		return htmlEscapeNonASCII(input);
 	}
 
 	/**
