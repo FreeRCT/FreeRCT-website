@@ -7,10 +7,11 @@ import java.text.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.util.data.MutableDataSet;
+import com.vladsch.flexmark.profile.pegdown.*;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.data.*;
 import javax.servlet.http.*;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -40,8 +41,7 @@ public class FreeRCTApplication {
 		SpringApplication app = new SpringApplication(FreeRCTApplication.class);
 		Map<String, Object> properties = new HashMap<>();
 
-		MutableDataSet markdown_cfg = new MutableDataSet();
-		// markdown_cfg.set(Parser.EXTENSIONS, Arrays.asList(TablesExtension.create(), StrikethroughExtension.create()));
+		DataHolder markdown_cfg = PegdownOptionsAdapter.flexmarkOptions(Extensions.ALL_WITH_OPTIONALS);
 		_markdown_parser = Parser.builder(markdown_cfg).build();
 		_markdown_renderer = HtmlRenderer.builder(markdown_cfg).build();
 
@@ -295,7 +295,7 @@ public class FreeRCTApplication {
 		 * Order matters, because some smiley definitions are part of another smiley definition.
 		 */
 		public static final SmileyDefinition[] SMILEYS = new SmileyDefinition[] {
-			new SmileyDefinition("(\\:&apos;\\))","😅️"),  // :')
+			new SmileyDefinition("(\\:'\\))",     "😅️"),  // :')
 
 			new SmileyDefinition("(\\:-?D)",      "😁️"),  // :D  :-D
 			new SmileyDefinition("(\\:-?\\)\\))", "😀️"),  // :)) :-))

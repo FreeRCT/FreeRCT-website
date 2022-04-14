@@ -123,8 +123,15 @@ footer div {
 	width: 100%;
 }
 
-strong, em, p a, p code, li:not(.menubar_li) a, li code {
+strong, em, del, ins, sub, sup, p a, p code, li:not(.menubar_li) a, li code {
 	padding: 0 !important;
+}
+
+del {
+	text-decoration: line-through var(--text-light) solid 1px !important;
+}
+sub, sup {
+	font-size: 12px;
 }
 
 a { position:relative }
