@@ -7,11 +7,13 @@ import java.text.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.vladsch.flexmark.ast.*;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.profile.pegdown.*;
-import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.*;
 import com.vladsch.flexmark.util.data.*;
+import com.vladsch.flexmark.util.sequence.*;
 import javax.servlet.http.*;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -265,28 +267,39 @@ public class FreeRCTApplication {
 		input = input.replaceAll(">", _markdown_quote_symbol);
 		input = htmlEscape(input);
 		input = input.replaceAll(_markdown_quote_symbol, ">");
-		input = _markdown_renderer.render(_markdown_parser.parse(input));
+
+		Node tree = _markdown_parser.parse(input);
+		_smiley_renderer.visit(tree);
+		input = _markdown_renderer.render(tree);
 		input = input.trim();
 		input = htmlEscapeNonASCII(input);
-
-		// NOCOM:
-		// - Should only use whole-word matches, not within words
-		// - Should not happen within code blocks
-		// for (SmileyDefinition d : SmileyDefinition.SMILEYS) input = input.replaceAll(d.regex, d.smiley);
 
 		input = input.replaceAll("&amp;([a-z]+|#[0-9]+);", "&$1;");
 
 		return input;
 	}
 
+	/**
+	 * Recursively render smileys in the given Markdown node and its children.
+	 * @param node Parent node to start iterating in.
+	 */
+	public static void renderSmileys(Text node) {
+		String seq = node.getChars().toString();
+		for (SmileyDefinition d : SmileyDefinition.SMILEYS) seq = seq.replaceAll(d.regex, d.smiley);
+		node.setChars(BasedSequence.of(seq));
+
+		_smiley_renderer.visitChildren(node);
+	}
+
 	private static final String _markdown_quote_symbol = "\032";
 	private static Parser _markdown_parser;
 	private static HtmlRenderer _markdown_renderer;
+	private static final NodeVisitor _smiley_renderer = new NodeVisitor(new VisitHandler<>(Text.class, FreeRCTApplication::renderSmileys));
 
 	private static class SmileyDefinition {
 		public final String regex, smiley;
 		private SmileyDefinition(String r, String s) {
-			regex = r;
+			regex = "(\\b|\\B)" + r + "(\\b|\\B)";
 			smiley = htmlEscape(s);
 		}
 
@@ -295,7 +308,7 @@ public class FreeRCTApplication {
 		 * Order matters, because some smiley definitions are part of another smiley definition.
 		 */
 		public static final SmileyDefinition[] SMILEYS = new SmileyDefinition[] {
-			new SmileyDefinition("(\\:'\\))",     "😅️"),  // :')
+			new SmileyDefinition("(\\:_\\))",     "😅️"),  // :')
 
 			new SmileyDefinition("(\\:-?D)",      "😁️"),  // :D  :-D
 			new SmileyDefinition("(\\:-?\\)\\))", "😀️"),  // :)) :-))
