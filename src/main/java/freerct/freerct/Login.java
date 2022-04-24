@@ -98,7 +98,7 @@ public class Login {
 
 			final String randomToken = SecurityManager.generateRandomToken();
 			Calendar tokenExpiry = Calendar.getInstance();
-			tokenExpiry.roll(Calendar.DATE, 7);  // Keep the token valid for 7 days.
+			tokenExpiry.add(Calendar.DATE, 7);  // Keep the token valid for 7 days.
 
 			sql("update users set activation_token=?, activation_expire=? where username=?",
 					randomToken, new Timestamp(tokenExpiry.getTimeInMillis()), username);

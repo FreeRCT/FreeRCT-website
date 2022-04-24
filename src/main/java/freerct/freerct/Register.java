@@ -107,7 +107,7 @@ public class Register {
 
 			final String randomToken = SecurityManager.generateRandomToken();
 			Calendar tokenExpiry = Calendar.getInstance();
-			tokenExpiry.roll(Calendar.DATE, 7);  // Keep the token valid for 7 days.
+			tokenExpiry.add(Calendar.DATE, 7);  // Keep the token valid for 7 days.
 
 			// TODO run a scheduled job that frequently purges stale tokens from the database
 
