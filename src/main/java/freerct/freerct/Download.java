@@ -46,7 +46,11 @@ public class Download {
 			Map newestWorkflow = null;
 			Date newestDate = null;
 			for (Object key : (List)json.get("workflow_runs")) if (key instanceof Map m) {
-				if (!m.get("name").toString().equals("CI") || !m.get("head_branch").toString().equals("master")) continue;
+				if (!m.get("name").toString().equals("CI") ||
+					!m.get("event").toString().equals("push") ||
+					!m.get("status").toString().equals("completed") ||
+					!m.get("conclusion").toString().equals("success") ||
+					!m.get("head_branch").toString().equals("master")) continue;
 				Date d = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(m.get("created_at").toString());
 				if (newestDate == null || newestDate.before(d)) {
 					newestDate = d;
