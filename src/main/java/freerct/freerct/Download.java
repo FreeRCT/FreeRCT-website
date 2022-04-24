@@ -152,7 +152,10 @@ public class Download {
 						new File(Resources.RESOURCES_DIR, "/public/release/0.1/freerct-0.1-linux-amd64.deb"), "Download Package")
 			+			"<br>" + createChecksumDownloadLink(
 						new File(Resources.RESOURCES_DIR, "/public/release/0.1/freerct-0.1-linux-amd64.deb.sha256")) + "</td>"
-			+		"<td class='center invalid'>Flatpakref<br>Available soon</td>"
+			+		"<td class='center'>" + createAssetDownloadLink(request, true,
+						new File(Resources.RESOURCES_DIR, "/public/release/0.1/freerct-0.1-linux-x86_64.flatpak"), "Flatpakref")
+			+			"<br>" + createChecksumDownloadLink(
+						new File(Resources.RESOURCES_DIR, "/public/release/0.1/freerct-0.1-linux-x86_64.flatpak.sha256")) + "</td>"
 			+		"<td class='center'>" + createAssetDownloadLink(request, true,
 						new File(Resources.RESOURCES_DIR, "/public/release/0.1/0.1.zip"), "Source ZIP")
 			+			"<br>" + createChecksumDownloadLink(
