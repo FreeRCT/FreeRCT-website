@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 
 import javax.servlet.http.*;
+import org.springframework.scheduling.annotation.*;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.*;
 import org.springframework.security.core.context.*;
@@ -27,6 +28,16 @@ import static freerct.freerct.FreeRCTApplication.sendEMail;
 public class Register {
 	private static final String USERNAME_REGEX = "[-._+A-Za-z0-9]+";
 	private static final int USERNAME_MAX_LENGTH = 40;  // Arbitrary limit, we could easily handle up to 254 characters.
+
+	@Scheduled(cron = "0 0 * * * *")
+	public void purgeStaleTokens() {
+		try {
+			sql("delete from users where activation_expire is not null and activation_expire<current_timestamp and state=?", SecurityManager.USER_STATE_AWAITING);
+			sql("update users set activation_token=null, activation_expire=null where activation_expire is not null and activation_expire<current_timestamp");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	@GetMapping("/signup")
 	@ResponseBody
@@ -72,6 +83,11 @@ public class Register {
 				case "name_taken":
 					body += "This username is already in use.";
 					break;
+				case "already_registered":
+					body	+=	"You already signed up but did not activate your account yet. Please check your e-mail inbox for the activation message. "
+							+	"Contact the <a href='/contact'>website administrator</a> if you did not receive one."
+							;
+					break;
 				case "name_invalid":
 					body	+=	"Usernames may contain only Latin characters, digits, and the special characters <code>.-_+</code> "
 							+	"and may not be longer than " + USERNAME_MAX_LENGTH + " characters."
@@ -101,15 +117,18 @@ public class Register {
 
 			if (username.length() > USERNAME_MAX_LENGTH || !username.matches(USERNAME_REGEX)) return "redirect:/signup?type=name_invalid#signup_form";
 
-			ResultSet userDetails = sql("select id from users where username=?", username);
+			ResultSet userDetails = sql("select email,state from users where username=?", username);
 			if (!password.equals(password2)) return "redirect:/signup?type=passwords#signup_form";
-			if (userDetails.next()) return "redirect:/signup?type=name_taken#signup_form";
+			if (userDetails.next()) {
+				if (email.equals(userDetails.getString("email")) && userDetails.getInt("state") == SecurityManager.USER_STATE_AWAITING) {
+					return "redirect:/signup?type=already_registered#signup_form";
+				}
+				return "redirect:/signup?type=name_taken#signup_form";
+			}
 
 			final String randomToken = SecurityManager.generateRandomToken();
 			Calendar tokenExpiry = Calendar.getInstance();
 			tokenExpiry.add(Calendar.DATE, 7);  // Keep the token valid for 7 days.
-
-			// TODO run a scheduled job that frequently purges stale tokens from the database
 
 			sql("insert into users (username,email,password,activation_token,activation_expire) value (?,?,?,?,?)",
 					username, email, SecurityManager.passwordEncoder().encode​(password), randomToken, new Timestamp(tokenExpiry.getTimeInMillis()));

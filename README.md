@@ -13,8 +13,8 @@ sudo apt install openjdk-17-* maven
 
 To compile and run the website locally, type:
 ```
-git clone git@github.com:Noordfrees/freerct-website.git
-cd freerct-website
+git clone git@github.com:FreeRCT/FreeRCT-website.git
+cd FreeRCT-website
 ./mvnw spring-boot:run
 ```
 Then open your web browser and visit http://localhost:8080/.
@@ -70,11 +70,11 @@ Valid user states (the constants are hardcoded) are:
 
 Constant | Description
 -------- | -------------------------
-       0 | Normal user
-       1 | Administrator
-       2 | Moderator
-       3 | Deactivated account
-       4 | Awaiting activation
+0        | Normal user
+1        | Administrator
+2        | Moderator
+3        | Deactivated account
+4        | Awaiting activation
 
 ### `news`
 
