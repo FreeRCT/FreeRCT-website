@@ -260,6 +260,7 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			.antMatchers("/submit_resetpassword").permitAll()
 			.antMatchers("/ok").permitAll()
 			.antMatchers("/error").permitAll()
+			.antMatchers("/.well-known/acme-challenge/**").permitAll()
 
 			/* Public-facing pages. */
 			.antMatchers("/").permitAll()
