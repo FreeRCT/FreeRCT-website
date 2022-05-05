@@ -11,6 +11,7 @@
 
 # Binaries
 /resources/public/daily_builds/
+/resources/public/release/
 
 ### Everything below has been auto-excluded by SpringBoot Initializr
 
