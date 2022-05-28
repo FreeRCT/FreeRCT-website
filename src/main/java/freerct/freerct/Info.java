@@ -26,12 +26,7 @@ public class Info {
 		switch (type.toLowerCase()) {
 			case "account_created":
 				title = "Account Created";
-				body	=	"An e-mail has been sent to your address. Please follow the link therein to activate your account."
-						+	"</p><p>"
-						+	"<strong>Please note:</strong> Some e-mail providers currently do not accept mail from <em>freerct.net</em>. "
-						+	"Therefore also check your spam folder. <em>GMail</em> users may not receive a message at all; in this case, "
-						+	"please contact the website administrator <a href='/contact'>as described here</a>."
-						;
+				body = "An e-mail has been sent to your address. Please follow the link therein to activate your account.";
 				break;
 
 			case "password_reset":
