@@ -96,6 +96,8 @@ public class Mainpage {
 
 				<div class="content_flexbox_content slideshow_main">
 					<div class="slideshow_container">
+						<p id='javascriptdisabled'><em>If you enable JavaScript, you will see a slideshow of screenshots here.</em></p>
+						<script>document.getElementById('javascriptdisabled').style.display = 'none'</script>
 		""";
 
 		for (SlideshowSlide slide : SlideshowSlide.ALL_SLIDES) {

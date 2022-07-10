@@ -22,7 +22,10 @@ public class Screenshots {
 	public String fetch(WebRequest request, HttpSession session) {
 		return generatePage(request, session, "Screenshots", """
 			<h1>Screenshots</h1>
+			<p id='javascriptdisabled' style='text-align:center'><em>If you enable JavaScript, you will see a gallery of screenshots here.</em></p>
 			<script>
+				document.getElementById('javascriptdisabled').style.display = 'none';
+
 				const ALL_SCREENSHOT_SECTIONS = [
 					{slug: '0_1', label: 'FreeRCT 0.1'},
 					{slug: 'test', label: 'Test Images <em>(to be deleted)</em>'},  // TODO delete

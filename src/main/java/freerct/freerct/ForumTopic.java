@@ -217,7 +217,11 @@ public class ForumTopic {
 								.replaceAll("\n"  , "\\\\x0a> ")  // Here we add the "> " that indicates the block quote.
 								;
 
-						body += "<div class='form_button' onclick=\"quotePost('" + quotingFunctionCall + "')\">Quote</div>";
+						body	+=	"<div class='form_button' onclick=\"quotePost('" + quotingFunctionCall
+								+		"')\" id='quote_button_" + p.id + "'><abbr title='JavaScript needs to be enabled to use this feature.' style='color:darkgrey'>"
+								+	"Quote</abbr></div>"
+								+	"<script>document.getElementById('quote_button_" + p.id + "').innerHTML = 'Quote'</script>"
+								;
 					}
 
 					if (mayEdit  ) body += "<a class='form_button' href='/forum/post/edit/" + p.id + "'>Edit</a>";

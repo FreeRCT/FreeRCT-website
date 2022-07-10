@@ -764,6 +764,7 @@ input[type=checkbox] {
 	height: auto;
 	position: absolute;
 	top: 0;
+	opacity: 0;
 }
 .slideshow_first_slide {
 	position: relative;

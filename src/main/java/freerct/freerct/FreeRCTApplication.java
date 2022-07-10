@@ -796,6 +796,7 @@ public class FreeRCTApplication {
 							document.getElementById('menubar_spacer_menu').style.marginRight = menuSpacer + 'px';
 							document.getElementById('menubar_spacer_bottom').style.marginBottom = bottomSpacer + 'px';
 							logo.style.height = newLogoH + 'px';
+							logo.style.width = 'auto';
 							logo.style.marginLeft = newLogoHalfspace + 'px';
 							logo.style.marginRight = newLogoHalfspace + 'px';
 
@@ -822,12 +823,12 @@ public class FreeRCTApplication {
 					<link rel='icon' href='/img/logo.png'>
 					<div id='menubar_top_canvas'></div>
 					<a class='pictorial_link' href=#top>
-						<img id='menubar_logo' src='/img/logo.png' height=auto width=auto></img>
+						<img id='menubar_logo' src='/img/logo.png' height='50px' width='50px'></img>
 					</a>
 
 			"""
 			+		"<ul id='menubar_ul'>"
-			+		"<p id='menubar_spacer_menu'></p>"
+			+		"<p id='menubar_spacer_menu' style='margin-right:58px'></p>"
 
 			+		createMenuBarDropdown(uri, new DropdownEntry("/"           , "FreeRCT Home"),
 					                           new DropdownEntry("/news"       , "News Archive"))
@@ -853,7 +854,7 @@ public class FreeRCTApplication {
 					                           new DropdownEntry("https://github.com/FreeRCT/FreeRCT/issues", "Issue Tracker" , true))
 
 			+		"</ul>"
-			+		"<p id='menubar_spacer_bottom'></p>"
+			+		"<p id='menubar_spacer_bottom' style='margin-bottom:58px'></p>"
 
 			+		"<div class='toplevel_content_flexbox'>"
 			+			"<div class='content_flexbox_content'>" + body + "</div>"
