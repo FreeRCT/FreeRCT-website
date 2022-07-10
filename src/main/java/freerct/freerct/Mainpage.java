@@ -58,15 +58,13 @@ public class Mainpage {
 
 				function showSlides(n) {
 					var i;
-					var images = document.getElementsByClassName("slideshow_image");
-					var texts = document.getElementsByClassName("slideshow_text");
+					var slides = document.getElementsByClassName("slideshow_slide");
 					var dots = document.getElementsByClassName("slideshow_dot");
 					if (n > NR_SLIDES) slideIndex = 1;
 					if (n < 1) slideIndex = NR_SLIDES;
 
 					for (i = 0; i < NR_SLIDES; i++) {
-						images[i].style.opacity = (i + 1 == slideIndex) ? '1' : '0';
-						texts[i].style.opacity = (i + 1 == slideIndex) ? '1' : '0';
+						slides[i].style.opacity = (i + 1 == slideIndex) ? '1' : '0';
 					}
 					for (i = 0; i < NR_SLIDES; i++) dots[i].className = dots[i].className.replace(" slideshow_dot_active", "");
 					dots[slideIndex-1].className += " slideshow_dot_active";

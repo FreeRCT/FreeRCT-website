@@ -765,14 +765,13 @@ input[type=checkbox] {
 	position: absolute;
 	top: 0;
 	opacity: 0;
+	transition: opacity 1.5s;
 }
 .slideshow_first_slide {
 	position: relative;
 }
 .slideshow_image {
 	width: 100%;
-	opacity: 0;
-	transition: opacity 1.5s;
 	border-bottom: 2px solid var(--blue-light);
 	margin-bottom: 30px;
 }
