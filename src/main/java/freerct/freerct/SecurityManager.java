@@ -274,6 +274,9 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			.antMatchers("/play/*").permitAll()
 			.antMatchers("/news").permitAll()
 			.antMatchers("/screenshots").permitAll()
+			.antMatchers("/wiki/history/*").permitAll()
+			.antMatchers("/wiki/rev/*").permitAll()
+			.antMatchers("/wiki/w/*").permitAll()
 			/* The "/user/*" pages are not public. */
 
 			/* All other pages are accessible only to authenticated users. */

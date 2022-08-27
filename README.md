@@ -138,6 +138,29 @@ body                 | text             | The content of the message.
 timestamp            | datetime         | The time and date the message was sent.
 state                | int              | One of 0 (unread), 1 (read), or 2 (deleted).
 
+### `wiki_articles`
+
+Each row represents a wiki article.
+
+Column               | Type             | Description
+-------------------- | ---------------- | ----------------------------------------------------------
+id                   | int              | Unique article ID.
+slug                 | varchar          | The article's URL title.
+
+### `wiki_revisions`
+
+Each row represents a revision of a wiki article.
+
+Column               | Type             | Description
+-------------------- | ---------------- | ----------------------------------------------------------
+id                   | int              | Unique revision ID.
+article              | int              | The article's ID.
+author               | int              | The user who created this revision.
+created              | datetime         | The time and date the revision was created.
+title                | varchar          | The article's title.
+content              | text             | The article's content.
+changelog            | varchar          | The description of the changes made in this revision.
+
 ### `noticetypes`
 
 Each row represents a type of e-mail notification.
@@ -171,8 +194,6 @@ id                   | int              | Table key.
 user                 | int              | The user's ID.
 topic                | int              | The topic's ID.
 
-### *ToDo add wiki tables*
-
 ### Table Schema
 ```sql
 -- Delete all current tables in the correct order.
@@ -180,6 +201,8 @@ topic                | int              | The topic's ID.
 drop table if exists notification_settings;
 drop table if exists noticetypes;
 drop table if exists subscriptions;
+drop table if exists wiki_revisions;
+drop table if exists wiki_articles;
 drop table if exists posts;
 drop table if exists topics;
 drop table if exists forums;
@@ -271,5 +294,22 @@ create table messages (
 	state     int          not null default 0,
 	foreign key fk_sender    (sender   ) references users (id) on delete cascade on update cascade,
 	foreign key fk_recipient (recipient) references users (id) on delete cascade on update cascade
+);
+
+create table wiki_articles (
+	id   int          not null primary key auto_increment,
+	slug varchar(255) not null
+);
+
+create table wiki_revisions (
+	id        int          not null primary key auto_increment,
+	article   int          not null,
+	author    int          not null,
+	created   datetime     not null default current_timestamp,
+	title     varchar(255) not null,
+	content   text         not null,
+	changelog varchar(255) not null,
+	foreign key fk_article (article) references wiki_articles (id) on delete cascade on update cascade,
+	foreign key fk_author  (author ) references users         (id) on delete cascade on update cascade
 );
 ```
