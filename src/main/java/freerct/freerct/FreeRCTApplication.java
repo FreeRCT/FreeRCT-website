@@ -835,7 +835,9 @@ public class FreeRCTApplication {
 			+		createMenuBarEntry   (uri, new DropdownEntry("/screenshots", "Screenshots" ))
 			+		createMenuBarEntry   (uri, new DropdownEntry("/play/play"  , "Play Online" ))
 			+		createMenuBarEntry   (uri, new DropdownEntry("/download"   , "Get It!"     ))
-			+		createMenuBarEntry   (uri, new DropdownEntry("/manual"     , "Manual"      ))
+			+		createMenuBarDropdown(uri, new DropdownEntry("/wiki/w/main"  , "Wiki"),
+					                           new DropdownEntry("/wiki/w/manual", "FreeRCT Manual"),
+					                           new DropdownEntry("/wiki/list"    , "List of All Pages"))
 			;
 
 		List<DropdownEntry> allForums = new ArrayList<>();
