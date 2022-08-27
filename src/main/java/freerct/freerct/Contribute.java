@@ -62,21 +62,16 @@ public class Contribute {
 			+ """
 				<p>
 					The source language of FreeRCT is British English (<code>en_GB</code>).
-					All strings are defined in <code>graphics/rcd/lang/&lt;LANGUAGE_CODE&gt;.txt</code>.
+					All strings are defined in <code>graphics/rcd/lang/&lt;LANGUAGE_CODE&gt;.yml</code>
+					in the YAML file format.
 					Enhancing translations for an existing language as well as adding a new language
 					is as easy as opening/creating the respective file for your language
 					and editing the strings therein.
 				</p><p>
 					When you add a new language, it additionally needs to be added to the list of all
-					languages in all of the following files:
-				</p><ul class="ttlist">
-					<li><code>src/language.cpp</code></li>
-					<li><code>src/language.h</code></li>
-					<li><code>src/rcdgen/nodes.cpp</code></li>
-					<li><code>src/rcdgen/nodes.h</code></li>
-				</ul><p>
-					Search for the string <code>NDS_DE</code> therein to find the section where the language code needs to be added.
-					The lists of languages should be kept in alphabetical order.
+					languages in <code>src/language_definitions.h</code>.
+					The lists of languages must be kept in alphabetical order.
+					If your language uses an unusual plural rule, additionally add a function for that rule.
 				</p>
 
 			"""
