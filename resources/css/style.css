@@ -377,6 +377,12 @@ input[type=checkbox] {
 	margin: 32px 0;
 }
 
+#note_savegames_not_stored {
+	padding: 8px;
+	border-radius: 5px;
+	transition: background-color 4s ease;
+}
+
 /* Forums. */
 
 .forum_list_entry {
