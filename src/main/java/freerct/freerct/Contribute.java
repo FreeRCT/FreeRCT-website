@@ -92,9 +92,10 @@ public class Contribute {
 					<a target="_blank" href="https://github.com/FreeRCT/FreeRCT/pulls">open PRs</a>.
 					In this case, bugs should be reported in the PR, not on the issue tracker.
 					The PR description will tell you what to watch out for specifically.
-					Currently the only way to test a PR is to <a href="/download#compile">compile it yourself</a>.
-					Soon, installable binaries will be provided automatically for all PRs;
-					this site will then be updated with instructions where to get and how to install.
+					To test a PR, you can either <a href="/download#compile">compile it yourself</a>
+					or download prebuilt binaries. To get those, select the PR's <em>Checks</em> tab, then
+					select the <em>CI</em> group, then scroll down to <em>Artifacts</em> and download the
+					desired build. You need a GitHub account to download these artifacts.
 				</p><p>
 					New screenshots for the website's <a href="/screenshots">screenshots section</a>
 					are also always appreciated.
