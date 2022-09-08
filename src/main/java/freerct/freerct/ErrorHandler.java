@@ -41,6 +41,11 @@ public class ErrorHandler implements ErrorController {
 					body = "This token has already expired.";
 					break;
 
+				case "file_format_error":
+					title = "File Format Error";
+					body = "The file format is invalid.";
+					break;
+
 				default:
 					title = "Unknown Error";
 					body = "An unknown error has occurred: '" + htmlEscape(reason) + "'";

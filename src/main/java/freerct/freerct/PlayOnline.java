@@ -1,5 +1,6 @@
 package freerct.freerct;
 
+import java.io.*;
 import java.sql.*;
 import java.util.*;
 
@@ -25,6 +26,40 @@ import static freerct.freerct.FreeRCTApplication.generateForumPostForm;
 /** The frame that runs FreeRCT as an online WebAssembly game. */
 @Controller
 public class PlayOnline {
+	@PostMapping("/savegames/upload")
+	@ResponseBody
+	public String uploadSavegame(WebRequest request, HttpSession session, @RequestBody String blob) {
+		try {
+			final int colonpos = blob.lastIndexOf(':');
+			if (colonpos <= 0) return "Missing file name part";
+			String name = blob.substring(0, colonpos);
+			blob = blob.substring(colonpos + 1);
+
+			final int length = blob.length();
+			if (length % 2 != 0 || length < 4) return "Malformed blob";
+
+			File dir = new File(Resources.RESOURCES_DIR, "savegames/storage");
+			dir.mkdirs();
+			File outFile = new File(dir, new File(name).getName());
+			PrintStream out = new PrintStream(outFile);
+			for (int i = 0; i < length;) {
+				int b1 = blob.charAt(i++) - 'A';
+				int b2 = blob.charAt(i++) - 'a';
+				if (b1 < 0 || b2 < 0 || b1 > 15 || b2 > 15) {
+					out.close();
+					outFile.delete();
+					return "Invalid byte";
+				}
+				out.write((b2 << 4) | b1);
+			}
+			out.close();
+
+			return "";
+		} catch (Exception e) {
+			return "internal_server_error";
+		}
+	}
+
 	@GetMapping("/play/play")
 	@ResponseBody
 	public String play(WebRequest request, HttpSession session, @RequestParam(value="guest", required=false) boolean noLogin) {
@@ -52,10 +87,16 @@ public class PlayOnline {
 					<div class='griditem forum_header_grid_side_column_l'>
 					</div>
 					<div class='griditem forum_header_grid_middle_column'>
+			""";
+			if (request.getRemoteUser() == null) {
+				body += """
 						<p class='forum_description_name' id='note_savegames_not_stored'>
 							<strong>Note:</strong>
 							You are not logged in. Savegames will <strong>not</strong> be persisted.
 						</p>
+				""";
+			}
+			body += """
 						<div id='spinner'></div>
 						<p class='forum_description_name' id='status'>Preparing...</p>
 						<p class='forum_description_stats'
@@ -86,7 +127,7 @@ public class PlayOnline {
 
 			if (request.getRemoteUser() == null) {
 				body += """
-					function GameSavedCallback(filename) {
+					function GameSavedCallback(name, unused) {
 						GoToAnchor();
 						var e = document.getElementById('note_savegames_not_stored');
 						e.style.backgroundColor = '#e60a12';
@@ -97,8 +138,17 @@ public class PlayOnline {
 				""";
 			} else {
 				body += """
-					function GameSavedCallback(filename) {
-						console.log("NOCOM", filename);
+					async function GameSavedCallback(name, blob) {
+						const response = await fetch("/savegames/upload", {
+							method: 'POST',
+							body: name + ":" + blob
+						});
+						const result = await response.text();
+						if (result) {
+							console.log("WARNING: Saving " + name + " failed: " + result);
+						} else {
+							console.log("Savegame " + name + " saved on server.");
+						}
 					}
 				""";
 			}

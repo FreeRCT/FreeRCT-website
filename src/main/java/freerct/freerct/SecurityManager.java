@@ -245,6 +245,7 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 			/* Admin's area – admin only. */
 			.antMatchers("/admin/**").hasRole("ADMIN")
+			.antMatchers("/savegames/storage/*").hasRole("ADMIN")
 
 			/* Static assets. */
 			.antMatchers("/css/**").permitAll()

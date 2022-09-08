@@ -8,6 +8,7 @@
 
 # Userdata
 /resources/img/users/
+/resources/savegames/storage/
 
 # Binaries
 /resources/public/daily_builds/
