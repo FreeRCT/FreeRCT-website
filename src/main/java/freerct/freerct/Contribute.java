@@ -116,7 +116,7 @@ public class Contribute {
 			+ createLinkifiedHeader("h2", "/contribute", "coding", "Coding For FreeRCT")
 			+ """
 				<p>
-					The FreeRCT engine is coded in C++ using SDL2.
+					The FreeRCT engine is coded in C++ using GLFW3 with OpenGL ES 3.
 					Rides and other units are defined in a custom language called the RCD file format.
 				</p><p>
 					Please provide Doxygen documentation for your C++ patches.
