@@ -896,7 +896,7 @@ public class FreeRCTApplication {
 			+			"<div><a href='/contact'>Legal Notice / Contact / Privacy Policy</a></div>"
 			+			"<div>Other official sites:"
 			+				"   <a rel='me' href='https://github.com/FreeRCT/FreeRCT/'>GitHub</a>"
-			+				" · <a rel='me' href='https://mastodon.technology/@FreeRCT'>Mastodon</a>"
+			+				" · <a rel='me' href='https://floss.social/@FreeRCT'>Mastodon</a>"
 			+				" · <a rel='me' href='https://freerct.blogspot.com'>Blogspot</a>"
 			+			"</div>"
 			+		"</footer>"
