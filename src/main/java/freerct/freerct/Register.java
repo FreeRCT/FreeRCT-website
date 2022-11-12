@@ -134,7 +134,7 @@ public class Register {
 					username, email, SecurityManager.passwordEncoder().encode​(password), randomToken, new Timestamp(tokenExpiry.getTimeInMillis()));
 
 			sendEMail(email, "Activate Account",
-					"Dear " + username + ",\n\n"
+					"Hi " + username + ",\n\n"
 					+ "to activate your new FreeRCT account, please click on the following link:\n\n"
 					+ "https://freerct.net/signup/" + randomToken
 					+ "\n\nThis link remains valid for 7 days.\n\n"

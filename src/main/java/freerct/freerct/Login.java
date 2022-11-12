@@ -104,7 +104,7 @@ public class Login {
 					randomToken, new Timestamp(tokenExpiry.getTimeInMillis()), username);
 
 			sendEMail(email, "Reset Password",
-					"Dear " + username + ",\n\n"
+					"Hi " + username + ",\n\n"
 					+ "to reset your password, please visit https://freerct.net/resetpassword and use the following token to set a new password:\n\n"
 					+ randomToken
 					+ "\n\nYour token remains valid for 7 days and can be used only once.\n\n"
