@@ -263,6 +263,7 @@ public class SecurityManager extends WebSecurityConfigurerAdapter {
 
 			/* Public-facing pages. */
 			.antMatchers("/").permitAll()
+			.antMatchers("/.well-known/*").permitAll()
 			.antMatchers("/contact").permitAll()
 			.antMatchers("/contribute").permitAll()
 			.antMatchers("/download").permitAll()
