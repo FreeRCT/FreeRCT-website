@@ -174,6 +174,7 @@ public class FreeRCTApplication {
 	 */
 	public static String bash(String... args) throws Exception {
 		Process p = new ProcessBuilder(args).start();
+		p.waitFor();
 		BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		String str, result = null;
 		while ((str = b.readLine()) != null) {
